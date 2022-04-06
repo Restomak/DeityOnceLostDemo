@@ -8,16 +8,21 @@ namespace DeityOnceLost.DeckBuilder
 {
     public class Deck
     {
-        public const int EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT = 500;
+        public const int EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT = 500; //never have while loops without an emergency exit
+        
         public const int MAX_HAND_CAPACITY = 12;
         public const int DEFAULT_DRAW_ON_TURN_START = 6;
 
+        //The entire deck
         private List<Card> _deck;
 
+        //The deck split into parts:
         private List<Card> _drawPile;
         private List<Card> _hand;
         private List<Card> _discardPile;
         private List<Card> _removedCards;
+
+        //Used for checking cards that won't be discarded at the end of the turn (cards that automatically retain need not be added here, but it doesn't break if they are)
         private List<Card> _keepingInHand;
 
         public Deck(List<Card> startingCards)
@@ -35,6 +40,9 @@ namespace DeityOnceLost.DeckBuilder
             }
         }
 
+        /// <summary>
+        /// Initialize the deck. Use at the start of a new run
+        /// </summary>
         public void start()
         {
             _drawPile.Clear();
@@ -43,6 +51,8 @@ namespace DeityOnceLost.DeckBuilder
             _removedCards.Clear();
 
             _drawPile = shuffle(_deck);
+            
+            Game1.debugLog.Add("Deck start() called");
         }
 
         /// <summary>
@@ -85,9 +95,13 @@ namespace DeityOnceLost.DeckBuilder
                 cards.RemoveAt(randomIndex);
             }
 
+            Game1.debugLog.Add("Deck shuffled. emergencyExitCounter: " + emergencyExitCounter);
             return shuffledCards;
         }
 
+        /// <summary>
+        /// Draws cards one at a time to make sure last of draw pile is used up before shuffling discard pile back in
+        /// </summary>
         public void drawNumCards(int count)
         {
             for (int i = count; i > 0; i--)
@@ -153,6 +167,7 @@ namespace DeityOnceLost.DeckBuilder
 
 
 
+        //Functions for moving cards around between piles/hand
         public void discardFromHand(Card card)
         {
             if (_hand.Contains(card))
@@ -316,6 +331,7 @@ namespace DeityOnceLost.DeckBuilder
 
 
 
+        //Getters
         public List<Card> getDeck()
         {
             return _deck;

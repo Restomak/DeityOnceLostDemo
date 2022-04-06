@@ -14,6 +14,8 @@ namespace DeityOnceLost.Input
         public const int DEFAULT_SCREENSIZE_Y = Game1.VIRTUAL_WINDOW_HEIGHT;
 
         int _screenSize_X, _screenSize_Y, _windowPos_X, _windowPos_Y;
+
+        //Black bars for when the window is stretched too wide or too tall
         bool _blackBars_X, _blackBars_Y;
         double _blackBars_Width, _blackBars_Height;
 
@@ -26,9 +28,8 @@ namespace DeityOnceLost.Input
             _blackBars_Width = 0;
             _blackBars_Height = 0;
         }
-
-
-
+        
+        //Setters
         public void setWindowPosX(int pos)
         {
             _windowPos_X = pos;
@@ -38,8 +39,9 @@ namespace DeityOnceLost.Input
             _windowPos_Y = pos;
         }
 
-
-
+        /// <summary>
+        /// Initialize the game window. Normally done in Game1 but I want that class less cluttered
+        /// </summary>
         public void Initialize()
         {
             GraphicsDeviceManager graphics = Game1.getGame().getGraphics();
@@ -66,6 +68,9 @@ namespace DeityOnceLost.Input
             AdjustGraphics();
         }
 
+        /// <summary>
+        /// Automatically called when the window gets resized
+        /// </summary>
         public void Window_ClientSizeChanged(object sender, EventArgs e)
         {
             GraphicsDeviceManager graphics = Game1.getGame().getGraphics();
@@ -79,6 +84,9 @@ namespace DeityOnceLost.Input
             ResizeWindow();
         }
 
+        /// <summary>
+        /// Used to adjust the window manually when graphics options get changed
+        /// </summary>
         public void AdjustGraphics()
         {
             GraphicsDeviceManager graphics = Game1.getGame().getGraphics();
@@ -91,6 +99,9 @@ namespace DeityOnceLost.Input
             ResizeWindow();
         }
 
+        /// <summary>
+        /// Reposition the virtual window & size the black bars in case the screen is stretched too wide or too tall
+        /// </summary>
         public void ResizeWindow()
         {
             GraphicsDeviceManager graphics = Game1.getGame().getGraphics();
@@ -114,10 +125,11 @@ namespace DeityOnceLost.Input
                     _blackBars_Height = (graphics.PreferredBackBufferHeight - _screenSize_Y) / 2.0;
                 }
             }
-
-            //FIXIT: tell draw classes the window has been resized here
         }
 
+        /// <summary>
+        /// Returns the rectangle for where the virtual window will be drawn on the real window
+        /// </summary>
         public Rectangle getScreenRect()
         {
             return new Rectangle((int)_blackBars_Width, (int)_blackBars_Height, _screenSize_X, _screenSize_Y);

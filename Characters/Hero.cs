@@ -227,7 +227,7 @@ namespace DeityOnceLost.Characters
             {
                 log += card.getName() + ", ";
             }
-            Game1.gameLog.Add(log);
+            Game1.debugLog.Add(log);
         }
 
         private void generateRandomHP()

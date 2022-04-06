@@ -34,6 +34,9 @@ namespace DeityOnceLost.DeckBuilder
             }
         }
 
+        /// <summary>
+        /// Used to check if the card is playable (eg. do you have enough divinity? or is it meant to be an unplayable card? etc)
+        /// </summary>
         public bool canPlay()
         {
             //FIXIT check champion stats vs card cost

@@ -48,10 +48,15 @@ namespace DeityOnceLost.DeckBuilder
             return _allCards;
         }
 
+        /// <summary>
+        /// For manually adding a card into the game so that it can be found in engine searches & therefore obtainable in play
+        /// </summary>
         public void createCard(Card newCard)
         {
             _allCards.Add(newCard);
         }
+        
+
 
         public List<Card> getAllCardsByRarity(CardEnums.CardRarity rarity)
         {

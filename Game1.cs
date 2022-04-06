@@ -11,7 +11,32 @@ namespace DeityOnceLost
     /// </summary>
     public class Game1 : Game
     {
+        //Framework variables
         public static Game1 currentGame;
+        public SpriteBatch spriteBatch;
+        GraphicsDeviceManager graphics;
+        Input.WindowControl windowControl;
+        RenderTarget2D renderTarget;
+        private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
+        private static Random rand = new Random();
+
+        //Game structure variables
+        private static Draw.DrawHandler _drawHandler;
+        private static DeckBuilder.CardCollection _cardCollection_All;
+        private static Characters.Hero _hero; //Will probably be initialized elsewhere later post demo
+        private static Characters.Champion _champ; //Will probably be initialized elsewhere later post demo
+        bool test1 = false, test2 = false, test3 = false, test4 = false, test5 = false, test6 = false; //initial demo variables
+
+        //Logs
+        public static List<String> errorLog;
+        public static List<String> debugLog;
+        
+
+        //Framework constants
+        public const double VIRTUAL_SCREEN_RATIO_X = 16;
+        public const double VIRTUAL_SCREEN_RATIO_Y = 9;
+        public const int VIRTUAL_WINDOW_WIDTH = (int)VIRTUAL_SCREEN_RATIO_X * 100;
+        public const int VIRTUAL_WINDOW_HEIGHT = (int)VIRTUAL_SCREEN_RATIO_Y * 100;
 
         public Game1()
         {
@@ -24,9 +49,7 @@ namespace DeityOnceLost
             windowControl = new Input.WindowControl();
         }
 
-        GraphicsDeviceManager graphics;
-        public SpriteBatch spriteBatch;
-        Input.WindowControl windowControl;
+        //Framework getters
         public GraphicsDeviceManager getGraphics()
         {
             return graphics;
@@ -43,12 +66,8 @@ namespace DeityOnceLost
         {
             return currentGame;
         }
+        
 
-        RenderTarget2D renderTarget;
-        public const double VIRTUAL_SCREEN_RATIO_X = 16;
-        public const double VIRTUAL_SCREEN_RATIO_Y = 9;
-        public const int VIRTUAL_WINDOW_WIDTH = (int)VIRTUAL_SCREEN_RATIO_X * 100;
-        public const int VIRTUAL_WINDOW_HEIGHT = (int)VIRTUAL_SCREEN_RATIO_Y * 100;
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -109,20 +128,21 @@ namespace DeityOnceLost
             pic_enemy_fanbladeGuard = Content.Load<Texture2D>("Enemies/Fanblade Guard");
         }
 
-        //functionality art
+        /*____________________.Content Variables._____________________*/
+        //Functionality Art
         public static Texture2D pic_functionality_uiSketch, pic_functionality_endTurnButton, pic_functionality_cardDown;
 
-        //fonts
+        //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
             roboto_regular_10, roboto_medium_10, roboto_bold_10, roboto_black_10,
             roboto_regular_12, roboto_medium_12, roboto_bold_12, roboto_black_12,
             roboto_regular_24, roboto_medium_24, roboto_bold_24, roboto_black_24;
 
-        //cards
+        //Cards
         public static Texture2D pic_card_front_default, pic_card_front_common, pic_card_front_rare,
             pic_card_front_epic, pic_card_front_godly, pic_card_front_void;
 
-        //enemies
+        //Enemies
         public static Texture2D pic_enemy_fanbladeGuard;
 
 
@@ -135,11 +155,7 @@ namespace DeityOnceLost
         {
             // TODO: Unload any non ContentManager content here
         }
-
-        public static List<String> errorLog;
-        public static List<String> gameLog;
-
-        private static Random rand = new Random();
+        
         /// <summary>
         /// Works very similarly to the turing function "randint(variable, min, max)" except you use this one
         /// by doing "variable = Game1.randint(min, max)" instead.
@@ -148,20 +164,24 @@ namespace DeityOnceLost
         {
             return rand.Next(min, max + 1);
         }
-
-        private static DeckBuilder.CardCollection _cardCollection_All;
+        
+        /// <summary>
+        /// Should return a list of one of every single card in the game, no more or less. Currently all cards
+        /// are manually initialized in CardCollection.cs - needs a better instantiation method
+        /// </summary>
         public static DeckBuilder.CardCollection getAllCards()
         {
             return _cardCollection_All;
         }
-
-        private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
-        private static Draw.DrawHandler _drawHandler;
+        
+        /// <summary>
+        /// Runs on the first loop of the game. Initialize everything here, much like in a constructor
+        /// </summary>
         public static void InitializeGame()
         {
             //Logs
             errorLog = new List<string>();
-            gameLog = new List<string>();
+            debugLog = new List<string>();
 
             //Framework stuff
             _drawHandler = new Draw.DrawHandler();
@@ -178,10 +198,6 @@ namespace DeityOnceLost
 
             _gameInitialized = true;
         }
-        private static Characters.Hero _hero;
-        private static Characters.Champion _champ;
-
-        bool test1 = false, test2 = false, test3 = false, test4 = false, test5 = false, test6 = false;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -193,9 +209,7 @@ namespace DeityOnceLost
             //Window stuff first
             windowControl.setWindowPosX(Window.Position.X);
             windowControl.setWindowPosY(Window.Position.Y);
-
-
-
+            
             //Make sure game is initialized
             if (!_gameInitialized)
             {
@@ -208,6 +222,8 @@ namespace DeityOnceLost
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+
+            /*____________________.Temporary testing input._____________________*/
             if (Keyboard.GetState().IsKeyDown(Keys.Space) && !test1)
             {
                 test1 = true;
@@ -240,6 +256,8 @@ namespace DeityOnceLost
                 _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
             }
 
+
+
             //Logic
 
 
@@ -254,11 +272,14 @@ namespace DeityOnceLost
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.SetRenderTarget(renderTarget);
-            GraphicsDevice.Clear(new Color(36, 0, 72));
+            GraphicsDevice.SetRenderTarget(renderTarget); //draw to texture first so screen resizing doesn't require resolution changes
+            GraphicsDevice.Clear(new Color(36, 0, 72)); //dark indigo
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            if (!test1)
+
+
+            //Draw logic goes here
+            if (!test1) //demo stuff, will be removed later
             {
                 _drawHandler.drawCombat_Background(spriteBatch);
             }
@@ -267,6 +288,9 @@ namespace DeityOnceLost
                 _drawHandler.drawCombat_UI(spriteBatch, _champ);
             }
 
+
+
+            //Change the render target back to null
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
 
