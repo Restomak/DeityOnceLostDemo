@@ -23,6 +23,7 @@ namespace DeityOnceLost
         //Game structure variables
         private static Draw.DrawHandler _drawHandler;
         private static DeckBuilder.CardCollection _cardCollection_All;
+        private static Combat.CombatHandler _combatHandler;
         private static Characters.Hero _hero; //Will probably be initialized elsewhere later post demo
         private static Characters.Champion _champ; //Will probably be initialized elsewhere later post demo
         bool test1 = false, test2 = false, test3 = false, test4 = false, test5 = false, test6 = false; //initial demo variables
@@ -183,7 +184,7 @@ namespace DeityOnceLost
             errorLog = new List<string>();
             debugLog = new List<string>();
 
-            //Framework stuff
+            //Structure stuff
             _drawHandler = new Draw.DrawHandler();
 
             //Game stuff
@@ -194,6 +195,7 @@ namespace DeityOnceLost
             _hero = new Characters.Hero();
             _champ = new Characters.Champion(_hero);
             _champ.getDeck().start();
+            _combatHandler = new Combat.CombatHandler(_champ, null); //will have to adjust this later when doing it properly
 
 
             _gameInitialized = true;

@@ -16,7 +16,7 @@ namespace DeityOnceLost.Characters
         static DeckBuilder.Deck deck;
 
         //stats
-        static int _strength, _dexterity, _constitution;
+        int _strength, _dexterity, _resilience;
 
         public Champion(Hero hero)
         {
@@ -27,7 +27,7 @@ namespace DeityOnceLost.Characters
             _divinity = DEFAULT_DIVINITY;
             _strength = 0;
             _dexterity = 0;
-            _constitution = 0;
+            _resilience = 0;
         }
 
         public void resetDivinity()
@@ -56,11 +56,47 @@ namespace DeityOnceLost.Characters
         }
         public int getConstitution()
         {
-            return _constitution;
+            return _resilience;
         }
         public Hero getHero()
         {
             return _hero;
+        }
+
+        //Combat stat reset functions
+        public void resetStrength()
+        {
+            _strength = 0; //FIXIT add check for things that alter it when they exist
+        }
+        public void resetDexterity()
+        {
+            _dexterity = 0; //FIXIT add check for things that alter it when they exist
+        }
+        public void resetResilience()
+        {
+            _resilience = 0; //FIXIT add check for things that alter it when they exist
+        }
+
+
+
+        /// <summary>
+        /// Damage taken is affected by resilience by default. Things that bypass resilience should set affectedByResilience to false
+        /// </summary>
+        public void takeDamage(int damage, bool affectedByResilience = true)
+        {
+            if (affectedByResilience)
+            {
+                damage -= _resilience;
+            }
+
+            _currentHP -= damage;
+            if (_currentHP <= 0)
+            {
+                _currentHP = 0;
+                _hero.kill();
+
+                //FIXIT insert logic for swapping champion to a party member & the resulting card loss
+            }
         }
     }
 }

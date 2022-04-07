@@ -13,9 +13,9 @@ namespace DeityOnceLost.DeckBuilder
         private CardEnums.CardType _cardType;
         private CardEnums.CardRarity _rarity;
         public List<String> _description;
-        private bool _retainAlways;
+        private bool _retainAlways; //if kept in hand at the end of the turn
 
-        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity)
+        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, bool retainAlways = false)
         {
             _name = name;
             _cardType = cardType;
@@ -24,7 +24,7 @@ namespace DeityOnceLost.DeckBuilder
             _specialCost = new Dictionary<CardEnums.CostType, int>();
             _description = new List<string>();
             _description.Add("???"); //default description if none is set
-            _retainAlways = false;
+            _retainAlways = retainAlways;
 
             //iterate through every cost type and make the costs for each default 0
             foreach (CardEnums.CostType costType in (CardEnums.CostType[])Enum.GetValues(typeof(CardEnums.CostType)))
@@ -61,7 +61,7 @@ namespace DeityOnceLost.DeckBuilder
         public virtual bool onPlay() { return true; }
         public virtual bool onDiscard() { return true; }
         public virtual bool onOtherCardPlayed() { return true; }
-        public virtual bool onTurnEnd() { return true; }
+        public virtual bool onTurnEnd() { return true; } //FIXIT probably just make these all void
         public virtual bool onRemove() { return true; }
         public virtual bool onCombatStart() { return true; }
         public virtual bool onCombatEnd() { return true; }

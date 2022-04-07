@@ -10,6 +10,8 @@ namespace DeityOnceLost.Draw
 {
     class DrawHandler
     {
+        //FIXIT split this into several smaller classes for readability
+
         public const int MAX_SCREEN_X = Game1.VIRTUAL_WINDOW_WIDTH;
         public const int MAX_SCREEN_Y = Game1.VIRTUAL_WINDOW_HEIGHT;
 
@@ -62,11 +64,11 @@ namespace DeityOnceLost.Draw
             sprites.Draw(Game1.pic_functionality_endTurnButton, new Rectangle(
                     xFromRight(COMBAT_ENDTURNBUTTON_X_FROMRIGHT, COMBAT_ENDTURNBUTTON_WIDTH), yFromBottom(COMBAT_ENDTURNBUTTON_Y, COMBAT_ENDTURNBUTTON_HEIGHT),
                     COMBAT_ENDTURNBUTTON_WIDTH, COMBAT_ENDTURNBUTTON_HEIGHT), Color.White);
-            
+
             //Card piles
-            drawPile(sprites, champ.getDeck().getDrawPile(), COMBAT_DRAWPILE_X, COMBAT_DRAWPILE_Y, false);
-            drawPile(sprites, champ.getDeck().getDiscardPile(), COMBAT_DISCARDPILE_X, COMBAT_DISCARDPILE_Y, true);
-            drawPile(sprites, champ.getDeck().getRemovedCards(), COMBAT_REMOVEDCARDS_X, COMBAT_REMOVEDCARDS_Y, true);
+            drawCombat_CardPile(sprites, champ.getDeck().getDrawPile(), COMBAT_DRAWPILE_X, COMBAT_DRAWPILE_Y, false);
+            drawCombat_CardPile(sprites, champ.getDeck().getDiscardPile(), COMBAT_DISCARDPILE_X, COMBAT_DISCARDPILE_Y, true);
+            drawCombat_CardPile(sprites, champ.getDeck().getRemovedCards(), COMBAT_REMOVEDCARDS_X, COMBAT_REMOVEDCARDS_Y, true);
 
             //Divinity
             sprites.DrawString(Game1.roboto_medium_24, champ.getDivinity() + "/" + Characters.Champion.DEFAULT_DIVINITY,
@@ -130,22 +132,22 @@ namespace DeityOnceLost.Draw
             sprites.DrawString(Game1.roboto_medium_12, champ.getHero().getName() + " (" + champ.getHero().getPronoun_they() + "/" + champ.getHero().getPronoun_them() + ")", new Vector2(50, 10), Color.LawnGreen);
         }
 
-        private void drawPile(SpriteBatch sprites, List<DeckBuilder.Card> pile, int x, int y, bool drawFromRight)
+        private void drawCombat_CardPile(SpriteBatch sprites, List<DeckBuilder.Card> pile, int x, int y, bool drawFromRight)
         {
             for (int i = 0; i < pile.Count && i < DeckBuilder.Deck.MAX_HAND_CAPACITY * 2; i++) //draw at most two full hand capacities' worth of cards, up until the number that are actually in the pile
             {
                 if (drawFromRight)
                 {
-                    drawCard(sprites, x + (int)((double)i * 0.25), y + i * 2, drawFromRight);
+                    drawCombat_Card(sprites, x + (int)((double)i * 0.25), y + i * 2, drawFromRight);
                 }
                 else
                 {
-                    drawCard(sprites, x - (int)((double)i * 0.25), y + i * 2, drawFromRight);
+                    drawCombat_Card(sprites, x - (int)((double)i * 0.25), y + i * 2, drawFromRight);
                 }
             }
         }
 
-        private void drawCard(SpriteBatch sprites, int x, int y, bool drawFromRight)
+        private void drawCombat_Card(SpriteBatch sprites, int x, int y, bool drawFromRight)
         {
             int drawX = x;
             if (drawFromRight)

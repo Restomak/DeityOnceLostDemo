@@ -11,15 +11,21 @@ namespace DeityOnceLost.Characters
         List<DeckBuilder.Card> _defaultCards;
         String _name, _they, _them, _their, _theirs;
         int _maxHP;
+        bool dead;
+
+        //stats
+        int _defaultStrength, _defaultDexterity, _defaultResilience;
 
         public Hero()
         {
+            dead = false;
+
             _defaultCards = new List<DeckBuilder.Card>();
 
             generateRandomName();
             //generateRandomApperance();
             generateRandomPronouns();
-            //generateRandomTraits();
+            generateRandomTraits(); //for now just defaults stats to 0
             generateRandomDefaultDeck();
             generateRandomHP();
         }
@@ -47,6 +53,18 @@ namespace DeityOnceLost.Characters
         {
             return _theirs;
         }
+        public int getDefaultStrength()
+        {
+            return _defaultStrength;
+        }
+        public int getDefaultDexterity()
+        {
+            return _defaultDexterity;
+        }
+        public int getDefaultResilience()
+        {
+            return _defaultResilience;
+        }
         public void setName(String name)
         {
             _name = name;
@@ -66,6 +84,28 @@ namespace DeityOnceLost.Characters
         public void setPronouns_theirs(String theirs)
         {
             _theirs = theirs;
+        }
+        public bool isAlive()
+        {
+            return !dead;
+        }
+        public int getMaxHP()
+        {
+            return _maxHP;
+        }
+        public List<DeckBuilder.Card> getDefaultCards()
+        {
+            return _defaultCards;
+        }
+
+        //Playing with life
+        public void kill()
+        {
+            dead = true;
+        }
+        public void bringBackToLife()
+        {
+            dead = false;
         }
 
 
@@ -121,6 +161,15 @@ namespace DeityOnceLost.Characters
                 _their = HeroConstants.THEIR_THEYTHEM;
                 _theirs = HeroConstants.THEIRS_THEYTHEM;
             }
+        }
+
+        private void generateRandomTraits()
+        {
+            //FIXIT make this function when traits are added
+
+            _defaultStrength = 0;
+            _defaultDexterity = 0;
+            _defaultResilience = 0;
         }
 
         private void generateRandomDefaultDeck()
@@ -235,16 +284,6 @@ namespace DeityOnceLost.Characters
             int maxHP_1 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_2 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             _maxHP = (maxHP_1 + maxHP_2) / 2; //tends towards the average rather than the extremes
-        }
-
-        public List<DeckBuilder.Card> getDefaultCards()
-        {
-            return _defaultCards;
-        }
-
-        public int getMaxHP()
-        {
-            return _maxHP;
         }
     }
 }

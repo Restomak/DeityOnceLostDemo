@@ -45,9 +45,11 @@
     <Compile Include="Characters\Hero.cs" />
     <Compile Include="Characters\HeroConstants.cs" />
     <Compile Include="Characters\Names.cs" />
+    <Compile Include="Combat\AIPattern.cs" />
     <Compile Include="Combat\CombatHandler.cs" />
     <Compile Include="Combat\Encounter.cs" />
     <Compile Include="Combat\Enemy.cs" />
+    <Compile Include="Combat\PartyMember.cs" />
     <Compile Include="Combat\Unit.cs" />
     <Compile Include="DeckBuilder\AttackAndDefenseCard.cs" />
     <Compile Include="DeckBuilder\BasicAttackCard.cs" />
@@ -92,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Characters\Traits\" />
+    <Folder Include="Combat\AIPatterns\" />
     <Folder Include="Combat\Encounters\" />
     <Folder Include="Combat\Enemies\" />
     <Folder Include="Events\" />

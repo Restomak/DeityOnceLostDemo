@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    class Encounter
+    abstract class Encounter
     {
+        List<Enemy> _enemies;
+
+        public Encounter(List<Enemy> enemies)
+        {
+            _enemies = enemies;
+        }
+
+        //Getters
+        public List<Enemy> getEnemies()
+        {
+            return _enemies;
+        }
     }
 }

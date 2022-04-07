@@ -27,3 +27,4 @@ party member thoughts:
 - stat increases can happen over time via dungeon rewards
 - out of combat stuff: better hp gain on rest, chance to find secret passages/treasure/avoid combat/etc, certain events might be affected by personality traits?
 - no negative traits, focus on positivity (or neutrality at minimum, traits with a trade-off are fine eg +1dmg/-1def)
+- if your champion is killed, you swap with a party member of your choice. only a portion of your cards transfer to them, and the previous champion now counts as a dead party member. this allows you to champion zerg (3 extra lives) to finish off a boss if you're *so close*, and also lets you try and escape with the corpse of the original champion if you want to keep them

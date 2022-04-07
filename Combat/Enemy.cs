@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    class Enemy
+    abstract class Enemy : Unit
     {
+        AIPattern _aiPattern;
+
+        public Enemy(String name, int hitPoints, AIPattern aiPattern) : base(name, hitPoints, true)
+        {
+            _aiPattern = aiPattern;
+        }
     }
 }
