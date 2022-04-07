@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    abstract class Unit
+    public abstract class Unit
     {
         protected String _name;
         protected int _currentHP, _maxHP;
@@ -22,6 +22,10 @@ namespace DeityOnceLost.Combat
             _maxHP = hitPoints;
             _isEnemy = enemy;
             _downed = false;
+
+            resetStrength();
+            resetDexterity();
+            resetResilience();
         }
 
         //Getters
@@ -57,7 +61,7 @@ namespace DeityOnceLost.Combat
         /// <summary>
         /// Damage taken is affected by resilience by default. Things that bypass resilience should set affectedByResilience to false
         /// </summary>
-        public void takeDamage(int damage, bool affectedByResilience = true)
+        public virtual void takeDamage(int damage, bool affectedByResilience = true)
         {
             if (affectedByResilience)
             {
@@ -69,6 +73,10 @@ namespace DeityOnceLost.Combat
             {
                 _currentHP = 0;
                 _downed = true;
+            }
+            else if (damage > 0)
+            {
+                onDamageTaken(); //only call if they actually took damage
             }
         }
     }

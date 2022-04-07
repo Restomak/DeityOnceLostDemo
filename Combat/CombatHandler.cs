@@ -33,11 +33,13 @@ namespace DeityOnceLost.Combat
 
         public enum combatTurn
         {
+            ROUND_START,
             CHAMPION,
             PARTY,
             ENEMIES,
             KARMA,
-            VOID
+            VOID,
+            ROUND_END
         }
 
         Characters.Champion _champ;
@@ -47,7 +49,7 @@ namespace DeityOnceLost.Combat
 
         public CombatHandler(Characters.Champion champ, List<PartyMember> party)
         {
-            _turn = combatTurn.CHAMPION;
+            _turn = combatTurn.ROUND_START;
             _champ = champ;
             if (party == null || party.Count <= 3)
             {
@@ -113,6 +115,9 @@ namespace DeityOnceLost.Combat
         {
             switch (_turn)
             {
+                case combatTurn.ROUND_START:
+                    _turn = combatTurn.CHAMPION;
+                    break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
                     break;
@@ -126,7 +131,10 @@ namespace DeityOnceLost.Combat
                     _turn = combatTurn.VOID;
                     break;
                 case combatTurn.VOID:
-                    _turn = combatTurn.CHAMPION;
+                    _turn = combatTurn.ROUND_END;
+                    break;
+                case combatTurn.ROUND_END:
+                    _turn = combatTurn.ROUND_START;
                     break;
             }
         }
@@ -138,6 +146,14 @@ namespace DeityOnceLost.Combat
         {
             switch (_turn)
             {
+                case combatTurn.ROUND_START:
+                    _champ.resetDivinity();
+                    foreach (Enemy enemy in _currentEncounter.getEnemies())
+                    {
+                        enemy.getAIPattern().determineIntents(_champ, _partyMembers);
+                    }
+                    nextTurn();
+                    break;
                 case combatTurn.CHAMPION:
                     handleChampionTurn();
                     break;
@@ -145,13 +161,21 @@ namespace DeityOnceLost.Combat
                     nextTurn(); //FIXIT when party members are added, do their logic. remember to ADD PARTY CONTROL BUTTONS/COMMANDS for the player
                     break;
                 case combatTurn.ENEMIES:
-                    //FIXIT go through _currentEncounter & its enemies to handle AI & enemy actions
+                    //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
+                    for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
+                    {
+                        _currentEncounter.getEnemies()[0].getAIPattern().doTurnAction(_champ, _partyMembers);
+                    }
                     break;
                 case combatTurn.KARMA:
                     nextTurn(); //don't have anything for karma turns yet, so skip
                     break;
                 case combatTurn.VOID:
                     nextTurn(); //don't have anything for void turns yet, so skip
+                    break;
+                case combatTurn.ROUND_END:
+                    //Stuff that happens at the end of a round goes here
+                    nextTurn();
                     break;
             }
 

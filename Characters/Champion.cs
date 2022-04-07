@@ -6,28 +6,20 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters
 {
-    public class Champion
+    public class Champion : Combat.Unit
     {
         public const int DEFAULT_DIVINITY = 4;
+        public const int CHAMPION_HERO_HP_MODIFIER = 3;
 
         static int _divinity;
         static Hero _hero;
-        static int _currentHP, _maxHP;
         static DeckBuilder.Deck deck;
 
-        //stats
-        int _strength, _dexterity, _resilience;
-
-        public Champion(Hero hero)
+        public Champion(Hero hero) : base (hero.getName(), hero.getMaxHP() * CHAMPION_HERO_HP_MODIFIER)
         {
-            _maxHP = hero.getMaxHP() * 3;
-            _currentHP = _maxHP;
             _hero = hero;
             deck = new DeckBuilder.Deck(hero.getDefaultCards());
             _divinity = DEFAULT_DIVINITY;
-            _strength = 0;
-            _dexterity = 0;
-            _resilience = 0;
         }
 
         public void resetDivinity()
@@ -64,15 +56,15 @@ namespace DeityOnceLost.Characters
         }
 
         //Combat stat reset functions
-        public void resetStrength()
+        public override void resetStrength()
         {
             _strength = 0; //FIXIT add check for things that alter it when they exist
         }
-        public void resetDexterity()
+        public override void resetDexterity()
         {
             _dexterity = 0; //FIXIT add check for things that alter it when they exist
         }
-        public void resetResilience()
+        public override void resetResilience()
         {
             _resilience = 0; //FIXIT add check for things that alter it when they exist
         }
@@ -82,7 +74,7 @@ namespace DeityOnceLost.Characters
         /// <summary>
         /// Damage taken is affected by resilience by default. Things that bypass resilience should set affectedByResilience to false
         /// </summary>
-        public void takeDamage(int damage, bool affectedByResilience = true)
+        public override void takeDamage(int damage, bool affectedByResilience = true)
         {
             if (affectedByResilience)
             {
