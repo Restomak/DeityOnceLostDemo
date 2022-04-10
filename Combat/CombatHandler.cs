@@ -117,12 +117,18 @@ namespace DeityOnceLost.Combat
             {
                 case combatTurn.ROUND_START:
                     _turn = combatTurn.CHAMPION;
+                    _champ.resetDefense();
                     break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
+                    foreach (Unit party in _partyMembers)
+                    {
+                        party.resetDefense();
+                    }
                     break;
                 case combatTurn.PARTY:
                     _turn = combatTurn.ENEMIES;
+                    _currentEncounter.resetDefense();
                     break;
                 case combatTurn.ENEMIES:
                     _turn = combatTurn.KARMA;
@@ -148,10 +154,7 @@ namespace DeityOnceLost.Combat
             {
                 case combatTurn.ROUND_START:
                     _champ.resetDivinity();
-                    foreach (Enemy enemy in _currentEncounter.getEnemies())
-                    {
-                        enemy.getAIPattern().determineIntents(_champ, _partyMembers);
-                    }
+                    _currentEncounter.determineIntents(_champ, _partyMembers);
                     nextTurn();
                     break;
                 case combatTurn.CHAMPION:
@@ -161,11 +164,7 @@ namespace DeityOnceLost.Combat
                     nextTurn(); //FIXIT when party members are added, do their logic. remember to ADD PARTY CONTROL BUTTONS/COMMANDS for the player
                     break;
                 case combatTurn.ENEMIES:
-                    //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
-                    for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
-                    {
-                        _currentEncounter.getEnemies()[0].getAIPattern().doTurnAction(_champ, _partyMembers);
-                    }
+                    handleEnemyTurn();
                     break;
                 case combatTurn.KARMA:
                     nextTurn(); //don't have anything for karma turns yet, so skip
@@ -196,7 +195,11 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public void handleEnemyTurn()
         {
-            //FIXIT do the above
+            //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
+            for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
+            {
+                _currentEncounter.getEnemies()[0].getAIPattern().doTurnAction(_champ, _partyMembers);
+            }
         }
     }
 }

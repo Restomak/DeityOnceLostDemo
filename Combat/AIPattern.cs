@@ -14,6 +14,7 @@ namespace DeityOnceLost.Combat
             DEFEND,
             BUFF,
             DEBUFF,
+            MULTIATTACK, //attacking the champion with several hits
             AOE, //attacking the party members as well
             OMINOUS, //void or karma related bad shit
             REINFORCEMENTS,
@@ -21,8 +22,22 @@ namespace DeityOnceLost.Combat
             HIDDEN
         }
 
-        List<intent> _intentsForThisTurn;
+        protected List<intent> _intentsForThisTurn;
+        protected Enemy _enemy;
+        protected int _numHits;
 
+        /// <summary>
+        /// Every Enemy has one AIPattern, while each AIPattern can be associated with more than one enemy.
+        /// 
+        /// What AIPatterns are responsible for:
+        /// • determining intents each round
+        /// • determining the types of attacks that occur when attacks do occur
+        /// • determining the types of buffs or debuffs that occur
+        /// 
+        /// What Enemies are responsible for:
+        /// • supplying the raw stats (texture, name, hp, etc)
+        /// • supplying damage & defense amounts
+        /// </summary>
         public AIPattern()
         {
             _intentsForThisTurn = new List<intent>();
@@ -31,6 +46,24 @@ namespace DeityOnceLost.Combat
         public List<intent> getIntents()
         {
             return _intentsForThisTurn;
+        }
+
+        /// <summary>
+        /// Must be called in an Enemy's constructor to pass itself to the AIPattern it uses
+        /// </summary>
+        public abstract void setEnemy(Enemy enemy);
+
+        /// <summary>
+        /// Used by the engine to show the user how much damage is being dealt this turn
+        /// </summary>
+        public abstract int getDamage();
+
+        /// <summary>
+        /// Used by the engine to show the user how many attacks the enemy will be doing this turn
+        /// </summary>
+        public int getNumHits()
+        {
+            return _numHits;
         }
 
         /// <summary>

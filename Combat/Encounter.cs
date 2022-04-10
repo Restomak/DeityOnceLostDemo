@@ -8,11 +8,13 @@ namespace DeityOnceLost.Combat
 {
     abstract class Encounter
     {
-        List<Enemy> _enemies;
+        protected List<Enemy> _enemies;
 
-        public Encounter(List<Enemy> enemies)
+        public Encounter()
         {
-            _enemies = enemies;
+            _enemies = new List<Enemy>();
+
+            initialize();
         }
 
         //Getters
@@ -20,5 +22,23 @@ namespace DeityOnceLost.Combat
         {
             return _enemies;
         }
+
+        public void determineIntents(Characters.Champion champ, List<PartyMember> party)
+        {
+            foreach (Enemy enemy in _enemies)
+            {
+                enemy.getAIPattern().determineIntents(champ, party);
+            }
+        }
+
+        public void resetDefense()
+        {
+            foreach (Enemy enemy in _enemies)
+            {
+                enemy.resetDefense();
+            }
+        }
+
+        public abstract void initialize();
     }
 }

@@ -11,7 +11,7 @@ namespace DeityOnceLost.Characters
         public const int DEFAULT_DIVINITY = 4;
         public const int CHAMPION_HERO_HP_MODIFIER = 3;
 
-        static int _divinity;
+        static int _divinity, _nextTurnDivinity;
         static Hero _hero;
         static DeckBuilder.Deck deck;
 
@@ -19,12 +19,19 @@ namespace DeityOnceLost.Characters
         {
             _hero = hero;
             deck = new DeckBuilder.Deck(hero.getDefaultCards());
+            _nextTurnDivinity = DEFAULT_DIVINITY;
             _divinity = DEFAULT_DIVINITY;
         }
 
         public void resetDivinity()
         {
-            _divinity = DEFAULT_DIVINITY;
+            _divinity = _nextTurnDivinity;
+            resetNextTurnDivinity(); //because buffs/debuffs that affect divinity last only a single round (& if that changes I'll add a check)
+        }
+
+        public void resetNextTurnDivinity()
+        {
+            _nextTurnDivinity = DEFAULT_DIVINITY;
         }
 
 
@@ -89,6 +96,14 @@ namespace DeityOnceLost.Characters
 
                 //FIXIT insert logic for swapping champion to a party member & the resulting card loss
             }
+        }
+
+        /// <summary>
+        /// Affects the amount of Divinity the champion will start with next round
+        /// </summary>
+        public void affectDivinity(int amount)
+        {
+            _nextTurnDivinity += amount;
         }
     }
 }
