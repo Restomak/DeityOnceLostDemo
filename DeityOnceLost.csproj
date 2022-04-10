@@ -49,6 +49,7 @@
     <Compile Include="Combat\AIPatterns\SimpleSlowRoller.cs" />
     <Compile Include="Combat\CombatHandler.cs" />
     <Compile Include="Combat\Encounter.cs" />
+    <Compile Include="Combat\Encounters\SingleFanblade.cs" />
     <Compile Include="Combat\Enemies\FanbladeGuard.cs" />
     <Compile Include="Combat\Enemy.cs" />
     <Compile Include="Combat\PartyMember.cs" />
@@ -96,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Characters\Traits\" />
-    <Folder Include="Combat\Encounters\" />
     <Folder Include="Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

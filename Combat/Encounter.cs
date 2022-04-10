@@ -39,6 +39,19 @@ namespace DeityOnceLost.Combat
             }
         }
 
+        public bool areAllEnemiesDefeated()
+        {
+            foreach (Enemy enemy in _enemies)
+            {
+                if (!enemy.getDowned())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public abstract void initialize();
     }
 }

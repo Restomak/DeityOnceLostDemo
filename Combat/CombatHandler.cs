@@ -109,7 +109,23 @@ namespace DeityOnceLost.Combat
         }
 
 
+        
+        /// <summary>
+        /// Make sure setNewEncounter is called first so that the encounter's enemies are properly set up
+        /// </summary>
+        public void combatStart()
+        {
+            _turn = combatTurn.ROUND_START;
+            _champ.resetDivinity();
+            _champ.resetDefense();
+            foreach (Unit party in _partyMembers)
+            {
+                party.resetDefense();
+            }
+            _currentEncounter.resetDefense();
 
+            _champ.getDeck().start();
+        }
 
         public void nextTurn()
         {
@@ -150,6 +166,16 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public void handleCombat()
         {
+            if (_champ.getDowned())
+            {
+                //FIXIT include party member swapping mechanics when they're implemented
+                endCombat(true);
+            }
+            else if (_currentEncounter.areAllEnemiesDefeated())
+            {
+                endCombat();
+            }
+
             switch (_turn)
             {
                 case combatTurn.ROUND_START:
@@ -200,6 +226,11 @@ namespace DeityOnceLost.Combat
             {
                 _currentEncounter.getEnemies()[0].getAIPattern().doTurnAction(_champ, _partyMembers);
             }
+        }
+
+        public void endCombat(bool runOver = false)
+        {
+            //FIXIT make this function do anything when runs are implemented
         }
     }
 }
