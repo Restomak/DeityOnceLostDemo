@@ -17,6 +17,8 @@ namespace DeityOnceLost
         GraphicsDeviceManager graphics;
         Input.WindowControl windowControl;
         RenderTarget2D renderTarget;
+        List<UserInterface.UserInterface> battleUI;
+        UserInterface.UserInterface handCards;
         private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
         private static Random rand = new Random();
 
@@ -48,6 +50,8 @@ namespace DeityOnceLost
             currentGame = this;
 
             windowControl = new Input.WindowControl();
+            battleUI = new List<UserInterface.UserInterface>();
+            handCards = new UserInterface.UserInterface();
         }
 
         //Framework getters
@@ -81,6 +85,9 @@ namespace DeityOnceLost
             windowControl.Initialize();
             renderTarget = new RenderTarget2D(GraphicsDevice, VIRTUAL_WINDOW_WIDTH, VIRTUAL_WINDOW_HEIGHT, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             this.IsMouseVisible = true;
+
+            //added in sorted fashion, top to bottom is front of the screen to back
+            battleUI.Add(handCards);
 
             base.Initialize();
         }
