@@ -80,6 +80,10 @@
     <Compile Include="Input\WindowControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserInterface\Clickable.cs" />
+    <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
+    <Compile Include="UserInterface\Clickables\HandCard.cs" />
+    <Compile Include="UserInterface\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
