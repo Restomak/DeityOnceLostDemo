@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Input
 {
-    class WindowControl
+    public class WindowControl
     {
         public const int DEFAULT_SCREENSIZE_X = Game1.VIRTUAL_WINDOW_WIDTH;
         public const int DEFAULT_SCREENSIZE_Y = Game1.VIRTUAL_WINDOW_HEIGHT;
@@ -16,7 +16,7 @@ namespace DeityOnceLost.Input
         int _screenSize_X, _screenSize_Y, _windowPos_X, _windowPos_Y;
 
         //Black bars for when the window is stretched too wide or too tall
-        bool _blackBars_X, _blackBars_Y;
+        bool _blackBars_X, _blackBars_Y; //not sure if these are needed, but just in case
         double _blackBars_Width, _blackBars_Height;
 
         public WindowControl()

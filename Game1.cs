@@ -12,15 +12,19 @@ namespace DeityOnceLost
     public class Game1 : Game
     {
         //Framework variables
-        public static Game1 currentGame;
-        public SpriteBatch spriteBatch;
-        GraphicsDeviceManager graphics;
-        Input.WindowControl windowControl;
-        RenderTarget2D renderTarget;
-        List<UserInterface.UserInterface> battleUI;
-        UserInterface.UserInterface handCards;
-        private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
+        private static Game1 _currentGame;
+        private static SpriteBatch _spriteBatch;
+        private static GraphicsDeviceManager _graphics;
+        private static RenderTarget2D _renderTarget;
         private static Random rand = new Random();
+        private static Input.WindowControl _windowControl;
+        private static Input.InputController _inputController;
+        private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
+
+        //User Interface variables
+        private static List<UserInterface.UserInterface> _battleUI;
+        private static UserInterface.UserInterface _handCards;
+        private static UserInterface.Clickable _currentHover;
 
         //Game structure variables
         private static Draw.DrawHandler _drawHandler;
@@ -43,25 +47,26 @@ namespace DeityOnceLost
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.SynchronizeWithVerticalRetrace = false;
+            _graphics.SynchronizeWithVerticalRetrace = false;
             this.IsFixedTimeStep = false;
-            currentGame = this;
+            _currentGame = this;
 
-            windowControl = new Input.WindowControl();
-            battleUI = new List<UserInterface.UserInterface>();
-            handCards = new UserInterface.UserInterface();
+            _windowControl = new Input.WindowControl();
+            _inputController = new Input.InputController();
+            _battleUI = new List<UserInterface.UserInterface>();
+            _handCards = new UserInterface.UserInterface();
         }
 
         //Framework getters
         public GraphicsDeviceManager getGraphics()
         {
-            return graphics;
+            return _graphics;
         }
         public SpriteBatch getSpriteBatch()
         {
-            return spriteBatch;
+            return _spriteBatch;
         }
         public GameWindow getWindow()
         {
@@ -69,7 +74,14 @@ namespace DeityOnceLost
         }
         public static Game1 getGame()
         {
-            return currentGame;
+            return _currentGame;
+        }
+
+        
+        //User Interface setters
+        public static void setHoveredClickable(UserInterface.Clickable clickable)
+        {
+            _currentHover = clickable;
         }
         
 
@@ -82,12 +94,12 @@ namespace DeityOnceLost
         /// </summary>
         protected override void Initialize()
         {
-            windowControl.Initialize();
-            renderTarget = new RenderTarget2D(GraphicsDevice, VIRTUAL_WINDOW_WIDTH, VIRTUAL_WINDOW_HEIGHT, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+            _windowControl.Initialize();
+            _renderTarget = new RenderTarget2D(GraphicsDevice, VIRTUAL_WINDOW_WIDTH, VIRTUAL_WINDOW_HEIGHT, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             this.IsMouseVisible = true;
 
             //added in sorted fashion, top to bottom is front of the screen to back
-            battleUI.Add(handCards);
+            _battleUI.Add(_handCards);
 
             base.Initialize();
         }
@@ -99,7 +111,7 @@ namespace DeityOnceLost
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //functionality art
             pic_functionality_uiSketch = Content.Load<Texture2D>("functionality art/UI Sketch");
@@ -203,7 +215,7 @@ namespace DeityOnceLost
             _champ = new Characters.Champion(_hero);
             _champ.getDeck().start();
             _combatHandler = new Combat.CombatHandler(_champ, null); //will have to adjust this later when doing it properly
-
+            UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
 
             _gameInitialized = true;
         }
@@ -216,8 +228,8 @@ namespace DeityOnceLost
         protected override void Update(GameTime gameTime)
         {
             //Window stuff first
-            windowControl.setWindowPosX(Window.Position.X);
-            windowControl.setWindowPosY(Window.Position.Y);
+            _windowControl.setWindowPosX(Window.Position.X);
+            _windowControl.setWindowPosY(Window.Position.Y);
             
             //Make sure game is initialized
             if (!_gameInitialized)
@@ -241,28 +253,33 @@ namespace DeityOnceLost
             {
                 test2 = true;
                 _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
+                UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
             }
             if (Keyboard.GetState().IsKeyDown(Keys.B) && !test3)
             {
                 test3 = true;
                 _champ.getDeck().turnEndDiscardAll();
+                UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C) && !test4)
             {
                 test4 = true;
                 _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
+                UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D) && !test5)
             {
                 test5 = true;
                 test6 = false;
                 _champ.getDeck().turnEndDiscardAll();
+                UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
             }
             if (Keyboard.GetState().IsKeyDown(Keys.E) && !test6)
             {
                 test6 = true;
                 test5 = false;
                 _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
+                UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
             }
 
 
@@ -281,35 +298,35 @@ namespace DeityOnceLost
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.SetRenderTarget(renderTarget); //draw to texture first so screen resizing doesn't require resolution changes
+            GraphicsDevice.SetRenderTarget(_renderTarget); //draw to texture first so screen resizing doesn't require resolution changes
             GraphicsDevice.Clear(new Color(36, 0, 72)); //dark indigo
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
 
 
             //Draw logic goes here
             if (!test1) //demo stuff, will be removed later
             {
-                _drawHandler.drawCombat_Background(spriteBatch);
+                _drawHandler.drawCombat_Background(_spriteBatch);
             }
             else
             {
-                _drawHandler.drawCombat_UI(spriteBatch, _champ);
+                _drawHandler.drawCombat_UI(_spriteBatch, _champ);
             }
 
 
 
             //Change the render target back to null
-            spriteBatch.End();
+            _spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
 
 
 
             //Drawing render target to screen
             GraphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin();
-            spriteBatch.Draw(renderTarget, windowControl.getScreenRect(), Color.White);
-            spriteBatch.End();
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_renderTarget, _windowControl.getScreenRect(), Color.White);
+            _spriteBatch.End();
 
 
 

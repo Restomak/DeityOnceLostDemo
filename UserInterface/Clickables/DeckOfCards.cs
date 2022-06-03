@@ -93,11 +93,26 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         /// <summary>
-        /// 
+        /// Handles what happens in logic when the user hovers over one of the various decks:
+        /// the draw pile, discard pile, current deck, or entire collection (at base). For
+        /// each, it will simply enable the hover flag so that it can be displayed as glowing
+        /// so the player knows it's clickable.
         /// </summary>
-        public override void clickLogic()
+        public override void onHover()
         {
-            //FIXIT implement
+            _hovered = true;
+            Game1.setHoveredClickable(this);
+        }
+
+        /// <summary>
+        /// Handles what happens in logic when the user has clicked one of the various decks:
+        /// the draw pile, discard pile, current deck, or entire collection (at base).
+        /// Regarldess of which deck was clicked, the result will be a new UserInterface
+        /// popping up displaying each card in the deck.
+        /// </summary>
+        public override void onClick()
+        {
+            //FIXIT implement, regardless of the deck, it pops up a new UserInterface that is a list of the cards in the deck
         }
     }
 }

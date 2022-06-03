@@ -9,7 +9,7 @@ namespace DeityOnceLost.UserInterface
     public abstract class Clickable
     {
         public int _x, _y, _width, _height, _layer;
-        protected bool _clicked, _held;
+        protected bool _hovered, _clicked, _held;
 
         public bool mouseInBoundaries(int mouseX, int mouseY)
         {
@@ -20,7 +20,13 @@ namespace DeityOnceLost.UserInterface
 
             return false;
         }
-        
-        public abstract void clickLogic();
+
+        public abstract void onHover();
+        public abstract void onClick();
+        public virtual void whileHeld()
+        {
+            //not everything cares if it's held, so by default just run click
+            onClick();
+        }
     }
 }
