@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace DeityOnceLost.UserInterface
 {
@@ -68,11 +69,11 @@ namespace DeityOnceLost.UserInterface
         /// Returns the most relevant Clickable at the given mouse coordinates (the
         /// front of the list). If none are found, returns null
         /// </summary>
-        public Clickable getFrontClickable(int mouseX, int mouseY)
+        public Clickable getFrontClickable(Point mousePos)
         {
             for (int i = 0; i < _clickables.Count; i++)
             {
-                if (_clickables[i].mouseInBoundaries(mouseX, mouseY))
+                if (_clickables[i].mouseInBoundaries(mousePos))
                 {
                     return _clickables[i];
                 }
@@ -88,11 +89,11 @@ namespace DeityOnceLost.UserInterface
         /// return value that isn't null is found, and returns that. null will still
         /// be returned, however, if none are found throughout the whole list.
         /// </summary>
-        public static Clickable getFrontClickableFromUIList(List<UserInterface> uiList, int mouseX, int mouseY)
+        public static Clickable getFrontClickableFromUIList(List<UserInterface> uiList, Point mousePos)
         {
             for (int uiI = 0; uiI < uiList.Count; uiI++)
             {
-                Clickable returnClickable = uiList[uiI].getFrontClickable(mouseX, mouseY);
+                Clickable returnClickable = uiList[uiI].getFrontClickable(mousePos);
                 if (returnClickable != null)
                 {
                     return returnClickable;

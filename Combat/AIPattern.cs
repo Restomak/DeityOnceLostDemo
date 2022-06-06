@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    abstract class AIPattern
+    public abstract class AIPattern
     {
         public enum intent
         {

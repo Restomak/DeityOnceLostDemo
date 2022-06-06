@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Combat
 {
-    abstract class Enemy : Unit
+    public abstract class Enemy : Unit
     {
         public const int DEFAULT_AOE_DAMAGE = 5;
         public const int DEFAULT_BUFF_STRENGTH = 2;
@@ -15,6 +16,8 @@ namespace DeityOnceLost.Combat
 
         protected AIPattern _aiPattern;
         public Texture2D _texture;
+        public int _width, _height;
+        public bool _isFlyer = false; //most won't be fliers; this is only for graphics anyway
 
         /// <summary>
         /// Every Enemy has one AIPattern, while each AIPattern can be associated with more than one enemy.
@@ -28,15 +31,21 @@ namespace DeityOnceLost.Combat
         /// • supplying the raw stats (texture, name, hp, etc)
         /// • supplying damage & defense amounts
         /// </summary>
-        public Enemy(String name, int hitPoints, AIPattern aiPattern, Texture2D texture) : base(name, hitPoints, true)
+        public Enemy(String name, int hitPoints, AIPattern aiPattern, Texture2D texture, int width, int height) : base(name, hitPoints, true)
         {
             _aiPattern = aiPattern;
             _texture = texture;
+            _width = width;
+            _height = height;
         }
 
         public AIPattern getAIPattern()
         {
             return _aiPattern;
+        }
+        public void setFlying(bool isFlying)
+        {
+            _isFlyer = isFlying;
         }
 
         //Abstracts

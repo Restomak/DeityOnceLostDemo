@@ -28,3 +28,29 @@ party member thoughts:
 - out of combat stuff: better hp gain on rest, chance to find secret passages/treasure/avoid combat/etc, certain events might be affected by personality traits?
 - no negative traits, focus on positivity (or neutrality at minimum, traits with a trade-off are fine eg +1dmg/-1def)
 - if your champion is killed, you swap with a party member of your choice. only a portion of your cards transfer to them, and the previous champion now counts as a dead party member. this allows you to champion zerg (3 extra lives) to finish off a boss if you're *so close*, and also lets you try and escape with the corpse of the original champion if you want to keep them
+
+
+inventory thoughts:
+- potions like in StS
+- out-of-combat tools to change outcomes of events (darkest dungeon/StS events that depend on relics/good thing I have my trusty...!/etc)
+- corpses take lots of space (dead champion/party member/maybe even finding someone on the way you might want to resurrect, which could have a higher chance of legendary or whatever)
+
+
+hero thoughts:
+- as mentioned above, legendaries that are my friend group/possible kickstarter if that ever happens
+- if a hero completes an adventure alive & without being champion at any point, they gain something (incentive to bring favourites, despite the risk) - maybe points towards buffs/stats/etc?
+- the above allows for adding corpses in dungeons that you might be incentivized to carry home despite inventory space; they could have better buffs/stats/etc
+
+
+dungeon layout thoughts:
+- dungeons have 1-n floors, with easier dungeons having less floors
+- rather than in StS where you must go up, a dungeon map allows you to travel in the four cardinal directions, discovering rooms as you go (unless you have something that reveals the map)
+- dungeons have a grid map, with connectors displaying access to the next room (or nothing in the case of no access)
+- traversing to a previously-cleared room will usually do nothing. sometimes, random encounters show up
+- random encounters won't offer any rewards, slightly discouraging trying to clear the whole map if you find the stairs to the next floor
+- entering a room scouts all the next rooms in a straight from each exit, so you can see what's in them (combat, treasure, event, etc). this is only for free connectors
+- connector ideas:
+	- free connectors. just a connector, no special icon with it. you can both scout & travel in that direction. these are the most common connectors
+	- simple closed doors. you can travel that direction no problem, but you can't scout it before going in. who knows what it'll be on the other side?
+	- exclamation mark, signifying danger, along with an item icon and % chance of damage taken if you travel through it without the shown item. doesn't block scouting
+	- locked doors. you can neither scout nor travel in that direction without a key, found somewhere on the floor of the dungeon. these are likely rare and only in difficult dungeons

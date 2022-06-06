@@ -12,11 +12,10 @@ namespace DeityOnceLost.UserInterface.Clickables
         {
             DRAWPILE,
             DISCARDPILE,
+            REMOVEDPILE,
             DECK,
             WHOLECOLLECTION
         }
-
-        public const int DRAWDISCARD_BUFFER = 2;
 
         typeOfDeck _typeOfDeck;
 
@@ -24,6 +23,12 @@ namespace DeityOnceLost.UserInterface.Clickables
         {
             _typeOfDeck = type;
             setupDeck(champ);
+        }
+
+        //Getter
+        public typeOfDeck getDeckType()
+        {
+            return _typeOfDeck;
         }
 
         /// <summary>
@@ -34,10 +39,10 @@ namespace DeityOnceLost.UserInterface.Clickables
             switch (_typeOfDeck)
             {
                 case typeOfDeck.DRAWPILE:
-                    _x = Draw.DrawHandler.COMBAT_DRAWPILE_X - DRAWDISCARD_BUFFER;
-                    _y = Draw.DrawHandler.COMBAT_DRAWPILE_Y - DRAWDISCARD_BUFFER;
-                    _width = Draw.DrawHandler.COMBAT_CARDDOWN_WIDTH + DRAWDISCARD_BUFFER;
-                    _height = Draw.DrawHandler.COMBAT_CARDDOWN_HEIGHT + DRAWDISCARD_BUFFER;
+                    _x = Drawing.DrawConstants.COMBAT_DRAWPILE_X - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _y = Drawing.DrawConstants.COMBAT_DRAWPILE_Y - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _width = Drawing.DrawConstants.COMBAT_CARDDOWN_WIDTH + Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _height = Drawing.DrawConstants.COMBAT_CARDDOWN_HEIGHT + Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
 
                     if (champ.getDeck() != null && champ.getDeck().getDrawPile() != null)
                     {
@@ -47,8 +52,9 @@ namespace DeityOnceLost.UserInterface.Clickables
                     }
                     break;
                 case typeOfDeck.DISCARDPILE:
-                    _width = Draw.DrawHandler.COMBAT_CARDDOWN_WIDTH;
-                    _height = Draw.DrawHandler.COMBAT_CARDDOWN_HEIGHT;
+                    _y = Drawing.DrawConstants.COMBAT_DISCARDPILE_Y - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _width = Drawing.DrawConstants.COMBAT_CARDDOWN_WIDTH;
+                    _height = Drawing.DrawConstants.COMBAT_CARDDOWN_HEIGHT;
 
                     if (champ.getDeck() != null && champ.getDeck().getDiscardPile() != null)
                     {
@@ -57,10 +63,25 @@ namespace DeityOnceLost.UserInterface.Clickables
                         calculateWidthAndHeight(size);
                     }
 
-                    _x = Game1.VIRTUAL_WINDOW_WIDTH - Draw.DrawHandler.COMBAT_DRAWPILE_X - _width - DRAWDISCARD_BUFFER;
-                    _y = Game1.VIRTUAL_WINDOW_HEIGHT - Draw.DrawHandler.COMBAT_DRAWPILE_Y - _height - DRAWDISCARD_BUFFER;
-                    _width += DRAWDISCARD_BUFFER;
-                    _height += DRAWDISCARD_BUFFER;
+                    _x = Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_DISCARDPILE_X_FROMRIGHT - _width - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _width += Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _height += Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    break;
+                case typeOfDeck.REMOVEDPILE:
+                    _y = Drawing.DrawConstants.COMBAT_REMOVEDCARDS_Y - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _width = Drawing.DrawConstants.COMBAT_CARDDOWN_WIDTH;
+                    _height = Drawing.DrawConstants.COMBAT_CARDDOWN_HEIGHT;
+
+                    if (champ.getDeck() != null && champ.getDeck().getDiscardPile() != null)
+                    {
+                        int size = champ.getDeck().getDiscardPile().Count;
+
+                        calculateWidthAndHeight(size);
+                    }
+
+                    _x = Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_REMOVEDCARDS_X_FROMRIGHT - _width - Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _width += Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
+                    _height += Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
                     break;
                 case typeOfDeck.DECK:
                     //FIXIT implement

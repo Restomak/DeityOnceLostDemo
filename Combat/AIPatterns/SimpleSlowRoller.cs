@@ -119,6 +119,8 @@ namespace DeityOnceLost.Combat.AIPatterns
                 default:
                     break;
             }
+
+            _intentsForThisTurn.Clear();
         }
 
         public override int getDamage()

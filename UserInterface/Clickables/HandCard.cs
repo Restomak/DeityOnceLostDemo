@@ -68,16 +68,19 @@ namespace DeityOnceLost.UserInterface.Clickables
         public static void setupHandUI(UserInterface ui, List<DeckBuilder.Card> hand)
         {
             ui.resetClickables();
-            int handSize = hand.Count();
 
-            for (int i = 0; i < handSize; i++)
+            for (int i = 0; i < hand.Count; i++)
             {
                 HandCard clickableCard = new HandCard(hand[i], i);
 
-                //FIXIT set up card locations/sizes based on number of cards in hand. also make functions for the math
+                clickableCard._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARDS_X_FROMMID_LEFT
+                    + i * ((Drawing.DrawConstants.COMBAT_HANDCARDS_AREAWIDTH - Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH) / (hand.Count - 1));
+                clickableCard._y = Drawing.DrawConstants.COMBAT_HANDCARDS_Y;
+                clickableCard._width = Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH;
+                clickableCard._height = Drawing.DrawConstants.COMBAT_HANDCARD_HEIGHT;
 
                 //the first card is furthest to the right, and cards display from left to right as front to back, so add them to front each time
-                ui.addClickableToFront(clickableCard); 
+                ui.addClickableToFront(clickableCard);
             }
         }
     }

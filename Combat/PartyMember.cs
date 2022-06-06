@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    class PartyMember : Unit
+    public class PartyMember : Unit
     {
         Characters.Hero _hero;
 

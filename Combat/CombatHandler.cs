@@ -107,9 +107,13 @@ namespace DeityOnceLost.Combat
         {
             return _currentEncounter;
         }
+        public combatTurn getTurn()
+        {
+            return _turn;
+        }
 
 
-        
+
         /// <summary>
         /// Make sure setNewEncounter is called first so that the encounter's enemies are properly set up
         /// </summary>
@@ -118,9 +122,12 @@ namespace DeityOnceLost.Combat
             _turn = combatTurn.ROUND_START;
             _champ.resetDivinity();
             _champ.resetDefense();
-            foreach (Unit party in _partyMembers)
+            if (_partyMembers != null)
             {
-                party.resetDefense();
+                foreach (Unit party in _partyMembers)
+                {
+                    party.resetDefense();
+                }
             }
             _currentEncounter.resetDefense();
 
@@ -137,9 +144,12 @@ namespace DeityOnceLost.Combat
                     break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
-                    foreach (Unit party in _partyMembers)
+                    if (_partyMembers != null)
                     {
-                        party.resetDefense();
+                        foreach (Unit party in _partyMembers)
+                        {
+                            party.resetDefense();
+                        }
                     }
                     break;
                 case combatTurn.PARTY:
@@ -191,6 +201,7 @@ namespace DeityOnceLost.Combat
                     break;
                 case combatTurn.ENEMIES:
                     handleEnemyTurn();
+                    nextTurn(); //FIXIT this will disappear when things get done one by one visually (animations, etc)
                     break;
                 case combatTurn.KARMA:
                     nextTurn(); //don't have anything for karma turns yet, so skip
@@ -224,7 +235,7 @@ namespace DeityOnceLost.Combat
             //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
             for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
             {
-                _currentEncounter.getEnemies()[0].getAIPattern().doTurnAction(_champ, _partyMembers);
+                _currentEncounter.getEnemies()[i].getAIPattern().doTurnAction(_champ, _partyMembers);
             }
         }
 

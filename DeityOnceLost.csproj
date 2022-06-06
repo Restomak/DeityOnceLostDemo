@@ -71,7 +71,8 @@
     <Compile Include="DeckBuilder\IDamagingCard.cs" />
     <Compile Include="DeckBuilder\IDefendingCard.cs" />
     <Compile Include="DeckBuilder\ITargetingCard.cs" />
-    <Compile Include="Draw\DrawHandler.cs" />
+    <Compile Include="Drawing\DrawConstants.cs" />
+    <Compile Include="Drawing\DrawHandler.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input\GamepadControl.cs" />
     <Compile Include="Input\InputController.cs" />
@@ -81,8 +82,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInterface\Clickable.cs" />
+    <Compile Include="UserInterface\Clickables\Button.cs" />
     <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
+    <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
+    <Compile Include="UserInterface\Clickables\HoverInfo.cs" />
     <Compile Include="UserInterface\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
