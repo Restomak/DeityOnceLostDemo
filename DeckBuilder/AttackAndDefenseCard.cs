@@ -20,15 +20,15 @@ namespace DeityOnceLost.DeckBuilder
             get => _defense;
         }
 
-        public override bool onPlay()
+        public override void onPlay()
         {
-            return dealDamage() && gainDefense();
+            dealDamage();
+            gainDefense();
         }
 
-        public bool gainDefense()
+        public void gainDefense()
         {
-            //FIXIT: make the champion gain defense
-            return true;
+            Game1.getChamp().gainDefense(_defense);
         }
 
         public override List<String> getDescription(Characters.Champion champ)

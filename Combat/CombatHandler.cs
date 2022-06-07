@@ -140,7 +140,11 @@ namespace DeityOnceLost.Combat
             {
                 case combatTurn.ROUND_START:
                     _turn = combatTurn.CHAMPION;
+                    _champ.resetDivinity();
                     _champ.resetDefense();
+                    _champ.getDeck().drawNumCards(_champ.getCardDraw(true)); //Draw new cards at turn start, and set the champion's card draw back to normal
+                    _currentEncounter.determineIntents(_champ, _partyMembers);
+                    Game1.updateBattleUI();
                     break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
@@ -189,8 +193,6 @@ namespace DeityOnceLost.Combat
             switch (_turn)
             {
                 case combatTurn.ROUND_START:
-                    _champ.resetDivinity();
-                    _currentEncounter.determineIntents(_champ, _partyMembers);
                     nextTurn();
                     break;
                 case combatTurn.CHAMPION:

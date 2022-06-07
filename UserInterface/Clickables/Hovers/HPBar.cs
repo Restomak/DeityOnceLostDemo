@@ -37,7 +37,9 @@ namespace DeityOnceLost.UserInterface.Clickables.Hovers
                     _description.Add("Your champion's hitpoints. If");
                     _description.Add("they reach zero, your champion");
                     _description.Add("will die and you will be forced");
-                    _description.Add("out of " + Game1.getChampionPronouns_their().ToLower() + " body.");
+                    _description.Add("out of " + Game1.getChamp().getHero().getPronoun_their().ToLower() + " body.");
+                    _description.Add("Cards that cost Blood spend");
+                    _description.Add("hitpoints when played.");
                     break;
                 case hpBarType.party:
                     _description.Add("A party member's hitpoints.");

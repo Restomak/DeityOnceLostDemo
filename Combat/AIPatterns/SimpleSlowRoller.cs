@@ -53,6 +53,7 @@ namespace DeityOnceLost.Combat.AIPatterns
         {
             _intentsForThisTurn.Clear();
             _turnsLeftUntilBuff -= 1;
+            _intendedDamage = 0;
 
             if (_turnsLeftUntilBuff <= 0) //buff turn
             {
@@ -79,6 +80,7 @@ namespace DeityOnceLost.Combat.AIPatterns
                     _intentsForThisTurn.Add(intent.ATTACK);
                     _specificIntent = specificIntent.BASIC_ATTACK;
                     _numHits = 1;
+                    _intendedDamage = _enemy.getRegularDamage();
                 }
                 else if (rand <= WEIGHT_BASIC_ATTACK + WEIGHT_ATTACK_AND_DEFEND)
                 {
@@ -86,12 +88,14 @@ namespace DeityOnceLost.Combat.AIPatterns
                     _intentsForThisTurn.Add(intent.DEFEND);
                     _specificIntent = specificIntent.ATTACK_AND_DEFEND;
                     _numHits = 1;
+                    _intendedDamage = _enemy.getLightDamage();
                 }
                 else //heavy attack
                 {
                     _intentsForThisTurn.Add(intent.ATTACK);
                     _specificIntent = specificIntent.HEAVY_ATTACK;
                     _numHits = 1;
+                    _intendedDamage = _enemy.getHeavyDamage();
                 }
             }
 

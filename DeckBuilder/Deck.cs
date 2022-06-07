@@ -168,6 +168,19 @@ namespace DeityOnceLost.DeckBuilder
 
 
         //Functions for moving cards around between piles/hand
+        public void discardBecausePlayed(Card card)
+        {
+            if (_hand.Contains(card))
+            {
+                _discardPile.Add(card);
+                _hand.Remove(card);
+            }
+            else
+            {
+                Game1.errorLog.Add("Tried to move a card from hand to discard pile that wasn't in hand to begin with: " + card.getName());
+            }
+        }
+
         public void discardFromHand(Card card)
         {
             if (_hand.Contains(card))

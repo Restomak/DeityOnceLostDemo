@@ -33,6 +33,8 @@ namespace DeityOnceLost
         private static UserInterface.UserInterface _championHovers;
         private static UserInterface.Clickable _currentHover;
         private static UserInterface.Clickables.HandCard _activeCard;
+        private static UserInterface.UserInterface _targets;
+        private static UserInterface.UserInterface _resources;
 
         //Game structure variables
         private static Drawing.DrawHandler _drawHandler;
@@ -45,7 +47,7 @@ namespace DeityOnceLost
         //Logs
         public static List<String> errorLog;
         public static List<String> debugLog;
-        public static bool showDebugLog = false;
+        public static bool showErrorLog = false, showDebugLog = false;
 
 
         //Framework constants
@@ -72,6 +74,8 @@ namespace DeityOnceLost
             _enemyHovers = new UserInterface.UserInterface();
             _championUI = new UserInterface.Clickables.Avatar();
             _championHovers = new UserInterface.UserInterface();
+            _targets = new UserInterface.UserInterface();
+            _resources = new UserInterface.UserInterface();
         }
 
         //Framework getters
@@ -105,10 +109,22 @@ namespace DeityOnceLost
         public static void setActiveCard(UserInterface.Clickables.HandCard card)
         {
             _activeCard = card;
+
+            _targets.resetClickables(); //do it here instead of in setupTargets because it needs to reset even when deseslecting
+
+            //If selecting (and not unselecting), setup targets for that card
+            if (_activeCard != null)
+            {
+                UserInterface.Clickables.Target.setupTargets(_targets, _enemies/*, _party*/, _championUI, card.getCard().getTargetType());
+            }
         }
         public static void setEnemiesAsUI(UserInterface.UserInterface enemies)
         {
             _enemies = enemies;
+        }
+        public static void setTargets(UserInterface.UserInterface targets)
+        {
+            _targets = targets;
         }
 
         //User Interface getters
@@ -120,23 +136,15 @@ namespace DeityOnceLost
         {
             return _activeCard;
         }
+        public static UserInterface.UserInterface getTargets()
+        {
+            return _targets;
+        }
 
         //Other useful getters
-        public static String getChampionPronouns_they()
+        public static Characters.Champion getChamp()
         {
-            return _champ.getHero().getPronoun_they();
-        }
-        public static String getChampionPronouns_them()
-        {
-            return _champ.getHero().getPronoun_them();
-        }
-        public static String getChampionPronouns_their()
-        {
-            return _champ.getHero().getPronoun_their();
-        }
-        public static String getChampionPronouns_theirs()
-        {
-            return _champ.getHero().getPronoun_theirs();
+            return _champ;
         }
 
 
@@ -154,13 +162,15 @@ namespace DeityOnceLost
             this.IsMouseVisible = true;
 
             //added in sorted fashion, top to bottom is front of the screen to back
-            _battleUI.Add(_enemies);
+            _battleUI.Add(_targets);
+            _battleUI.Add(_handCards);
             _battleUI.Add(_enemyHovers);
+            _battleUI.Add(_enemies);
             _battleUI.Add(_championHovers);
             _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
             _battleUI.Add(_cardPiles);
             _battleUI.Add(_combatUIButtons);
-            _battleUI.Add(_handCards);
+            _battleUI.Add(_resources);
 
             base.Initialize();
         }
@@ -186,6 +196,14 @@ namespace DeityOnceLost
             pic_functionality_intent_Defend = Content.Load<Texture2D>("functionality art/Intent Defend");
             pic_functionality_defenseIcon = Content.Load<Texture2D>("functionality art/Defense");
             pic_functionality_championSilhouette = Content.Load<Texture2D>("functionality art/silhouette");
+            pic_functionality_targeting_faded_TL = Content.Load<Texture2D>("functionality art/targeting faded - top left");
+            pic_functionality_targeting_faded_TR = Content.Load<Texture2D>("functionality art/targeting faded - top right");
+            pic_functionality_targeting_faded_BR = Content.Load<Texture2D>("functionality art/targeting faded - bottom right");
+            pic_functionality_targeting_faded_BL = Content.Load<Texture2D>("functionality art/targeting faded - bottom left");
+            pic_functionality_targeting_back_TL = Content.Load<Texture2D>("functionality art/targeting back - top left");
+            pic_functionality_targeting_back_TR = Content.Load<Texture2D>("functionality art/targeting back - top right");
+            pic_functionality_targeting_back_BR = Content.Load<Texture2D>("functionality art/targeting back - bottom right");
+            pic_functionality_targeting_back_BL = Content.Load<Texture2D>("functionality art/targeting back - bottom left");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -239,7 +257,9 @@ namespace DeityOnceLost
         //Functionality Art
         public static Texture2D pic_functionality_uiSketch, pic_functionality_endTurnButton, pic_functionality_cardDown, pic_functionality_bar,
             pic_functionality_intent_AoE, pic_functionality_intent_Attack, pic_functionality_intent_Buff, pic_functionality_intent_Debuff, pic_functionality_intent_Defend,
-            pic_functionality_defenseIcon, pic_functionality_championSilhouette;
+            pic_functionality_defenseIcon, pic_functionality_championSilhouette,
+            pic_functionality_targeting_faded_TL, pic_functionality_targeting_faded_TR, pic_functionality_targeting_faded_BR, pic_functionality_targeting_faded_BL,
+            pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
@@ -325,11 +345,10 @@ namespace DeityOnceLost
                 new Point(VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_Y),
                 Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_HEIGHT, () =>
                 {
-                    //Temporary testing stuff
+                    //Make sure it's your turn
                     if (_combatHandler.getTurn() == Combat.CombatHandler.combatTurn.CHAMPION)
                     {
                         _champ.getDeck().turnEndDiscardAll();
-                        _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
                         _combatHandler.nextTurn();
                     }
                 }, new List<String>() { "Ends your turn." });
@@ -350,6 +369,10 @@ namespace DeityOnceLost
 
             UserInterface.Clickables.Avatar.setupChampionUI(_championUI, _champ, _championHovers);
             _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
+
+            _resources.resetClickables();
+            _resources.addClickableToBack(new UserInterface.Clickables.Hovers.Resource(new Point(Drawing.DrawConstants.COMBAT_DIVINITY_X, Drawing.DrawConstants.COMBAT_DIVINITY_Y),
+                (int)roboto_bold_16.MeasureString(UserInterface.Clickables.Hovers.Resource.DIVINITY_SAMPLE_STRING).X, Drawing.DrawConstants.TEXT_16_HEIGHT, DeckBuilder.CardEnums.CostType.DIVINITY));
         }
 
         /// <summary>
@@ -377,13 +400,18 @@ namespace DeityOnceLost
             _inputController.updateInput(_windowControl, _activeUI);
 
             //Debug log on screen
-            if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.Z))
+            if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 showDebugLog = true;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.E))
+            {
+                showErrorLog = true;
             }
             else
             {
                 showDebugLog = false;
+                showErrorLog = false;
             }
 
 
@@ -397,8 +425,8 @@ namespace DeityOnceLost
             {
                 test1 = true;
 
-                _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
-                updateBattleUI();
+                //_champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
+                //updateBattleUI();
             }
             /*if (Keyboard.GetState().IsKeyDown(Keys.A) && !test2)
             {

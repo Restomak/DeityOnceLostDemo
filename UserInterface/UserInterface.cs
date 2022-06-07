@@ -88,9 +88,16 @@ namespace DeityOnceLost.UserInterface
         /// each UserInterface's list of Clickables, from index 0 to max, until a
         /// return value that isn't null is found, and returns that. null will still
         /// be returned, however, if none are found throughout the whole list.
+        /// 
+        /// Updated to first check the hovered Clickable passed to it, if it's not null.
         /// </summary>
-        public static Clickable getFrontClickableFromUIList(List<UserInterface> uiList, Point mousePos)
+        public static Clickable getFrontClickableFromUIList(Clickable hoveredClickable, List<UserInterface> uiList, Point mousePos)
         {
+            if (hoveredClickable != null && hoveredClickable.mouseInBoundaries(mousePos))
+            {
+                return hoveredClickable;
+            }
+
             for (int uiI = 0; uiI < uiList.Count; uiI++)
             {
                 Clickable returnClickable = uiList[uiI].getFrontClickable(mousePos);

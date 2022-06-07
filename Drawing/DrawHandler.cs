@@ -66,6 +66,23 @@ namespace DeityOnceLost.Drawing
                         new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), Color.White);
                 }
             }
+            else if (Game1.showErrorLog)
+            {
+                for (int i = 0; i < Game1.errorLog.Count; i++)
+                {
+                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
+                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
+                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
+                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
+                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+
+                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
+                        new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), Color.Red);
+                }
+            }
         }
 
         /// <summary>
@@ -122,6 +139,14 @@ namespace DeityOnceLost.Drawing
             else if (current.GetType() == typeof(UserInterface.Clickables.Avatar))
             {
                 drawChampion(sprites, (UserInterface.Clickables.Avatar)current, champ);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Target))
+            {
+                drawTarget(sprites, (UserInterface.Clickables.Target)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.Resource))
+            {
+                drawResource(sprites, (UserInterface.Clickables.Hovers.Resource)current);
             }
             else
             {
@@ -337,6 +362,10 @@ namespace DeityOnceLost.Drawing
                 sprites.Draw(Game1.pic_functionality_intent_Attack, new Rectangle(enemy._x + enemy._width / 2 - DrawConstants.COMBAT_INTENTS_WIDTH / 2,
                     yFromBottom(enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER, DrawConstants.COMBAT_INTENTS_HEIGHT),
                     DrawConstants.COMBAT_INTENTS_WIDTH, DrawConstants.COMBAT_INTENTS_HEIGHT), Color.White);
+
+                drawShadowedText(sprites, Game1.roboto_bold_16, Game1.getChamp().calculateDamageIntakeFromEnemyAttack(enemy.getEnemy().getAIPattern().getIntendedDamage()).ToString(),
+                    enemy._x + enemy._width / 2, enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_HEIGHT + DrawConstants.COMBAT_INTENTS_DAMAGE_BUFFER,
+                    DrawConstants.TEXT_16_HEIGHT, Color.Red, Color.Black);
             }
             if (intents.Contains(Combat.AIPattern.intent.AOE))
             {
@@ -356,6 +385,10 @@ namespace DeityOnceLost.Drawing
                     new Rectangle(enemy._x + enemy._width / 2 - DrawConstants.COMBAT_INTENTS_WIDTH / 2 - DrawConstants.COMBAT_INTENTS_AOE_TOTALWIDTH / 2 + DrawConstants.COMBAT_INTENTS_AOE_WIDTH * 2 + DrawConstants.COMBAT_INTENTS_AOE_BUFFER * 2,
                     yFromBottom(enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_AOE_YBUFFER, DrawConstants.COMBAT_INTENTS_AOE_HEIGHT),
                     DrawConstants.COMBAT_INTENTS_AOE_WIDTH, DrawConstants.COMBAT_INTENTS_AOE_HEIGHT), Color.White);
+
+                drawShadowedText(sprites, Game1.roboto_bold_16, Game1.getChamp().calculateDamageIntakeFromEnemyAttack(enemy.getEnemy().getAIPattern().getIntendedDamage()).ToString(),
+                    enemy._x + enemy._width / 2, enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_HEIGHT + DrawConstants.COMBAT_INTENTS_DAMAGE_BUFFER,
+                    DrawConstants.TEXT_16_HEIGHT, Color.Red, Color.Black);
             }
         }
 
@@ -373,7 +406,7 @@ namespace DeityOnceLost.Drawing
                 anchor.X = hpBar._x - DrawConstants.COMBAT_DEFENSE_ICON_WIDTH + DrawConstants.COMBAT_DEFENSE_ICON_HPBAR_OVERLAP;
                 if (hpBar._x + hpBar._width < Game1.VIRTUAL_WINDOW_WIDTH / 2)
                 {
-                    anchor.X = hpBar._x + hpBar._width + DrawConstants.COMBAT_DEFENSE_ICON_WIDTH - DrawConstants.COMBAT_DEFENSE_ICON_HPBAR_OVERLAP;
+                    anchor.X = hpBar._x + hpBar._width - DrawConstants.COMBAT_DEFENSE_ICON_HPBAR_OVERLAP;
                 }
 
                 sprites.Draw(Game1.pic_functionality_bar,
@@ -432,6 +465,49 @@ namespace DeityOnceLost.Drawing
             {
                 drawShadowedText(sprites, Game1.roboto_medium_12, champ.getName(), //FIXIT option for pronouns always displayed with name?
                     champUI._x + champUI._width / 2, champUI._y + champUI._height + DrawConstants.COMBAT_ENEMY_NAME_BUFFER, DrawConstants.TEXT_12_HEIGHT, Color.White, Color.Black);
+            }
+        }
+
+        public void drawTarget(SpriteBatch sprites, UserInterface.Clickables.Target target)
+        {
+            float fadeFade = DrawConstants.COMBAT_TARGET_FADE_FADE;
+            float backFade = DrawConstants.COMBAT_TARGET_BACK_FADE;
+
+            if (target == Game1.getHoveredClickable())
+            {
+                fadeFade = DrawConstants.COMBAT_TARGET_FADE_FADE_HOVERED;
+                backFade = DrawConstants.COMBAT_TARGET_BACK_FADE_HOVERED;
+            }
+
+            sprites.Draw(Game1.pic_functionality_targeting_back_TL, target.getTopLeftTargetPiece(), Color.White * backFade);
+            sprites.Draw(Game1.pic_functionality_targeting_back_TR, target.getTopRightTargetPiece(), Color.White * backFade);
+            sprites.Draw(Game1.pic_functionality_targeting_back_BR, target.getBottomRightTargetPiece(), Color.White * backFade);
+            sprites.Draw(Game1.pic_functionality_targeting_back_BL, target.getBottomLeftTargetPiece(), Color.White * backFade);
+
+            sprites.Draw(Game1.pic_functionality_targeting_faded_TL, target.getTopLeftTargetPiece(), Color.White * fadeFade);
+            sprites.Draw(Game1.pic_functionality_targeting_faded_TR, target.getTopRightTargetPiece(), Color.White * fadeFade);
+            sprites.Draw(Game1.pic_functionality_targeting_faded_BR, target.getBottomRightTargetPiece(), Color.White * fadeFade);
+            sprites.Draw(Game1.pic_functionality_targeting_faded_BL, target.getBottomLeftTargetPiece(), Color.White * fadeFade);
+        }
+
+        public void drawResource(SpriteBatch sprites, UserInterface.Clickables.Hovers.Resource resource)
+        {
+            sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
+                new Vector2(resource._x - 1, yFromBottom(resource._y - 1, DrawConstants.TEXT_16_HEIGHT)), Color.Black);
+            sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
+                new Vector2(resource._x - 1, yFromBottom(resource._y + 1, DrawConstants.TEXT_16_HEIGHT)), Color.Black);
+            sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
+                new Vector2(resource._x + 1, yFromBottom(resource._y - 1, DrawConstants.TEXT_16_HEIGHT)), Color.Black);
+            sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
+                new Vector2(resource._x + 1, yFromBottom(resource._y + 1, DrawConstants.TEXT_16_HEIGHT)), Color.Black);
+
+            sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
+                new Vector2(resource._x, yFromBottom(resource._y, DrawConstants.TEXT_16_HEIGHT)), resource.getColor());
+
+            //Info box if hovered
+            if (resource == Game1.getHoveredClickable())
+            {
+                drawInfoBox(sprites, resource.getDescription(), new Rectangle(resource._x, resource._y, resource._width, resource._height));
             }
         }
 

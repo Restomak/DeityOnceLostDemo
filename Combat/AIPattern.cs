@@ -25,6 +25,7 @@ namespace DeityOnceLost.Combat
         protected List<intent> _intentsForThisTurn;
         protected Enemy _enemy;
         protected int _numHits;
+        protected int _intendedDamage;
 
         /// <summary>
         /// Every Enemy has one AIPattern, while each AIPattern can be associated with more than one enemy.
@@ -70,6 +71,11 @@ namespace DeityOnceLost.Combat
                 default:
                     return "something unknown";
             }
+        }
+
+        public int getIntendedDamage()
+        {
+            return _intendedDamage;
         }
 
         /// <summary>

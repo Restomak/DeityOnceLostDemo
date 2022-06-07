@@ -10,7 +10,7 @@ namespace DeityOnceLost.DeckBuilder
     {
         protected int _defense;
 
-        public BasicDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense) : base(name, cardType, rarity)
+        public BasicDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense) : base(name, cardType, rarity, CardEnums.TargetingType.champion)
         {
             _defense = defense;
         }
@@ -20,15 +20,14 @@ namespace DeityOnceLost.DeckBuilder
             get => _defense;
         }
 
-        public override bool onPlay()
+        public override void onPlay()
         {
-            return gainDefense();
+            gainDefense();
         }
 
-        public bool gainDefense()
+        public void gainDefense()
         {
-            //FIXIT: make the champion gain defense
-            return true;
+            Game1.getChamp().gainDefense(_defense);
         }
 
         public override List<String> getDescription(Characters.Champion champ)

@@ -19,92 +19,77 @@ namespace DeityOnceLost.Input
 
         public void updateInput(WindowControl windowControl, List<UserInterface.UserInterface> activeUIs)
         {
+            /*____________________.Setup._____________________*/
+
             gameChanged = false;
 
-            //Update mouse & keyboard
+            //Update mouse //FIXIT and keyboard
             mouseControl.checkMouse(windowControl);
 
-            //Perform logic
+
+
+            /*____________________.Perform Logic._____________________*/
+            
+
+            //Hover logic - only do if the left mouse button isn't currently held down
             if (!mouseControl.isLeftHeld())
             {
                 UserInterface.Clickable currentHover = Game1.getHoveredClickable();
-                if (currentHover != null)
-                {
-                    Rectangle boundingBox = new Rectangle(currentHover._x, currentHover._y, currentHover._width, currentHover._height);
-                    if (!boundingBox.Contains(mouseControl.getMousePosition()))
-                    {
-                        Game1.debugLog.Add("No longer hovering over " + currentHover.ToString());
+                UserInterface.Clickable newHover = UserInterface.UserInterface.getFrontClickableFromUIList(Game1.getHoveredClickable(), activeUIs, mouseControl.getMousePosition());
 
-                        currentHover.onHoverEnd();
-                        currentHover = null;
-                    }
+                //If there was already something being hovered and that's no longer the case, tell the game to end its hover
+                if (currentHover != null && newHover != currentHover)
+                {
+                    Game1.debugLog.Add("No longer hovering over " + currentHover.ToString());
+
+                    currentHover.onHoverEnd();
                 }
                 
-                if (currentHover == null)
+                //Check if there's a new hover
+                if (newHover != null && newHover != currentHover)
                 {
-                    bool activeCardInFront = false;
-                    if (Game1.getActiveCard() != null)
-                    {
-                        UserInterface.Clickables.HandCard activeCard = Game1.getActiveCard();
-                        Rectangle boundingBox = new Rectangle(activeCard._x, activeCard._y, activeCard._width, activeCard._height);
+                    Game1.debugLog.Add("Now hovering over " + newHover.ToString());
 
-                        if (boundingBox.Contains(mouseControl.getMousePosition()))
-                        {
-                            activeCardInFront = true;
-                        }
-                    }
-
-                    if (!activeCardInFront)
-                    {
-                        currentHover = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
-
-                        if (currentHover != null)
-                        {
-                            Game1.debugLog.Add("Now hovering over " + currentHover.ToString());
-
-                            currentHover.onHover();
-                        }
-                    }
+                    newHover.onHover();
                 }
             }
+            
 
-
-
+            //Mouse left click logic
             if (mouseControl.isLeftClicked())
             {
-                UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
+                UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(Game1.getHoveredClickable(), activeUIs, mouseControl.getMousePosition());
                 
-                //FIXIT implement more
                 if (clicked != null)
                 {
-                    clicked.onClick();
-                    gameChanged = true;
-                }
-                else
-                {
+                    //Check if we already have a HandCard active, and if so, make sure it's not the same one
+                    if (Game1.getActiveCard() == null || clicked.GetType() != typeof(UserInterface.Clickables.HandCard) || clicked != Game1.getActiveCard())
+                    {
+                        clicked.onClick();
+                        gameChanged = true;
+                    }
 
+                    //FIXIT implement more
                 }
             }
 
             if (mouseControl.isRightClicked())
             {
-                UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
+                UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(Game1.getHoveredClickable(), activeUIs, mouseControl.getMousePosition());
 
                 //Unclick active card if you right click somewhere else
-                if (Game1.getActiveCard() != null)
+                if (Game1.getActiveCard() != null && !Game1.getActiveCard().mouseInBoundaries(mouseControl.getMousePosition()))
                 {
-                    UserInterface.Clickables.HandCard activeCard = Game1.getActiveCard();
-                    Rectangle boundingBox = new Rectangle(activeCard._x, activeCard._y, activeCard._width, activeCard._height);
-                    
-                    if (!boundingBox.Contains(mouseControl.getMousePosition()))
-                    {
-                        Game1.setActiveCard(null);
-                        gameChanged = true;
-                    }
+                    Game1.setActiveCard(null);
+                    gameChanged = true;
                 }
 
                 //FIXIT implement more
             }
+
+
+
+            /*____________________.Cleanup._____________________*/
 
             if (gameChanged)
             {

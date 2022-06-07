@@ -70,7 +70,6 @@
     <Compile Include="DeckBuilder\Deck.cs" />
     <Compile Include="DeckBuilder\IDamagingCard.cs" />
     <Compile Include="DeckBuilder\IDefendingCard.cs" />
-    <Compile Include="DeckBuilder\ITargetingCard.cs" />
     <Compile Include="Drawing\DrawConstants.cs" />
     <Compile Include="Drawing\DrawHandler.cs" />
     <Compile Include="Game1.cs" />
@@ -87,9 +86,11 @@
     <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\EnemyIntent.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\HPBar.cs" />
+    <Compile Include="UserInterface\Clickables\Hovers\Resource.cs" />
     <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
     <Compile Include="UserInterface\Clickables\HoverInfo.cs" />
+    <Compile Include="UserInterface\Clickables\Target.cs" />
     <Compile Include="UserInterface\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>

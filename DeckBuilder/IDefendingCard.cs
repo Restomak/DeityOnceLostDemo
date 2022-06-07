@@ -13,6 +13,6 @@ namespace DeityOnceLost.DeckBuilder
             get;
         }
 
-        bool gainDefense();
+        void gainDefense();
     }
 }

@@ -46,7 +46,6 @@ namespace DeityOnceLost.UserInterface.Clickables
             {
                 _hovered = true;
                 Game1.setHoveredClickable(this);
-                //FIXIT implement
 
                 _x += Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2;
                 _y = Drawing.DrawConstants.COMBAT_HANDCARDS_GROW_Y;
@@ -63,7 +62,6 @@ namespace DeityOnceLost.UserInterface.Clickables
         {
             _hovered = false;
             Game1.setHoveredClickable(null);
-            //FIXIT implement
 
             if (Game1.getActiveCard() != this)
             {
@@ -76,6 +74,8 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
+            Game1.debugLog.Add("HandCard " + _positionInHand + " (" + _card.getName() + ") now active.");
+
             //Deactivate current active card first
             if (Game1.getActiveCard() != null)
             {
@@ -86,8 +86,11 @@ namespace DeityOnceLost.UserInterface.Clickables
                 }
             }
 
-            //FIXIT implement
-            Game1.setActiveCard(this);
+            if (Game1.getChamp().getDivinity() >= _card.getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY) && //Make sure there's enough Divinity to play the card
+                Game1.getChamp().getCurrentHP() >= _card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD)) //Make sure there's enough HP to play the card
+            {
+                Game1.setActiveCard(this);
+            }
         }
 
         /// <summary>
@@ -128,8 +131,21 @@ namespace DeityOnceLost.UserInterface.Clickables
             {
                 HandCard clickableCard = new HandCard(hand[i], i);
 
-                clickableCard._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARDS_X_FROMMID_LEFT
-                    + i * ((Drawing.DrawConstants.COMBAT_HANDCARDS_AREAWIDTH - Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH) / (hand.Count - 1));
+                if (hand.Count == 1)
+                {
+                    clickableCard._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH / 2;
+                }
+                else if (hand.Count < 6)
+                {
+                    int totalWidth = Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH * hand.Count + Drawing.DrawConstants.COMBAT_HANDCARDS_SPACE_BETWEEN_WHEN_LOW * (hand.Count - 1);
+                    
+                    clickableCard._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - totalWidth / 2 + (Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH + Drawing.DrawConstants.COMBAT_HANDCARDS_SPACE_BETWEEN_WHEN_LOW) * i;
+                }
+                else
+                {
+                    clickableCard._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARDS_X_FROMMID_LEFT
+                        + i * ((Drawing.DrawConstants.COMBAT_HANDCARDS_AREAWIDTH - Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH) / (hand.Count - 1));
+                }
                 clickableCard._y = Drawing.DrawConstants.COMBAT_HANDCARDS_Y;
                 clickableCard._width = Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH;
                 clickableCard._height = Drawing.DrawConstants.COMBAT_HANDCARD_HEIGHT;

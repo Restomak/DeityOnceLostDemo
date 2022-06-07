@@ -33,6 +33,14 @@ namespace DeityOnceLost.DeckBuilder
             GODLY,
             VOID //curse cards etc
         }
+        public enum TargetingType
+        {
+            enemies,
+            champion,
+            party,
+            friendlies, //champion & party
+            all //anyone
+        }
 
         public static String costTypeToString(CostType ct)
         {

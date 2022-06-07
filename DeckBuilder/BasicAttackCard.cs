@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
-    abstract class BasicAttackCard : Card, ITargetingCard, IDamagingCard
+    abstract class BasicAttackCard : Card, IDamagingCard
     {
         protected int _damage;
-        Combat.Unit _target;
 
-        public BasicAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage) : base(name, cardType, rarity)
+        public BasicAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage) : base(name, cardType, rarity, CardEnums.TargetingType.enemies)
         {
             _damage = damage;
         }
@@ -21,32 +20,20 @@ namespace DeityOnceLost.DeckBuilder
             get => _damage;
         }
 
-        public Combat.Unit target
+        public override void onPlay()
         {
-            get => _target;
-            set => _target = value;
+            dealDamage();
         }
 
-        public override bool onPlay()
-        {
-            return dealDamage();
-        }
-
-        public void selectTarget()
-        {
-            //FIXIT: call on input bs for setting a target
-        }
-
-        public bool dealDamage()
+        public void dealDamage()
         {
             if (_target != null)
             {
-                //FIXIT: make the champion deal damage to the selected target
-                return true;
+                _target.takeDamage(_damage);
             }
             else
             {
-                return false;
+                Game1.errorLog.Add("Attempted to use damage card without a target!");
             }
         }
 

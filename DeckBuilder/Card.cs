@@ -14,8 +14,10 @@ namespace DeityOnceLost.DeckBuilder
         private CardEnums.CardRarity _rarity;
         public List<String> _description;
         private bool _retainAlways; //if kept in hand at the end of the turn
+        protected CardEnums.TargetingType _targetType;
+        protected Combat.Unit _target;
 
-        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, bool retainAlways = false)
+        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, CardEnums.TargetingType targetType, bool retainAlways = false)
         {
             _name = name;
             _cardType = cardType;
@@ -25,6 +27,7 @@ namespace DeityOnceLost.DeckBuilder
             _description = new List<string>();
             _description.Add("???"); //default description if none is set
             _retainAlways = retainAlways;
+            _targetType = targetType;
 
             //iterate through every cost type and make the costs for each default 0
             foreach (CardEnums.CostType costType in (CardEnums.CostType[])Enum.GetValues(typeof(CardEnums.CostType)))
@@ -54,18 +57,22 @@ namespace DeityOnceLost.DeckBuilder
             _specialCost[costType] = costAmount;
         }
 
+        public void setTarget(Combat.Unit target)
+        {
+            _target = target;
+        }
 
 
         //Override these functions if used
-        public virtual bool onDraw() { return true; }
-        public virtual bool onPlay() { return true; }
-        public virtual bool onDiscard() { return true; }
-        public virtual bool onOtherCardPlayed() { return true; }
-        public virtual bool onTurnEnd() { return true; } //FIXIT probably just make these all void
-        public virtual bool onRemove() { return true; }
-        public virtual bool onCombatStart() { return true; }
-        public virtual bool onCombatEnd() { return true; }
-        public virtual bool onKeep() { return true; }
+        public virtual void onDraw() { }
+        public virtual void onPlay() { }
+        public virtual void onDiscard() { }
+        public virtual void onOtherCardPlayed() { }
+        public virtual void onTurnEnd() { }
+        public virtual void onRemove() { }
+        public virtual void onCombatStart() { }
+        public virtual void onCombatEnd() { }
+        public virtual void onKeep() { }
 
 
 
@@ -89,6 +96,14 @@ namespace DeityOnceLost.DeckBuilder
         public CardEnums.CardRarity getCardRarity()
         {
             return _rarity;
+        }
+        public CardEnums.TargetingType getTargetType()
+        {
+            return _targetType;
+        }
+        public Combat.Unit getTarget()
+        {
+            return _target;
         }
         public bool getRetainAlways()
         {

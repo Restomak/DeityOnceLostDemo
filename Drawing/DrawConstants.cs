@@ -28,8 +28,8 @@ namespace DeityOnceLost.Drawing
 
         public const int COMBAT_DRAW_PILE_BUFFER = 2;
 
-        public const int COMBAT_DIVINITY_AMOUNT_X = 250;
-        public const int COMBAT_DIVINITY_AMOUNT_Y = 210;
+        public const int COMBAT_DIVINITY_X = Game1.VIRTUAL_WINDOW_WIDTH / 2 - 500;
+        public const int COMBAT_DIVINITY_Y = 250;
 
         public const int COMBAT_HANDCARDS_AREAWIDTH = 1000;
         public const int COMBAT_HANDCARDS_X_FROMMID_LEFT = 500;
@@ -39,6 +39,7 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_HANDCARD_GROW_WIDTH = 282;
         public const int COMBAT_HANDCARD_GROW_HEIGHT = 390;
         public const int COMBAT_HANDCARDS_GROW_Y = 0;
+        public const int COMBAT_HANDCARDS_SPACE_BETWEEN_WHEN_LOW = 32;
 
         public const int COMBAT_ENEMY_Y = 350;
         public const int COMBAT_FLYING_ENEMY_Y = 500;
@@ -59,6 +60,7 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_INTENTS_AOE_YBUFFER = COMBAT_INTENTS_HEIGHT / 4;
         public const int COMBAT_INTENTS_AOE_WIDTH = COMBAT_INTENTS_WIDTH / 2;
         public const int COMBAT_INTENTS_AOE_HEIGHT = COMBAT_INTENTS_HEIGHT / 2;
+        public const int COMBAT_INTENTS_DAMAGE_BUFFER = 16;
 
         public const int COMBAT_DEFENSE_ICON_WIDTH = 28;
         public const int COMBAT_DEFENSE_ICON_HEIGHT = 28;
@@ -68,6 +70,13 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_CHAMPION_Y = 350;
         public const int COMBAT_CHAMPION_WIDTH = 200;
         public const int COMBAT_CHAMPION_HEIGHT = 240;
+
+        public const int COMBAT_TARGET_CORNER_WIDTH = 32;
+        public const int COMBAT_TARGET_CORNER_HEIGHT = 32;
+        public const float COMBAT_TARGET_FADE_FADE = 0.25f;
+        public const float COMBAT_TARGET_BACK_FADE = 0.5f;
+        public const float COMBAT_TARGET_FADE_FADE_HOVERED = 0.5f;
+        public const float COMBAT_TARGET_BACK_FADE_HOVERED = 0.75f;
 
 
 

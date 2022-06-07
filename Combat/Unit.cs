@@ -90,7 +90,24 @@ namespace DeityOnceLost.Combat
                 damage -= _resilience;
             }
 
-            _currentHP -= damage;
+            if (damage > 0)
+            {
+                if (_defense > 0)
+                {
+                    _defense -= damage;
+
+                    if (_defense < 0)
+                    {
+                        damage = -_defense;
+                    }
+                    else
+                    {
+                        damage = 0;
+                    }
+                }
+                
+                _currentHP -= damage;
+            }
             if (_currentHP <= 0)
             {
                 _currentHP = 0;
