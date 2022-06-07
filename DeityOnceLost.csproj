@@ -82,8 +82,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInterface\Clickable.cs" />
+    <Compile Include="UserInterface\Clickables\Avatar.cs" />
     <Compile Include="UserInterface\Clickables\Button.cs" />
     <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
+    <Compile Include="UserInterface\Clickables\Hovers\EnemyIntent.cs" />
+    <Compile Include="UserInterface\Clickables\Hovers\HPBar.cs" />
     <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
     <Compile Include="UserInterface\Clickables\HoverInfo.cs" />

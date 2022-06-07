@@ -47,6 +47,30 @@ namespace DeityOnceLost.Combat
         {
             return _intentsForThisTurn;
         }
+        public static String getIntentToString(intent toString)
+        {
+            switch (toString)
+            {
+                case intent.ATTACK:
+                    return "to attack";
+                case intent.DEFEND:
+                    return "to defend";
+                case intent.BUFF:
+                    return "to apply a buff";
+                case intent.DEBUFF:
+                    return "to apply a debuff";
+                case intent.MULTIATTACK:
+                    return "to attack";
+                case intent.AOE:
+                    return "to attack the whole party";
+                case intent.OMINOUS:
+                    return "to do something ominous";
+                case intent.REINFORCEMENTS:
+                    return "to call reinforcements";
+                default:
+                    return "something unknown";
+            }
+        }
 
         /// <summary>
         /// Must be called in an Enemy's constructor to pass itself to the AIPattern it uses

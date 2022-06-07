@@ -42,6 +42,10 @@ namespace DeityOnceLost.Combat
         {
             return _maxHP;
         }
+        public int getDefense()
+        {
+            return _defense;
+        }
         public bool getDowned()
         {
             return _downed;

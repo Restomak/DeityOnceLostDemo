@@ -126,6 +126,15 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         /// <summary>
+        /// Handles what happens when the user is no longer hovering over this object.
+        /// </summary>
+        public override void onHoverEnd()
+        {
+            _hovered = false;
+            Game1.setHoveredClickable(null);
+        }
+
+        /// <summary>
         /// Handles what happens in logic when the user has clicked one of the various decks:
         /// the draw pile, discard pile, current deck, or entire collection (at base).
         /// Regarldess of which deck was clicked, the result will be a new UserInterface
@@ -133,6 +142,12 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
+            //Deactivate current active card first
+            if (Game1.getActiveCard() != null)
+            {
+                Game1.getActiveCard().deactivate();
+            }
+
             //FIXIT implement, regardless of the deck, it pops up a new UserInterface that is a list of the cards in the deck
         }
     }

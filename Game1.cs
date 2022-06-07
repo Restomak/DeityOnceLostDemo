@@ -28,7 +28,11 @@ namespace DeityOnceLost
         private static UserInterface.UserInterface _cardPiles;
         private static UserInterface.UserInterface _combatUIButtons;
         private static UserInterface.UserInterface _enemies;
+        private static UserInterface.UserInterface _enemyHovers;
+        private static UserInterface.Clickables.Avatar _championUI;
+        private static UserInterface.UserInterface _championHovers;
         private static UserInterface.Clickable _currentHover;
+        private static UserInterface.Clickables.HandCard _activeCard;
 
         //Game structure variables
         private static Drawing.DrawHandler _drawHandler;
@@ -65,6 +69,9 @@ namespace DeityOnceLost
             _cardPiles = new UserInterface.UserInterface();
             _combatUIButtons = new UserInterface.UserInterface();
             _enemies = new UserInterface.UserInterface();
+            _enemyHovers = new UserInterface.UserInterface();
+            _championUI = new UserInterface.Clickables.Avatar();
+            _championHovers = new UserInterface.UserInterface();
         }
 
         //Framework getters
@@ -84,12 +91,20 @@ namespace DeityOnceLost
         {
             return _currentGame;
         }
+        public static Input.InputController getInputController()
+        {
+            return _inputController;
+        }
 
         
         //User Interface setters
         public static void setHoveredClickable(UserInterface.Clickable clickable)
         {
             _currentHover = clickable;
+        }
+        public static void setActiveCard(UserInterface.Clickables.HandCard card)
+        {
+            _activeCard = card;
         }
         public static void setEnemiesAsUI(UserInterface.UserInterface enemies)
         {
@@ -100,6 +115,28 @@ namespace DeityOnceLost
         public static UserInterface.Clickable getHoveredClickable()
         {
             return _currentHover;
+        }
+        public static UserInterface.Clickables.HandCard getActiveCard()
+        {
+            return _activeCard;
+        }
+
+        //Other useful getters
+        public static String getChampionPronouns_they()
+        {
+            return _champ.getHero().getPronoun_they();
+        }
+        public static String getChampionPronouns_them()
+        {
+            return _champ.getHero().getPronoun_them();
+        }
+        public static String getChampionPronouns_their()
+        {
+            return _champ.getHero().getPronoun_their();
+        }
+        public static String getChampionPronouns_theirs()
+        {
+            return _champ.getHero().getPronoun_theirs();
         }
 
 
@@ -118,6 +155,9 @@ namespace DeityOnceLost
 
             //added in sorted fashion, top to bottom is front of the screen to back
             _battleUI.Add(_enemies);
+            _battleUI.Add(_enemyHovers);
+            _battleUI.Add(_championHovers);
+            _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
             _battleUI.Add(_cardPiles);
             _battleUI.Add(_combatUIButtons);
             _battleUI.Add(_handCards);
@@ -138,11 +178,14 @@ namespace DeityOnceLost
             pic_functionality_uiSketch = Content.Load<Texture2D>("functionality art/UI Sketch");
             pic_functionality_endTurnButton = Content.Load<Texture2D>("functionality art/End Turn Button");
             pic_functionality_cardDown = Content.Load<Texture2D>("functionality art/Card Down");
+            pic_functionality_bar = Content.Load<Texture2D>("functionality art/Bar");
             pic_functionality_intent_AoE = Content.Load<Texture2D>("functionality art/Intent AoE");
             pic_functionality_intent_Attack = Content.Load<Texture2D>("functionality art/Intent Attack");
             pic_functionality_intent_Buff = Content.Load<Texture2D>("functionality art/Intent Buff");
             pic_functionality_intent_Debuff = Content.Load<Texture2D>("functionality art/Intent Debuff");
             pic_functionality_intent_Defend = Content.Load<Texture2D>("functionality art/Intent Defend");
+            pic_functionality_defenseIcon = Content.Load<Texture2D>("functionality art/Defense");
+            pic_functionality_championSilhouette = Content.Load<Texture2D>("functionality art/silhouette");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -153,10 +196,22 @@ namespace DeityOnceLost
             roboto_medium_10 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-10");
             roboto_bold_10 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-10");
             roboto_black_10 = Content.Load<SpriteFont>("Fonts/Roboto-Black-10");
+            roboto_regular_11 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-11");
+            roboto_medium_11 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-11");
+            roboto_bold_11 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-11");
+            roboto_black_11 = Content.Load<SpriteFont>("Fonts/Roboto-Black-11");
             roboto_regular_12 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-12");
             roboto_medium_12 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-12");
             roboto_bold_12 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-12");
             roboto_black_12 = Content.Load<SpriteFont>("Fonts/Roboto-Black-12");
+            roboto_regular_16 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-16");
+            roboto_medium_16 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-16");
+            roboto_bold_16 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-16");
+            roboto_black_16 = Content.Load<SpriteFont>("Fonts/Roboto-Black-16");
+            roboto_regular_20 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-20");
+            roboto_medium_20 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-20");
+            roboto_bold_20 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-20");
+            roboto_black_20 = Content.Load<SpriteFont>("Fonts/Roboto-Black-20");
             roboto_regular_24 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-24");
             roboto_medium_24 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-24");
             roboto_bold_24 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-24");
@@ -172,17 +227,27 @@ namespace DeityOnceLost
 
             //enemies
             pic_enemy_fanbladeGuard = Content.Load<Texture2D>("Enemies/Fanblade Guard");
+
+            //shaders
+            shader_Regular = Content.Load<Effect>("Shaders/Regular");
+            shader_CardGlow = Content.Load<Effect>("Shaders/Card Glow");
+            shader_DeckGlow = Content.Load<Effect>("Shaders/Deck Glow");
+            shader_Experimental = Content.Load<Effect>("Shaders/Experimental");
         }
 
         /*____________________.Content Variables._____________________*/
         //Functionality Art
-        public static Texture2D pic_functionality_uiSketch, pic_functionality_endTurnButton, pic_functionality_cardDown,
-            pic_functionality_intent_AoE, pic_functionality_intent_Attack, pic_functionality_intent_Buff, pic_functionality_intent_Debuff, pic_functionality_intent_Defend;
+        public static Texture2D pic_functionality_uiSketch, pic_functionality_endTurnButton, pic_functionality_cardDown, pic_functionality_bar,
+            pic_functionality_intent_AoE, pic_functionality_intent_Attack, pic_functionality_intent_Buff, pic_functionality_intent_Debuff, pic_functionality_intent_Defend,
+            pic_functionality_defenseIcon, pic_functionality_championSilhouette;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
             roboto_regular_10, roboto_medium_10, roboto_bold_10, roboto_black_10,
+            roboto_regular_11, roboto_medium_11, roboto_bold_11, roboto_black_11,
             roboto_regular_12, roboto_medium_12, roboto_bold_12, roboto_black_12,
+            roboto_regular_16, roboto_medium_16, roboto_bold_16, roboto_black_16,
+            roboto_regular_20, roboto_medium_20, roboto_bold_20, roboto_black_20,
             roboto_regular_24, roboto_medium_24, roboto_bold_24, roboto_black_24;
 
         //Cards
@@ -191,7 +256,9 @@ namespace DeityOnceLost
 
         //Enemies
         public static Texture2D pic_enemy_fanbladeGuard;
-
+        
+        //Shaders
+        public static Effect shader_Regular, shader_CardGlow, shader_DeckGlow, shader_Experimental;
 
 
         /// <summary>
@@ -265,7 +332,7 @@ namespace DeityOnceLost
                         _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
                         _combatHandler.nextTurn();
                     }
-                });
+                }, new List<String>() { "Ends your turn." });
 
             _combatUIButtons.addClickableToFront(endTurnButton);
         }
@@ -279,7 +346,10 @@ namespace DeityOnceLost
             _cardPiles.addClickableToFront(new UserInterface.Clickables.DeckOfCards(UserInterface.Clickables.DeckOfCards.typeOfDeck.DISCARDPILE, _champ));
             _cardPiles.addClickableToFront(new UserInterface.Clickables.DeckOfCards(UserInterface.Clickables.DeckOfCards.typeOfDeck.DRAWPILE, _champ));
 
-            UserInterface.Clickables.Opponent.setupEnemyUI(_enemies, _combatHandler.getCurrentEncounter());
+            UserInterface.Clickables.Opponent.setupEnemyUI(_enemies, _combatHandler.getCurrentEncounter(), _enemyHovers);
+
+            UserInterface.Clickables.Avatar.setupChampionUI(_championUI, _champ, _championHovers);
+            _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
         }
 
         /// <summary>
@@ -381,11 +451,12 @@ namespace DeityOnceLost
         {
             GraphicsDevice.SetRenderTarget(_renderTarget); //draw to texture first so screen resizing doesn't require resolution changes
             GraphicsDevice.Clear(new Color(36, 0, 72)); //dark indigo
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
+            shader_Regular.CurrentTechnique.Passes[0].Apply();
+            
 
 
-
-            //Draw logic goes here
+            //Most draw logic goes here
             if (!test1) //demo stuff, will be removed later
             {
                 _drawHandler.drawCombat_Background(_spriteBatch);
@@ -393,6 +464,37 @@ namespace DeityOnceLost
             else
             {
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
+            }
+
+            if (_activeCard != null)
+            {
+                //Change up the shader for the glow
+                shader_CardGlow.CurrentTechnique.Passes[0].Apply();
+                _drawHandler.drawUI_LateActiveCard(_spriteBatch, _champ, true);
+
+                //Set it back to the regular shader
+                shader_Regular.CurrentTechnique.Passes[0].Apply();
+                _drawHandler.drawUI_LateActiveCard(_spriteBatch, _champ, false);
+            }
+            if (_currentHover != null)
+            {
+                if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))
+                {
+                    //Doesn't glow using a shader atm
+                    _drawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
+                }
+                else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
+                    ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION &&
+                    ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                {
+                    //Change up the shader for the glow
+                    shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
+                }
+
+                //Set it back to the regular shader in case it was changed
+                shader_Regular.CurrentTechnique.Passes[0].Apply();
+                _drawHandler.drawUI_LateHover(_spriteBatch, _champ);
             }
 
 

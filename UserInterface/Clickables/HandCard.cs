@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
-    class HandCard : Clickable
+    public class HandCard : Clickable
     {
         DeckBuilder.Card _card;
         int _positionInHand;
@@ -41,9 +41,34 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onHover()
         {
-            _hovered = true;
-            Game1.setHoveredClickable(this);
+            //Cannot become hovered if another card is active
+            if (Game1.getActiveCard() == null)
+            {
+                _hovered = true;
+                Game1.setHoveredClickable(this);
+                //FIXIT implement
+
+                _x += Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2;
+                _y = Drawing.DrawConstants.COMBAT_HANDCARDS_GROW_Y;
+                _width = Drawing.DrawConstants.COMBAT_HANDCARD_GROW_WIDTH;
+                _height = Drawing.DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT;
+            }
+        }
+
+        /// <summary>
+        /// Handles what happens when the user is no longer hovering over this object. Will
+        /// return to its previous size.
+        /// </summary>
+        public override void onHoverEnd()
+        {
+            _hovered = false;
+            Game1.setHoveredClickable(null);
             //FIXIT implement
+
+            if (Game1.getActiveCard() != this)
+            {
+                deactivate();
+            }
         }
 
         /// <summary>
@@ -51,7 +76,37 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
+            //Deactivate current active card first
+            if (Game1.getActiveCard() != null)
+            {
+                if (Game1.getActiveCard() != this)
+                {
+                    Game1.getActiveCard().deactivate();
+                    onHover();
+                }
+            }
+
             //FIXIT implement
+            Game1.setActiveCard(this);
+        }
+
+        /// <summary>
+        /// Used when a card that is currently active ceases being so. Sets the sizes back
+        /// to normal, similarly to onHoverEnd if the card were not active.
+        /// </summary>
+        public void deactivate()
+        {
+            Game1.setActiveCard(null);
+
+            if (Game1.getHoveredClickable() == this)
+            {
+                onHoverEnd();
+            }
+
+            _x -= Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Drawing.DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2;
+            _y = Drawing.DrawConstants.COMBAT_HANDCARDS_Y;
+            _width = Drawing.DrawConstants.COMBAT_HANDCARD_WIDTH;
+            _height = Drawing.DrawConstants.COMBAT_HANDCARD_HEIGHT;
         }
 
         /// <summary>

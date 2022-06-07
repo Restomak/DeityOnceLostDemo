@@ -104,12 +104,33 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Black-10.spritefont
 
+#begin Fonts/Roboto-Black-11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-11.spritefont
+
 #begin Fonts/Roboto-Black-12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Black-12.spritefont
+
+#begin Fonts/Roboto-Black-16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-16.spritefont
+
+#begin Fonts/Roboto-Black-20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-20.spritefont
 
 #begin Fonts/Roboto-Black-24.spritefont
 /importer:FontDescriptionImporter
@@ -132,12 +153,33 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Bold-10.spritefont
 
+#begin Fonts/Roboto-Bold-11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-11.spritefont
+
 #begin Fonts/Roboto-Bold-12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Bold-12.spritefont
+
+#begin Fonts/Roboto-Bold-16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-16.spritefont
+
+#begin Fonts/Roboto-Bold-20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-20.spritefont
 
 #begin Fonts/Roboto-Bold-24.spritefont
 /importer:FontDescriptionImporter
@@ -160,12 +202,33 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Medium-10.spritefont
 
+#begin Fonts/Roboto-Medium-11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-11.spritefont
+
 #begin Fonts/Roboto-Medium-12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Medium-12.spritefont
+
+#begin Fonts/Roboto-Medium-16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-16.spritefont
+
+#begin Fonts/Roboto-Medium-20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-20.spritefont
 
 #begin Fonts/Roboto-Medium-24.spritefont
 /importer:FontDescriptionImporter
@@ -188,12 +251,33 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-10.spritefont
 
+#begin Fonts/Roboto-Regular-11.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-11.spritefont
+
 #begin Fonts/Roboto-Regular-12.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-12.spritefont
+
+#begin Fonts/Roboto-Regular-16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-16.spritefont
+
+#begin Fonts/Roboto-Regular-20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-20.spritefont
 
 #begin Fonts/Roboto-Regular-24.spritefont
 /importer:FontDescriptionImporter
@@ -209,6 +293,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-8.spritefont
 
+#begin functionality art/Bar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Bar.png
+
 #begin functionality art/Card Back laid down.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -220,6 +316,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/Card Back laid down.png;functionality art/Card Down.png
+
+#begin functionality art/Defense.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Defense.png
 
 #begin functionality art/End Turn Button.png
 /importer:TextureImporter
@@ -293,6 +401,18 @@
 /processorParam:TextureFormat=Color
 /build:functionality art/Intent Defend.png
 
+#begin functionality art/silhouette.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/silhouette.png
+
 #begin functionality art/UI Sketch.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -304,4 +424,28 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/UI Sketch.png
+
+#begin Shaders/Card Glow.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Card Glow.fx
+
+#begin Shaders/Deck Glow.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Deck Glow.fx
+
+#begin Shaders/Experimental.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Experimental.fx
+
+#begin Shaders/Regular.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Regular.fx
 

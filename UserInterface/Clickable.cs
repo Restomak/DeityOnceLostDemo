@@ -20,6 +20,7 @@ namespace DeityOnceLost.UserInterface
         }
 
         public abstract void onHover();
+        public abstract void onHoverEnd();
         public abstract void onClick();
         public virtual void whileHeld()
         {

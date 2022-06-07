@@ -12,8 +12,9 @@ namespace DeityOnceLost.UserInterface.Clickables
     {
         Action _buttonFunction;
         Texture2D _texture; //buttons need to supply their texture since there's no other way to determine which button is which in the DrawHandler
+        List<String> _description;
 
-        public Button(Texture2D texture, Point xy, int width, int height, Action function)
+        public Button(Texture2D texture, Point xy, int width, int height, Action function, List<String> hoverDescription)
         {
             _texture = texture;
             _x = xy.X;
@@ -21,12 +22,17 @@ namespace DeityOnceLost.UserInterface.Clickables
             _width = width;
             _height = height;
             _buttonFunction = function;
+            _description = hoverDescription;
         }
 
         //Getter
         public Texture2D getTexture()
         {
             return _texture;
+        }
+        public List<String> getHoverDescription()
+        {
+            return _description;
         }
 
         /// <summary>
@@ -41,11 +47,26 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         /// <summary>
+        /// Handles what happens when the user is no longer hovering over this object.
+        /// </summary>
+        public override void onHoverEnd()
+        {
+            _hovered = false;
+            Game1.setHoveredClickable(null);
+        }
+
+        /// <summary>
         /// Handles what happens in logic when the user has clicked the button. Will
         /// call the function passed to the constructor when the button was created.
         /// </summary>
         public override void onClick()
         {
+            //Deactivate current active card first
+            if (Game1.getActiveCard() != null)
+            {
+                Game1.getActiveCard().deactivate();
+            }
+
             _buttonFunction();
         }
     }

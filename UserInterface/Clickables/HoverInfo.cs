@@ -8,37 +8,42 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
-    class HoverInfo : Clickable
+    public abstract class HoverInfo : Clickable
     {
-        Action _hoverFunction;
-        Texture2D _texture; //these need to supply their texture since there's no other way to determine which is which in the DrawHandler
+        protected List<String> _description;
 
-        public HoverInfo(Texture2D texture, Point xy, int width, int height, Action function)
+        public HoverInfo(Point xy, int width, int height, List<String> description)
         {
-            _texture = texture;
             _x = xy.X;
             _y = xy.Y;
             _width = width;
             _height = height;
-            _hoverFunction = function;
+            _description = description;
         }
 
-        //Getter
-        public Texture2D getTexture()
+        public virtual List<String> getDescription()
         {
-            return _texture;
+            return _description;
         }
         
         /// <summary>
         /// Handles what happens in logic when the user hovers over the object. Will
-        /// call the function passed to the constructor when the object was created.
+        /// pop up a description box giving more details about what it is.
         /// </summary>
         public override void onHover()
         {
             _hovered = true;
             Game1.setHoveredClickable(this);
+            //FIXIT implement in DrawHandler
+        }
 
-            _hoverFunction();
+        /// <summary>
+        /// Handles what happens when the user is no longer hovering over this object.
+        /// </summary>
+        public override void onHoverEnd()
+        {
+            _hovered = false;
+            Game1.setHoveredClickable(null);
         }
 
         /// <summary>

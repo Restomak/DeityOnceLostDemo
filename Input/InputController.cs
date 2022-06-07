@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DeityOnceLost.Input
 {
-    class InputController
+    public class InputController
     {
         MouseControl mouseControl;
         bool gameChanged;
@@ -34,21 +34,36 @@ namespace DeityOnceLost.Input
                     if (!boundingBox.Contains(mouseControl.getMousePosition()))
                     {
                         Game1.debugLog.Add("No longer hovering over " + currentHover.ToString());
-                        
-                        Game1.setHoveredClickable(null);
+
+                        currentHover.onHoverEnd();
                         currentHover = null;
                     }
                 }
                 
                 if (currentHover == null)
                 {
-                    currentHover = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
-
-                    if (currentHover != null)
+                    bool activeCardInFront = false;
+                    if (Game1.getActiveCard() != null)
                     {
-                        Game1.debugLog.Add("Now hovering over " + currentHover.ToString());
+                        UserInterface.Clickables.HandCard activeCard = Game1.getActiveCard();
+                        Rectangle boundingBox = new Rectangle(activeCard._x, activeCard._y, activeCard._width, activeCard._height);
 
-                        currentHover.onHover();
+                        if (boundingBox.Contains(mouseControl.getMousePosition()))
+                        {
+                            activeCardInFront = true;
+                        }
+                    }
+
+                    if (!activeCardInFront)
+                    {
+                        currentHover = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
+
+                        if (currentHover != null)
+                        {
+                            Game1.debugLog.Add("Now hovering over " + currentHover.ToString());
+
+                            currentHover.onHover();
+                        }
                     }
                 }
             }
@@ -58,8 +73,8 @@ namespace DeityOnceLost.Input
             if (mouseControl.isLeftClicked())
             {
                 UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
-
-                //FIXIT implement an actively clicked Clickable, like I have with hover?
+                
+                //FIXIT implement more
                 if (clicked != null)
                 {
                     clicked.onClick();
@@ -71,10 +86,35 @@ namespace DeityOnceLost.Input
                 }
             }
 
+            if (mouseControl.isRightClicked())
+            {
+                UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(activeUIs, mouseControl.getMousePosition());
+
+                //Unclick active card if you right click somewhere else
+                if (Game1.getActiveCard() != null)
+                {
+                    UserInterface.Clickables.HandCard activeCard = Game1.getActiveCard();
+                    Rectangle boundingBox = new Rectangle(activeCard._x, activeCard._y, activeCard._width, activeCard._height);
+                    
+                    if (!boundingBox.Contains(mouseControl.getMousePosition()))
+                    {
+                        Game1.setActiveCard(null);
+                        gameChanged = true;
+                    }
+                }
+
+                //FIXIT implement more
+            }
+
             if (gameChanged)
             {
                 Game1.updateBattleUI(); //Be sure to update the UI
             }
+        }
+
+        public Point getMousePos()
+        {
+            return mouseControl.getMousePosition();
         }
     }
 }
