@@ -26,6 +26,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         public static void setupChampionUI(Avatar champUI, Characters.Champion champ, UserInterface hoverUI)
         {
             hoverUI.resetClickables();
+            hoverUI.addClickableToFront(champUI);
 
             //HP bar
             Hovers.HPBar hpBar = new Hovers.HPBar(new Point(champUI._x + Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER, champUI._y - Drawing.DrawConstants.COMBAT_ENEMY_HP_BUFFER_TO_TOP - Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT),

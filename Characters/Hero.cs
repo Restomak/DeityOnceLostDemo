@@ -182,7 +182,7 @@ namespace DeityOnceLost.Characters
             {
                 if (!allDefaultAttackCards.Contains(card) && !allDefaultSkillCards.Contains(card))
                 {
-                    allDefaultOtherCards.Add(card); //FIXIT make sure there's no weird reference errors
+                    allDefaultOtherCards.Add(card);
                 }
             }
             int numDefaultCards = allDefaultCards.Count;

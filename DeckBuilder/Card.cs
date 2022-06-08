@@ -42,8 +42,8 @@ namespace DeityOnceLost.DeckBuilder
         /// </summary>
         public bool canPlay()
         {
-            //FIXIT check champion stats vs card cost
-            return true;
+            return (Game1.getChamp().getDivinity() >= getPlayCost(CardEnums.CostType.DIVINITY) && //Make sure there's enough Divinity to play the card
+                Game1.getChamp().getCurrentHP() >= getPlayCost(CardEnums.CostType.BLOOD)); //Make sure there's enough HP to play the card
         }
 
         //Setters

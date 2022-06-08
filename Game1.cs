@@ -167,7 +167,7 @@ namespace DeityOnceLost
             _battleUI.Add(_enemyHovers);
             _battleUI.Add(_enemies);
             _battleUI.Add(_championHovers);
-            _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
+            _championHovers.addClickableToFront(_championUI);
             _battleUI.Add(_cardPiles);
             _battleUI.Add(_combatUIButtons);
             _battleUI.Add(_resources);
@@ -316,6 +316,8 @@ namespace DeityOnceLost
             //Logs
             errorLog = new List<string>();
             debugLog = new List<string>();
+            errorLog.Add("ERROR LOG");
+            debugLog.Add("DEBUG LOG");
 
             //Structure stuff
             _drawHandler = new Drawing.DrawHandler();
@@ -368,7 +370,6 @@ namespace DeityOnceLost
             UserInterface.Clickables.Opponent.setupEnemyUI(_enemies, _combatHandler.getCurrentEncounter(), _enemyHovers);
 
             UserInterface.Clickables.Avatar.setupChampionUI(_championUI, _champ, _championHovers);
-            _championHovers.addClickableToFront(_championUI); //FIXIT temp until I add the party UserInterface
 
             _resources.resetClickables();
             _resources.addClickableToBack(new UserInterface.Clickables.Hovers.Resource(new Point(Drawing.DrawConstants.COMBAT_DIVINITY_X, Drawing.DrawConstants.COMBAT_DIVINITY_Y),
@@ -498,11 +499,11 @@ namespace DeityOnceLost
             {
                 //Change up the shader for the glow
                 shader_CardGlow.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawUI_LateActiveCard(_spriteBatch, _champ, true);
+                _drawHandler.drawCombat_HandCard(_spriteBatch, _activeCard, _champ, true);
 
                 //Set it back to the regular shader
                 shader_Regular.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawUI_LateActiveCard(_spriteBatch, _champ, false);
+                _drawHandler.drawCombat_HandCard(_spriteBatch, _activeCard, _champ, false);
             }
             if (_currentHover != null)
             {
@@ -522,7 +523,7 @@ namespace DeityOnceLost
 
                 //Set it back to the regular shader in case it was changed
                 shader_Regular.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawUI_LateHover(_spriteBatch, _champ);
+                _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
             }
 
 

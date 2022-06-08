@@ -72,8 +72,6 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
-            //FIXIT implement
-
             //First, check if there's an active HandCard (currently the only possibility but that may change in the future)
             if (Game1.getActiveCard() != null)
             {

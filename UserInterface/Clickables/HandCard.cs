@@ -86,8 +86,7 @@ namespace DeityOnceLost.UserInterface.Clickables
                 }
             }
 
-            if (Game1.getChamp().getDivinity() >= _card.getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY) && //Make sure there's enough Divinity to play the card
-                Game1.getChamp().getCurrentHP() >= _card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD)) //Make sure there's enough HP to play the card
+            if (_card.canPlay())
             {
                 Game1.setActiveCard(this);
             }

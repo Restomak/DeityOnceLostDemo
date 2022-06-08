@@ -10,19 +10,32 @@ namespace DeityOnceLost.Drawing
 {
     class DrawHandler
     {
-        //FIXIT split this into several smaller classes for readability
-
         public DrawHandler()
         {
 
         }
 
+        /// <summary>
+        /// Draws the space behind the UI. Aesthetics only.
+        /// </summary>
         public void drawCombat_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_functionality_uiSketch, new Rectangle(
                     0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
         }
 
+        /// <summary>
+        /// Draws the space in front of the UI. Aesthetics only
+        /// </summary>
+        public void drawCombat_Foreground(SpriteBatch sprites)
+        {
+            //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it. Maybe this can be Midground, who knows
+        }
+
+        /// <summary>
+        /// Receives as a parameter a list of every active UI element that should be on the
+        /// screen. Iterates through each from back to front so that front is on top.
+        /// </summary>
         public void drawUI(SpriteBatch sprites, List<UserInterface.UserInterface> activeUI, Characters.Champion champ)
         {
             //Backwards-iterate, since we're drawing from back of the screen to front
@@ -35,74 +48,26 @@ namespace DeityOnceLost.Drawing
                     drawInterface(sprites, current, champ);
                 }
             }
-            /*
-            //Divinity
-            sprites.DrawString(Game1.roboto_medium_24, champ.getDivinity() + "/" + Characters.Champion.DEFAULT_DIVINITY,
-                new Vector2(COMBAT_DIVINITY_AMOUNT_X, yFromBottom(COMBAT_DIVINITY_AMOUNT_Y_FROMBOTTOM, TEXT_24_HEIGHT)), Color.PowderBlue);
-            if (champ.getDivinity() == 0)
-            {
-                sprites.DrawString(Game1.roboto_medium_24, "0",
-                    new Vector2(COMBAT_DIVINITY_AMOUNT_X, yFromBottom(COMBAT_DIVINITY_AMOUNT_Y_FROMBOTTOM, TEXT_24_HEIGHT)), Color.Gray);
-            }
-
+            /* -old code-
             //temp top bar writing
             sprites.DrawString(Game1.roboto_medium_12, champ.getHero().getName() + " (" + champ.getHero().getPronoun_they() + "/" + champ.getHero().getPronoun_them() + ")", new Vector2(50, 10), Color.LawnGreen);
             */
 
             if (Game1.showDebugLog)
             {
-                for (int i = 0; i < Game1.debugLog.Count; i++)
-                {
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.debugLog[Game1.debugLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.debugLog[Game1.debugLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.debugLog[Game1.debugLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.debugLog[Game1.debugLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.debugLog[Game1.debugLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), Color.White);
-                }
+                drawGameLogs(sprites, Game1.debugLog, Color.White);
             }
             else if (Game1.showErrorLog)
             {
-                for (int i = 0; i < Game1.errorLog.Count; i++)
-                {
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-
-                    sprites.DrawString(Game1.roboto_bold_10, Game1.errorLog[Game1.errorLog.Count - 1 - i],
-                        new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), Color.Red);
-                }
+                drawGameLogs(sprites, Game1.errorLog, Color.Red);
             }
         }
 
         /// <summary>
-        /// Called twice and nearly last so that the currently-active HandCard is drawn on top. The first time it's
-        /// called, glow should be true - then the second time should be false so the regular card is drawn on top.
+        /// Determines the type of Clickable passed to it, and then sends it off to the
+        /// appropriate function for drawing.
         /// </summary>
-        public void drawUI_LateActiveCard(SpriteBatch sprites, Characters.Champion champ, bool glow)
-        {
-            drawCombat_HandCard(sprites, Game1.getActiveCard(), champ, glow);
-        }
-
-        /// <summary>
-        /// Called last so that the currently-hovered Clickable is drawn on top after any glows have been drawn
-        /// </summary>
-        public void drawUI_LateHover(SpriteBatch sprites, Characters.Champion champ)
-        {
-            drawInterface(sprites, Game1.getHoveredClickable(), champ);
-        }
-
-        private void drawInterface(SpriteBatch sprites, UserInterface.Clickable current, Characters.Champion champ)
+        public void drawInterface(SpriteBatch sprites, UserInterface.Clickable current, Characters.Champion champ)
         {
             if (current.GetType() == typeof(UserInterface.Clickables.HandCard))
             {
@@ -154,7 +119,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        private void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
+        public void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
         {
             String name = card.getCard().getName();
             List<String> description = card.getCard().getDescription(champ);
@@ -513,19 +478,12 @@ namespace DeityOnceLost.Drawing
 
 
 
-        public void drawCombatArea()
-        {
-            //Champion
-
-
-            //Party Members
-
-
-            //Enemies
-        }
-
-        
-
+        /// <summary>
+        /// My function for replicating shadowed text through the process of drawing the
+        /// text five times - four times behind offset by 1 x & y, as the shadows - and
+        /// one time in front. Text can be made to glow in this manner as well if black
+        /// is not the color sent as the shadow.
+        /// </summary>
         public void drawShadowedText(SpriteBatch sprites, SpriteFont font, String text, int textXFromCenter, int y, int height, Color textColor, Color shadowColor)
         {
             sprites.DrawString(font, text,
@@ -546,6 +504,10 @@ namespace DeityOnceLost.Drawing
                 yFromBottom(y, height)), textColor);
         }
 
+        /// <summary>
+        /// Calculates the dimensions of the info box and draws it at the corner of the
+        /// anchor (prefers top-right, but will adjust if that's off the screen edges).
+        /// </summary>
         public void drawInfoBox(SpriteBatch sprites, List<String> contents, Rectangle anchor)
         {
             //Point anchorPos = Game1.getInputController().getMousePos();
@@ -591,12 +553,35 @@ namespace DeityOnceLost.Drawing
             }
         }
 
+        public void drawGameLogs(SpriteBatch sprites, List<String> log, Color textColor)
+        {
+            for (int i = 0; i < log.Count; i++)
+            {
+                sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
+                    new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
+                    new Vector2(DrawConstants.DEBUG_LOG_X - 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
+                    new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i - 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
+                    new Vector2(DrawConstants.DEBUG_LOG_X + 1, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i + 1, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+
+                sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
+                    new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), textColor);
+            }
+        }
 
 
+
+        /// <summary>
+        /// Since y is calculated from the top of the screen, this function is to quickly
+        /// calculate the y from the bottom of the screen instead.
+        /// </summary>
         public static int yFromBottom(int y, int height)
         {
             return Game1.VIRTUAL_WINDOW_HEIGHT - y - height;
         }
+
         public static int xFromRight(int x, int width)
         {
             return Game1.VIRTUAL_WINDOW_WIDTH - x - width;

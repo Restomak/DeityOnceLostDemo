@@ -12,7 +12,7 @@ namespace DeityOnceLost.Characters
 
         public static void initializeNameList()
         {
-            //FIXIT make a better way to add names
+            //FIXIT make a better way to add names - probably loading from a text document so users can add their own names. still use something like this for legendaries/presets/etc
 
             heroNames.Add("Alard");
             heroNames.Add("Amanda");

@@ -34,7 +34,6 @@ namespace DeityOnceLost.UserInterface.Clickables
         {
             _hovered = true;
             Game1.setHoveredClickable(this);
-            //FIXIT implement in DrawHandler
         }
 
         /// <summary>

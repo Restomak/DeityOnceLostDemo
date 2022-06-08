@@ -226,7 +226,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public void handleChampionTurn()
         {
-            //FIXIT do the above, also make UIHandler class in Input folder
+            //FIXIT do the above
         }
 
         /// <summary>
