@@ -11,6 +11,13 @@ namespace DeityOnceLost
     /// </summary>
     public class Game1 : Game
     {
+        public enum gameState
+        {
+            title,
+            combat,
+            dungeon
+        }
+
         //Framework variables
         private static Game1 _currentGame;
         private static SpriteBatch _spriteBatch;
@@ -19,30 +26,20 @@ namespace DeityOnceLost
         private static Random rand = new Random();
         private static Input.WindowControl _windowControl;
         private static Input.InputController _inputController;
+        private static gameState _gameState;
         private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
 
         //User Interface variables
         private static List<UserInterface.UserInterface> _activeUI;
-        private static List<UserInterface.UserInterface> _battleUI;
-        private static UserInterface.UserInterface _handCards;
-        private static UserInterface.UserInterface _cardPiles;
-        private static UserInterface.UserInterface _combatUIButtons;
-        private static UserInterface.UserInterface _enemies;
-        private static UserInterface.UserInterface _enemyHovers;
-        private static UserInterface.Clickables.Avatar _championUI;
-        private static UserInterface.UserInterface _championHovers;
         private static UserInterface.Clickable _currentHover;
-        private static UserInterface.Clickables.HandCard _activeCard;
-        private static UserInterface.UserInterface _targets;
-        private static UserInterface.UserInterface _resources;
 
         //Game structure variables
         private static Drawing.DrawHandler _drawHandler;
         private static DeckBuilder.CardCollection _cardCollection_All;
         private static Combat.CombatHandler _combatHandler;
+        private static Dungeon.DungeonHandler _dungeonHandler;
         private static Characters.Hero _hero; //Will probably be initialized elsewhere later post demo
         private static Characters.Champion _champ; //Will probably be initialized elsewhere later post demo
-        bool test1 = false, test2 = false, test3 = false, test4 = false, test5 = false, test6 = false; //initial demo variables
 
         //Logs
         public static List<String> errorLog;
@@ -66,16 +63,6 @@ namespace DeityOnceLost
 
             _windowControl = new Input.WindowControl();
             _inputController = new Input.InputController();
-            _battleUI = new List<UserInterface.UserInterface>();
-            _handCards = new UserInterface.UserInterface();
-            _cardPiles = new UserInterface.UserInterface();
-            _combatUIButtons = new UserInterface.UserInterface();
-            _enemies = new UserInterface.UserInterface();
-            _enemyHovers = new UserInterface.UserInterface();
-            _championUI = new UserInterface.Clickables.Avatar();
-            _championHovers = new UserInterface.UserInterface();
-            _targets = new UserInterface.UserInterface();
-            _resources = new UserInterface.UserInterface();
         }
 
         //Framework getters
@@ -99,6 +86,14 @@ namespace DeityOnceLost
         {
             return _inputController;
         }
+        public static Combat.CombatHandler getCombatHandler()
+        {
+            return _combatHandler;
+        }
+        public static Dungeon.DungeonHandler getDungeonHandler()
+        {
+            return _dungeonHandler;
+        }
 
         
         //User Interface setters
@@ -106,45 +101,38 @@ namespace DeityOnceLost
         {
             _currentHover = clickable;
         }
-        public static void setActiveCard(UserInterface.Clickables.HandCard card)
-        {
-            _activeCard = card;
-
-            _targets.resetClickables(); //do it here instead of in setupTargets because it needs to reset even when deseslecting
-
-            //If selecting (and not unselecting), setup targets for that card
-            if (_activeCard != null)
-            {
-                UserInterface.Clickables.Target.setupTargets(_targets, _enemies/*, _party*/, _championUI, card.getCard().getTargetType());
-            }
-        }
-        public static void setEnemiesAsUI(UserInterface.UserInterface enemies)
-        {
-            _enemies = enemies;
-        }
-        public static void setTargets(UserInterface.UserInterface targets)
-        {
-            _targets = targets;
-        }
 
         //User Interface getters
         public static UserInterface.Clickable getHoveredClickable()
         {
             return _currentHover;
         }
-        public static UserInterface.Clickables.HandCard getActiveCard()
-        {
-            return _activeCard;
-        }
-        public static UserInterface.UserInterface getTargets()
-        {
-            return _targets;
-        }
 
         //Other useful getters
         public static Characters.Champion getChamp()
         {
             return _champ;
+        }
+
+        public static Point getPlayerLocationOnMap()
+        {
+            return _dungeonHandler.getPlayerLocation();
+        }
+
+
+
+        public static void enterNewCombat(Combat.Encounter newEncounter, Dungeon.Room currentRoom)
+        {
+            _gameState = gameState.combat;
+            _combatHandler.setNewEncounter(newEncounter);
+            _combatHandler.setCurrentRoom(currentRoom);
+            _combatHandler.combatStart(_activeUI);
+        }
+
+        public static void endCombat()
+        {
+            _gameState = gameState.dungeon;
+            _dungeonHandler.returnToDungeon(_activeUI);
         }
 
 
@@ -161,16 +149,7 @@ namespace DeityOnceLost
             _renderTarget = new RenderTarget2D(GraphicsDevice, VIRTUAL_WINDOW_WIDTH, VIRTUAL_WINDOW_HEIGHT, false, GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             this.IsMouseVisible = true;
 
-            //added in sorted fashion, top to bottom is front of the screen to back
-            _battleUI.Add(_targets);
-            _battleUI.Add(_handCards);
-            _battleUI.Add(_enemyHovers);
-            _battleUI.Add(_enemies);
-            _battleUI.Add(_championHovers);
-            _championHovers.addClickableToFront(_championUI);
-            _battleUI.Add(_cardPiles);
-            _battleUI.Add(_combatUIButtons);
-            _battleUI.Add(_resources);
+            _activeUI = new List<UserInterface.UserInterface>();
 
             base.Initialize();
         }
@@ -204,6 +183,13 @@ namespace DeityOnceLost
             pic_functionality_targeting_back_TR = Content.Load<Texture2D>("functionality art/targeting back - top right");
             pic_functionality_targeting_back_BR = Content.Load<Texture2D>("functionality art/targeting back - bottom right");
             pic_functionality_targeting_back_BL = Content.Load<Texture2D>("functionality art/targeting back - bottom left");
+            pic_functionality_mapRoom = Content.Load<Texture2D>("functionality art/Map Room");
+            pic_functionality_mapConnectorH = Content.Load<Texture2D>("functionality art/Map Open Connector H");
+            pic_functionality_mapConnectorV = Content.Load<Texture2D>("functionality art/Map Open Connector V");
+            pic_functionality_mapChampLoc = Content.Load<Texture2D>("functionality art/Map Champion Location");
+            pic_functionality_mapStoryIcon = Content.Load<Texture2D>("functionality art/Map Story Icon");
+            pic_functionality_mapCombatIcon = Content.Load<Texture2D>("functionality art/Map Combat Icon");
+            pic_functionality_mapExitIcon = Content.Load<Texture2D>("functionality art/Map Exit Icon");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -251,6 +237,9 @@ namespace DeityOnceLost
             shader_CardGlow = Content.Load<Effect>("Shaders/Card Glow");
             shader_DeckGlow = Content.Load<Effect>("Shaders/Deck Glow");
             shader_Experimental = Content.Load<Effect>("Shaders/Experimental");
+
+            //backgrounds
+            pic_background_map = Content.Load<Texture2D>("Backgrounds/Map Background");
         }
 
         /*____________________.Content Variables._____________________*/
@@ -259,7 +248,9 @@ namespace DeityOnceLost
             pic_functionality_intent_AoE, pic_functionality_intent_Attack, pic_functionality_intent_Buff, pic_functionality_intent_Debuff, pic_functionality_intent_Defend,
             pic_functionality_defenseIcon, pic_functionality_championSilhouette,
             pic_functionality_targeting_faded_TL, pic_functionality_targeting_faded_TR, pic_functionality_targeting_faded_BR, pic_functionality_targeting_faded_BL,
-            pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL;
+            pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL,
+            pic_functionality_mapRoom, pic_functionality_mapConnectorH, pic_functionality_mapConnectorV, pic_functionality_mapChampLoc, pic_functionality_mapStoryIcon,
+            pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
@@ -279,6 +270,9 @@ namespace DeityOnceLost
         
         //Shaders
         public static Effect shader_Regular, shader_CardGlow, shader_DeckGlow, shader_Experimental;
+
+        //Backgrounds
+        public static Texture2D pic_background_map;
 
 
         /// <summary>
@@ -325,55 +319,16 @@ namespace DeityOnceLost
             //Game stuff
             _cardCollection_All = new DeckBuilder.CardCollection();
             Characters.Names.initializeNameList();
-
-            //UI stuff
-            initializeCombatButtons();
+            _combatHandler = new Combat.CombatHandler();
+            _dungeonHandler = new Dungeon.DungeonHandler();
+            _gameState = gameState.title;
 
             //Temporary testing stuff
             _hero = new Characters.Hero();
             _champ = new Characters.Champion(_hero);
-            _combatHandler = new Combat.CombatHandler(_champ, null); //will have to adjust this later when doing it properly
-            _combatHandler.setNewEncounter(new Combat.Encounters.SingleFanblade());
-            _combatHandler.combatStart();
-            _activeUI = _battleUI;
-
-            _gameInitialized = true;
-        }
-
-        public static void initializeCombatButtons()
-        {
-            //End Turn button
-            UserInterface.Clickables.Button endTurnButton = new UserInterface.Clickables.Button(pic_functionality_endTurnButton,
-                new Point(VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_Y),
-                Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_HEIGHT, () =>
-                {
-                    //Make sure it's your turn
-                    if (_combatHandler.getTurn() == Combat.CombatHandler.combatTurn.CHAMPION)
-                    {
-                        _champ.getDeck().turnEndDiscardAll();
-                        _combatHandler.nextTurn();
-                    }
-                }, new List<String>() { "Ends your turn." });
-
-            _combatUIButtons.addClickableToFront(endTurnButton);
-        }
-        
-        public static void updateBattleUI()
-        {
-            UserInterface.Clickables.HandCard.setupHandUI(_handCards, _champ.getDeck().getHand());
+            _dungeonHandler.setupDungeon(_activeUI, new Dungeon.Locations.FirstDungeon());
             
-            _cardPiles.resetClickables();
-            _cardPiles.addClickableToFront(new UserInterface.Clickables.DeckOfCards(UserInterface.Clickables.DeckOfCards.typeOfDeck.REMOVEDPILE, _champ));
-            _cardPiles.addClickableToFront(new UserInterface.Clickables.DeckOfCards(UserInterface.Clickables.DeckOfCards.typeOfDeck.DISCARDPILE, _champ));
-            _cardPiles.addClickableToFront(new UserInterface.Clickables.DeckOfCards(UserInterface.Clickables.DeckOfCards.typeOfDeck.DRAWPILE, _champ));
-
-            UserInterface.Clickables.Opponent.setupEnemyUI(_enemies, _combatHandler.getCurrentEncounter(), _enemyHovers);
-
-            UserInterface.Clickables.Avatar.setupChampionUI(_championUI, _champ, _championHovers);
-
-            _resources.resetClickables();
-            _resources.addClickableToBack(new UserInterface.Clickables.Hovers.Resource(new Point(Drawing.DrawConstants.COMBAT_DIVINITY_X, Drawing.DrawConstants.COMBAT_DIVINITY_Y),
-                (int)roboto_bold_16.MeasureString(UserInterface.Clickables.Hovers.Resource.DIVINITY_SAMPLE_STRING).X, Drawing.DrawConstants.TEXT_16_HEIGHT, DeckBuilder.CardEnums.CostType.DIVINITY));
+            _gameInitialized = true;
         }
 
         /// <summary>
@@ -398,7 +353,7 @@ namespace DeityOnceLost
             //Input
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            _inputController.updateInput(_windowControl, _activeUI);
+            _inputController.updateInput(_windowControl, _activeUI, _gameState);
 
             //Debug log on screen
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.D))
@@ -418,53 +373,22 @@ namespace DeityOnceLost
 
 
             //Game Logic
-            _combatHandler.handleCombat();
+            switch (_gameState)
+            {
+                case gameState.combat:
+                    _combatHandler.handleCombat();
+                    break;
+                case gameState.dungeon:
+                    _dungeonHandler.handleDungeonLogic();
+                    break;
+            }
 
 
             /*____________________.Temporary testing input._____________________*/
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !test1)
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && _gameState == gameState.title)
             {
-                test1 = true;
-
-                //_champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
-                //updateBattleUI();
+                _gameState = gameState.dungeon;
             }
-            /*if (Keyboard.GetState().IsKeyDown(Keys.A) && !test2)
-            {
-                test2 = true;
-                _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
-                updateBattleUI();
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.B) && !test3)
-            {
-                test3 = true;
-                _champ.getDeck().turnEndDiscardAll();
-                updateBattleUI();
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.C) && !test4)
-            {
-                test4 = true;
-                _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
-                updateBattleUI();
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.D) && !test5)
-            {
-                test5 = true;
-                test6 = false;
-                _champ.getDeck().turnEndDiscardAll();
-                updateBattleUI();
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.E) && !test6)
-            {
-                test6 = true;
-                test5 = false;
-                _champ.getDeck().drawNumCards(DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START);
-                updateBattleUI();
-            }*/
-
-
-
-            //Logic
 
 
 
@@ -486,44 +410,52 @@ namespace DeityOnceLost
 
 
             //Most draw logic goes here
-            if (!test1) //demo stuff, will be removed later
+            if (_gameState == gameState.title) //demo stuff, will be removed later
+            {
+                _drawHandler.drawTitle_Background(_spriteBatch);
+            }
+            else if (_gameState == gameState.combat)
             {
                 _drawHandler.drawCombat_Background(_spriteBatch);
-            }
-            else
-            {
+
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
-            }
 
-            if (_activeCard != null)
-            {
-                //Change up the shader for the glow
-                shader_CardGlow.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawCombat_HandCard(_spriteBatch, _activeCard, _champ, true);
-
-                //Set it back to the regular shader
-                shader_Regular.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawCombat_HandCard(_spriteBatch, _activeCard, _champ, false);
-            }
-            if (_currentHover != null)
-            {
-                if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))
-                {
-                    //Doesn't glow using a shader atm
-                    _drawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
-                }
-                else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
-                    ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION &&
-                    ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                if (_combatHandler.getCombatUI().getActiveCard() != null)
                 {
                     //Change up the shader for the glow
-                    shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
-                    _drawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
-                }
+                    shader_CardGlow.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, true);
 
-                //Set it back to the regular shader in case it was changed
-                shader_Regular.CurrentTechnique.Passes[0].Apply();
-                _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
+                    //Set it back to the regular shader
+                    shader_Regular.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, false);
+                }
+                if (_currentHover != null)
+                {
+                    if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))
+                    {
+                        //Doesn't glow using a shader atm
+                        _drawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
+                    }
+                    else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
+                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION &&
+                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                    {
+                        //Change up the shader for the glow
+                        shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
+                        _drawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
+                    }
+
+                    //Set it back to the regular shader in case it was changed
+                    shader_Regular.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
+                }
+            }
+            else if (_gameState == gameState.dungeon)
+            {
+                _drawHandler.drawMap_Background(_spriteBatch);
+
+                _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
             }
 
 

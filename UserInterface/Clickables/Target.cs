@@ -73,9 +73,10 @@ namespace DeityOnceLost.UserInterface.Clickables
         public override void onClick()
         {
             //First, check if there's an active HandCard (currently the only possibility but that may change in the future)
-            if (Game1.getActiveCard() != null)
+            HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
+            if (activeCard != null)
             {
-                DeckBuilder.Card card = Game1.getActiveCard().getCard();
+                DeckBuilder.Card card = activeCard.getCard();
 
                 //Set the card's target to what was just clicked on
                 if (_clickableUnit.GetType() == typeof(Opponent))
@@ -103,10 +104,10 @@ namespace DeityOnceLost.UserInterface.Clickables
                 Game1.getChamp().getDeck().discardBecausePlayed(card);
 
                 //Update UI
-                Game1.updateBattleUI();
+                Game1.getCombatHandler().updateCombatUI();
 
                 //Set active card as null & remove targeting from current hover when finished
-                Game1.setActiveCard(null);
+                Game1.getCombatHandler().getCombatUI().setActiveCard(null);
                 Game1.setHoveredClickable(null);
             }
         }

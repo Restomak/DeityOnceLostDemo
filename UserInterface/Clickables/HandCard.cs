@@ -42,7 +42,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         public override void onHover()
         {
             //Cannot become hovered if another card is active
-            if (Game1.getActiveCard() == null)
+            if (Game1.getCombatHandler().getCombatUI().getActiveCard() == null)
             {
                 _hovered = true;
                 Game1.setHoveredClickable(this);
@@ -63,7 +63,7 @@ namespace DeityOnceLost.UserInterface.Clickables
             _hovered = false;
             Game1.setHoveredClickable(null);
 
-            if (Game1.getActiveCard() != this)
+            if (Game1.getCombatHandler().getCombatUI().getActiveCard() != this)
             {
                 deactivate();
             }
@@ -77,18 +77,20 @@ namespace DeityOnceLost.UserInterface.Clickables
             Game1.debugLog.Add("HandCard " + _positionInHand + " (" + _card.getName() + ") now active.");
 
             //Deactivate current active card first
-            if (Game1.getActiveCard() != null)
+            HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
+            if (activeCard != null)
             {
-                if (Game1.getActiveCard() != this)
+                if (activeCard != this)
                 {
-                    Game1.getActiveCard().deactivate();
+                    activeCard.deactivate();
                     onHover();
                 }
+                activeCard.deactivate();
             }
 
             if (_card.canPlay())
             {
-                Game1.setActiveCard(this);
+                Game1.getCombatHandler().getCombatUI().setActiveCard(this);
             }
         }
 
@@ -98,7 +100,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public void deactivate()
         {
-            Game1.setActiveCard(null);
+            Game1.getCombatHandler().getCombatUI().setActiveCard(null);
 
             if (Game1.getHoveredClickable() == this)
             {

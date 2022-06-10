@@ -72,6 +72,18 @@
     <Compile Include="DeckBuilder\IDefendingCard.cs" />
     <Compile Include="Drawing\DrawConstants.cs" />
     <Compile Include="Drawing\DrawHandler.cs" />
+    <Compile Include="Dungeon\Connector.cs" />
+    <Compile Include="Dungeon\Connectors\SeeNotTraverse.cs" />
+    <Compile Include="Dungeon\Dungeon.cs" />
+    <Compile Include="Dungeon\DungeonHandler.cs" />
+    <Compile Include="Dungeon\Floor.cs" />
+    <Compile Include="Dungeon\Floors\FirstDungeon_Beginning.cs" />
+    <Compile Include="Dungeon\Locations\FirstDungeon.cs" />
+    <Compile Include="Dungeon\Room.cs" />
+    <Compile Include="Dungeon\Rooms\CombatRoom.cs" />
+    <Compile Include="Dungeon\Rooms\ExitRoom.cs" />
+    <Compile Include="Dungeon\Rooms\StartRoom.cs" />
+    <Compile Include="Dungeon\Rooms\StoryRoom.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input\GamepadControl.cs" />
     <Compile Include="Input\InputController.cs" />
@@ -87,10 +99,13 @@
     <Compile Include="UserInterface\Clickables\Hovers\EnemyIntent.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\HPBar.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\Resource.cs" />
+    <Compile Include="UserInterface\Clickables\MapGrid.cs" />
     <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
     <Compile Include="UserInterface\Clickables\HoverInfo.cs" />
     <Compile Include="UserInterface\Clickables\Target.cs" />
+    <Compile Include="UserInterface\CombatUI.cs" />
+    <Compile Include="UserInterface\MapUI.cs" />
     <Compile Include="UserInterface\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Characters\Traits\" />
+    <Folder Include="Dungeon\Subsections\" />
     <Folder Include="Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

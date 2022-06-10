@@ -143,9 +143,10 @@ namespace DeityOnceLost.UserInterface.Clickables
         public override void onClick()
         {
             //Deactivate current active card first
-            if (Game1.getActiveCard() != null)
+            HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
+            if (activeCard != null)
             {
-                Game1.getActiveCard().deactivate();
+                activeCard.deactivate();
             }
 
             //FIXIT implement, regardless of the deck, it pops up a new UserInterface that is a list of the cards in the deck

@@ -49,28 +49,32 @@ namespace DeityOnceLost.UserInterface.Clickables
             for (int i = 0; i < encounter.getEnemies().Count; i++)
             {
                 Combat.Enemy currentEnemy = encounter.getEnemies()[i];
-                Opponent opponent = new Opponent(currentEnemy, i);
-                
-                //FIXIT the actual Encounters subclasses should be setting up enemy spacing (x & y) so it looks better
-                //opponent._y = encounter.getEnemyY(i);
-                //opponent._x = encounter.getEnemyX(i);
 
-                //Temp: for testing
-                if (!currentEnemy._isFlyer)
+                if (!currentEnemy.getDowned())
                 {
-                    opponent._y = Drawing.DrawConstants.COMBAT_ENEMY_Y;
-                }
-                else
-                {
-                    opponent._y = Drawing.DrawConstants.COMBAT_FLYING_ENEMY_Y;
-                }
-                opponent._x = Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_WIDTH / 2 - currentEnemy._width / 2;
+                    Opponent opponent = new Opponent(currentEnemy, i);
 
-                opponent._width = currentEnemy._width;
-                opponent._height = currentEnemy._height;
-                
-                ui.addClickableToBack(opponent); //the first enemy is closest to front, so always add behind the line
-                setupEnemyHoversUI(hoverUI, opponent);
+                    //FIXIT the actual Encounters subclasses should be setting up enemy spacing (x & y) so it looks better
+                    //opponent._y = encounter.getEnemyY(i);
+                    //opponent._x = encounter.getEnemyX(i);
+
+                    //Temp: for testing
+                    if (!currentEnemy._isFlyer)
+                    {
+                        opponent._y = Drawing.DrawConstants.COMBAT_ENEMY_Y;
+                    }
+                    else
+                    {
+                        opponent._y = Drawing.DrawConstants.COMBAT_FLYING_ENEMY_Y;
+                    }
+                    opponent._x = Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_WIDTH / 2 - currentEnemy._width / 2;
+
+                    opponent._width = currentEnemy._width;
+                    opponent._height = currentEnemy._height;
+
+                    ui.addClickableToBack(opponent); //the first enemy is closest to front, so always add behind the line
+                    setupEnemyHoversUI(hoverUI, opponent);
+                }
             }
         }
 

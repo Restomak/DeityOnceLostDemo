@@ -21,11 +21,14 @@ namespace DeityOnceLost.Characters
             heroNames.Add("Anthon");
             heroNames.Add("Arled");
             heroNames.Add("Atham");
+            heroNames.Add("Ati");
             heroNames.Add("Atril");
+            heroNames.Add("Cassandra");
             heroNames.Add("Cassi");
             heroNames.Add("Cece");
             heroNames.Add("Drichye");
             heroNames.Add("Efrix");
+            heroNames.Add("Elend");
             heroNames.Add("Eleth");
             heroNames.Add("Ellet");
             heroNames.Add("Elyn");
@@ -48,7 +51,9 @@ namespace DeityOnceLost.Characters
             heroNames.Add("Kater");
             heroNames.Add("Kathon");
             heroNames.Add("Katie");
+            heroNames.Add("Kelsier");
             heroNames.Add("Lene");
+            heroNames.Add("Leras");
             heroNames.Add("Lesym");
             heroNames.Add("Liz");
             heroNames.Add("Maly");
@@ -67,9 +72,11 @@ namespace DeityOnceLost.Characters
             heroNames.Add("Ryany");
             heroNames.Add("Sabeth");
             heroNames.Add("Sane");
+            heroNames.Add("Sazed");
             heroNames.Add("Stomund");
             heroNames.Add("Suse");
             heroNames.Add("Thomes");
+            heroNames.Add("Vin");
             heroNames.Add("Violet");
             heroNames.Add("Vyncent");
             heroNames.Add("Willex");

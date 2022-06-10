@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
-    class CombatHandler
+    public class CombatHandler
     {
-        public const int MAX_PARTY_MEMBERS = 3; //will get moved into RunHandler when I eventually make that, since this is just combat
+        public const int MAX_PARTY_MEMBERS = 3; //will get moved into party stuff when I eventually make that, since this is just combat
         public void addToParty(PartyMember newMember)
         {
             if (_partyMembers == null)
@@ -29,7 +29,7 @@ namespace DeityOnceLost.Combat
                 }
                 Game1.errorLog.Add(log);
             }
-        }  //will get moved into RunHandler when I eventually make that, since this is just combat
+        }  //will get moved into party stuff when I eventually make that, since this is just combat
 
         public enum combatTurn
         {
@@ -42,16 +42,21 @@ namespace DeityOnceLost.Combat
             ROUND_END
         }
 
+        UserInterface.CombatUI _combatUI;
         Characters.Champion _champ;
         List<PartyMember> _partyMembers;
         Encounter _currentEncounter;
         combatTurn _turn;
+        Dungeon.Room _currentRoom;
 
-        public CombatHandler(Characters.Champion champ, List<PartyMember> party)
+        public CombatHandler()
         {
+            _combatUI = new UserInterface.CombatUI(this);
+
             _turn = combatTurn.ROUND_START;
-            _champ = champ;
-            if (party == null || party.Count <= 3)
+            _champ = Game1.getChamp();
+            //FIXIT implement party stuff
+            /*if (party == null || party.Count <= 3)
             {
                 _partyMembers = party;
             }
@@ -62,7 +67,7 @@ namespace DeityOnceLost.Combat
                 _partyMembers.Add(party[0]);
                 _partyMembers.Add(party[1]);
                 _partyMembers.Add(party[2]);
-            }
+            }*/
         }
 
         //Setters
@@ -93,6 +98,10 @@ namespace DeityOnceLost.Combat
         {
             _turn = turn;
         }
+        public void setCurrentRoom(Dungeon.Room currentRoom)
+        {
+            _currentRoom = currentRoom;
+        }
 
         //Getters
         public Characters.Champion getChamp()
@@ -111,14 +120,24 @@ namespace DeityOnceLost.Combat
         {
             return _turn;
         }
+        public UserInterface.CombatUI getCombatUI()
+        {
+            return _combatUI;
+        }
 
 
 
         /// <summary>
         /// Make sure setNewEncounter is called first so that the encounter's enemies are properly set up
         /// </summary>
-        public void combatStart()
+        public void combatStart(List<UserInterface.UserInterface> activeUI)
         {
+            Game1.debugLog.Add("Beginning combat");
+
+            _combatUI.setAsActiveUI(activeUI);
+
+            _champ = Game1.getChamp();
+
             _turn = combatTurn.ROUND_START;
             _champ.resetDivinity();
             _champ.resetDefense();
@@ -134,6 +153,59 @@ namespace DeityOnceLost.Combat
             _champ.getDeck().start();
         }
 
+        /// <summary>
+        /// Main game loop method for handling combat. Whether or not combat is over gets handled here (except for menu quitting, etc).
+        /// </summary>
+        public void handleCombat()
+        {
+            //Check if the combat needs to end
+            if (_champ.getDowned())
+            {
+                //FIXIT include party member swapping mechanics when they're implemented instead of immediately ending combat here
+                endCombat(false);
+            }
+            else if (_currentEncounter.areAllEnemiesDefeated())
+            {
+                endCombat();
+            }
+            
+            //Perform turn logic
+            switch (_turn)
+            {
+                case combatTurn.ROUND_START:
+                    _champ.getDeck().drawNumCards(_champ.getCardDraw(true)); //Draw new cards at turn start, and set the champion's card draw back to normal
+                    nextTurn();
+                    break;
+                case combatTurn.CHAMPION:
+                    //Nothing much needs to be called here, since it's all handled by the UI. Even the End Turn button that switches to the next turn is handled by the UI
+                    break;
+                case combatTurn.PARTY:
+                    nextTurn(); //FIXIT when party members are added, do their logic. remember to ADD PARTY CONTROL BUTTONS/COMMANDS for the player
+                    break;
+                case combatTurn.ENEMIES:
+                    handleEnemyTurn();
+                    nextTurn(); //FIXIT this will disappear when things get done one by one visually (animations, etc)
+                    break;
+                case combatTurn.KARMA:
+                    nextTurn(); //don't have anything for karma turns yet, so skip
+                    break;
+                case combatTurn.VOID:
+                    nextTurn(); //don't have anything for void turns yet, so skip
+                    break;
+                case combatTurn.ROUND_END:
+                    //Stuff that happens at the end of a round goes here
+                    nextTurn();
+                    break;
+            }
+
+            //FIXIT handle whether or not combat has ended
+        }
+
+        /// <summary>
+        /// Handles what happens when handleCombat wants to begin the next turn. Only things that happen in an instant should be
+        /// handled here; anything with an animation or something that needs to happen gradually should be handled in handleCombat
+        /// or any other function it will call more than once per turn transition.
+        /// </summary>
         public void nextTurn()
         {
             switch (_turn)
@@ -142,9 +214,8 @@ namespace DeityOnceLost.Combat
                     _turn = combatTurn.CHAMPION;
                     _champ.resetDivinity();
                     _champ.resetDefense();
-                    _champ.getDeck().drawNumCards(_champ.getCardDraw(true)); //Draw new cards at turn start, and set the champion's card draw back to normal
                     _currentEncounter.determineIntents(_champ, _partyMembers);
-                    Game1.updateBattleUI();
+                    updateCombatUI();
                     break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
@@ -176,60 +247,6 @@ namespace DeityOnceLost.Combat
         }
 
         /// <summary>
-        /// Main game loop method for handling combat. Whether or not combat is over gets handled here (except for menu quitting, etc).
-        /// </summary>
-        public void handleCombat()
-        {
-            if (_champ.getDowned())
-            {
-                //FIXIT include party member swapping mechanics when they're implemented
-                endCombat(true);
-            }
-            else if (_currentEncounter.areAllEnemiesDefeated())
-            {
-                endCombat();
-            }
-
-            switch (_turn)
-            {
-                case combatTurn.ROUND_START:
-                    nextTurn();
-                    break;
-                case combatTurn.CHAMPION:
-                    handleChampionTurn();
-                    break;
-                case combatTurn.PARTY:
-                    nextTurn(); //FIXIT when party members are added, do their logic. remember to ADD PARTY CONTROL BUTTONS/COMMANDS for the player
-                    break;
-                case combatTurn.ENEMIES:
-                    handleEnemyTurn();
-                    nextTurn(); //FIXIT this will disappear when things get done one by one visually (animations, etc)
-                    break;
-                case combatTurn.KARMA:
-                    nextTurn(); //don't have anything for karma turns yet, so skip
-                    break;
-                case combatTurn.VOID:
-                    nextTurn(); //don't have anything for void turns yet, so skip
-                    break;
-                case combatTurn.ROUND_END:
-                    //Stuff that happens at the end of a round goes here
-                    nextTurn();
-                    break;
-            }
-
-            //FIXIT handle whether or not combat has ended
-        }
-
-        /// <summary>
-        /// Main game loop method for handling champion's turn during combat. Checks in with the UIHandler until the End Turn button is
-        /// pressed or something else forces the champion's turn to end.
-        /// </summary>
-        public void handleChampionTurn()
-        {
-            //FIXIT do the above
-        }
-
-        /// <summary>
         /// Main game loop for handling the enemies' turn during combat. Checks _currentEncounter's enemies & performs logic based on their AI
         /// </summary>
         public void handleEnemyTurn()
@@ -237,13 +254,29 @@ namespace DeityOnceLost.Combat
             //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
             for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
             {
-                _currentEncounter.getEnemies()[i].getAIPattern().doTurnAction(_champ, _partyMembers);
+                if (!_currentEncounter.getEnemies()[i].getDowned())
+                {
+                    _currentEncounter.getEnemies()[i].getAIPattern().doTurnAction(_champ, _partyMembers);
+                }
             }
         }
 
-        public void endCombat(bool runOver = false)
+        public void endCombat(bool enemiesDefeated = true)
         {
-            //FIXIT make this function do anything when runs are implemented
+            if (enemiesDefeated)
+            {
+                _currentRoom.finishTopContent();
+                Game1.endCombat();
+            }
+            else //the champion has died and no party members can replace them
+            {
+
+            }
+        }
+
+        public void updateCombatUI()
+        {
+            _combatUI.updateCombatUI(this);
         }
     }
 }

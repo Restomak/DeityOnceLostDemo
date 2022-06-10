@@ -98,12 +98,15 @@ namespace DeityOnceLost.UserInterface
                 return hoveredClickable;
             }
 
-            for (int uiI = 0; uiI < uiList.Count; uiI++)
+            if (uiList != null)
             {
-                Clickable returnClickable = uiList[uiI].getFrontClickable(mousePos);
-                if (returnClickable != null)
+                for (int uiI = 0; uiI < uiList.Count; uiI++)
                 {
-                    return returnClickable;
+                    Clickable returnClickable = uiList[uiI].getFrontClickable(mousePos);
+                    if (returnClickable != null)
+                    {
+                        return returnClickable;
+                    }
                 }
             }
 

@@ -11,14 +11,14 @@ namespace DeityOnceLost.Characters
         List<DeckBuilder.Card> _defaultCards;
         String _name, _they, _them, _their, _theirs;
         int _maxHP;
-        bool dead;
+        bool _dead;
 
         //stats
         int _defaultStrength, _defaultDexterity, _defaultResilience;
 
         public Hero()
         {
-            dead = false;
+            _dead = false;
 
             _defaultCards = new List<DeckBuilder.Card>();
 
@@ -87,7 +87,7 @@ namespace DeityOnceLost.Characters
         }
         public bool isAlive()
         {
-            return !dead;
+            return !_dead;
         }
         public int getMaxHP()
         {
@@ -101,11 +101,11 @@ namespace DeityOnceLost.Characters
         //Playing with life
         public void kill()
         {
-            dead = true;
+            _dead = true;
         }
         public void bringBackToLife()
         {
-            dead = false;
+            _dead = false;
         }
 
 

@@ -17,7 +17,7 @@ namespace DeityOnceLost.Input
             mouseControl = new MouseControl();
         }
 
-        public void updateInput(WindowControl windowControl, List<UserInterface.UserInterface> activeUIs)
+        public void updateInput(WindowControl windowControl, List<UserInterface.UserInterface> activeUIs, Game1.gameState gameState)
         {
             /*____________________.Setup._____________________*/
 
@@ -63,7 +63,9 @@ namespace DeityOnceLost.Input
                 if (clicked != null)
                 {
                     //Check if we already have a HandCard active, and if so, make sure it's not the same one
-                    if (Game1.getActiveCard() == null || clicked.GetType() != typeof(UserInterface.Clickables.HandCard) || clicked != Game1.getActiveCard())
+                    UserInterface.Clickables.HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
+                    if (gameState != Game1.gameState.combat ||
+                        gameState == Game1.gameState.combat && (activeCard == null || clicked.GetType() != typeof(UserInterface.Clickables.HandCard) || clicked != activeCard))
                     {
                         clicked.onClick();
                         gameChanged = true;
@@ -78,9 +80,10 @@ namespace DeityOnceLost.Input
                 UserInterface.Clickable clicked = UserInterface.UserInterface.getFrontClickableFromUIList(Game1.getHoveredClickable(), activeUIs, mouseControl.getMousePosition());
 
                 //Unclick active card if you right click somewhere else
-                if (Game1.getActiveCard() != null && !Game1.getActiveCard().mouseInBoundaries(mouseControl.getMousePosition()))
+                UserInterface.Clickables.HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
+                if (activeCard != null && !activeCard.mouseInBoundaries(mouseControl.getMousePosition()))
                 {
-                    Game1.setActiveCard(null);
+                    Game1.getCombatHandler().getCombatUI().setActiveCard(null);
                     gameChanged = true;
                 }
 
@@ -93,7 +96,15 @@ namespace DeityOnceLost.Input
 
             if (gameChanged)
             {
-                Game1.updateBattleUI(); //Be sure to update the UI
+                switch (gameState)
+                {
+                    case Game1.gameState.combat:
+                        Game1.getCombatHandler().updateCombatUI();
+                        break;
+                    case Game1.gameState.dungeon:
+                        Game1.getDungeonHandler().updateMapUI();
+                        break;
+                }
             }
         }
 

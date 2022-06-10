@@ -13,8 +13,8 @@ namespace DeityOnceLost.Characters
             sheHerHerHers,
             heHimHisHis,
             theyThemTheirTheirs,
-            xeXirXem,
-            VeVer
+            xeXirXirXirs,
+            VeVerVerVers
         }
 
         public const String THEY_SHEHER = "She";

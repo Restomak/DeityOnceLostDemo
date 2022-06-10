@@ -18,10 +18,18 @@ namespace DeityOnceLost.Drawing
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
         /// </summary>
-        public void drawCombat_Background(SpriteBatch sprites)
+        public void drawTitle_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_functionality_uiSketch, new Rectangle(
                     0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+        }
+
+        /// <summary>
+        /// Draws the space behind the UI. Aesthetics only.
+        /// </summary>
+        public void drawCombat_Background(SpriteBatch sprites)
+        {
+            //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it.
         }
 
         /// <summary>
@@ -33,25 +41,41 @@ namespace DeityOnceLost.Drawing
         }
 
         /// <summary>
+        /// Draws the space behind the UI. Aesthetics only.
+        /// </summary>
+        public void drawMap_Background(SpriteBatch sprites)
+        {
+            sprites.Draw(Game1.pic_background_map, new Rectangle(
+                    0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+        }
+
+        /// <summary>
+        /// Draws the space in front of the UI. Aesthetics only
+        /// </summary>
+        public void drawMap_Foreground(SpriteBatch sprites)
+        {
+            //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it. Maybe this can be Midground, who knows
+        }
+
+        /// <summary>
         /// Receives as a parameter a list of every active UI element that should be on the
         /// screen. Iterates through each from back to front so that front is on top.
         /// </summary>
         public void drawUI(SpriteBatch sprites, List<UserInterface.UserInterface> activeUI, Characters.Champion champ)
         {
             //Backwards-iterate, since we're drawing from back of the screen to front
-            for (int ui = activeUI.Count - 1; ui >= 0; ui--)
+            if (activeUI != null)
             {
-                for (int ci = activeUI[ui].getClickables().Count - 1; ci >= 0; ci--)
+                for (int ui = activeUI.Count - 1; ui >= 0; ui--)
                 {
-                    UserInterface.Clickable current = activeUI[ui].getClickables()[ci];
+                    for (int ci = activeUI[ui].getClickables().Count - 1; ci >= 0; ci--)
+                    {
+                        UserInterface.Clickable current = activeUI[ui].getClickables()[ci];
 
-                    drawInterface(sprites, current, champ);
+                        drawInterface(sprites, current, champ);
+                    }
                 }
             }
-            /* -old code-
-            //temp top bar writing
-            sprites.DrawString(Game1.roboto_medium_12, champ.getHero().getName() + " (" + champ.getHero().getPronoun_they() + "/" + champ.getHero().getPronoun_them() + ")", new Vector2(50, 10), Color.LawnGreen);
-            */
 
             if (Game1.showDebugLog)
             {
@@ -113,6 +137,10 @@ namespace DeityOnceLost.Drawing
             {
                 drawResource(sprites, (UserInterface.Clickables.Hovers.Resource)current);
             }
+            else if (current.GetType() == typeof(UserInterface.Clickables.MapGrid))
+            {
+                drawMapGrid(sprites, (UserInterface.Clickables.MapGrid)current);
+            }
             else
             {
                 Game1.errorLog.Add("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
@@ -161,12 +189,12 @@ namespace DeityOnceLost.Drawing
 
             //Draw card background
             sprites.Draw(cardFromRarity, new Rectangle(card._x, yFromBottom(card._y, card._height), card._width, card._height), Color.White);
-            
+
             //Draw card art
 
 
             //Draw card text
-            if (card == Game1.getActiveCard() || card == Game1.getHoveredClickable())
+            if (card == Game1.getCombatHandler().getCombatUI().getActiveCard() || card == Game1.getHoveredClickable())
             {
                 //Nme
                 sprites.DrawString(Game1.roboto_bold_20, name,
@@ -473,6 +501,142 @@ namespace DeityOnceLost.Drawing
             if (resource == Game1.getHoveredClickable())
             {
                 drawInfoBox(sprites, resource.getDescription(), new Rectangle(resource._x, resource._y, resource._width, resource._height));
+            }
+        }
+
+        public void drawMapGrid(SpriteBatch sprites, UserInterface.Clickables.MapGrid room)
+        {
+            if (room.getRoom().isRevealed())
+            {
+                sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.Black);
+
+                List<Dungeon.Room.roomContents> roomContents = room.getRoom().getRoomContents();
+                if (roomContents != null)
+                {
+                    int centering = -((roomContents.Count + 1) % 2);
+                    bool centerSwitched = false;
+                    for (int i = 0; i < roomContents.Count; i++)
+                    {
+                        if (!centerSwitched && i > roomContents.Count / 2)
+                        {
+                            centering = -centering;
+                            centerSwitched = true;
+                        }
+
+                        switch (roomContents[i])
+                        {
+                            case Dungeon.Room.roomContents.story:
+                                sprites.Draw(Game1.pic_functionality_mapStoryIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.White);
+                                break;
+                            case Dungeon.Room.roomContents.combat:
+                                sprites.Draw(Game1.pic_functionality_mapCombatIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
+                                break;
+                            case Dungeon.Room.roomContents.exit:
+                                sprites.Draw(Game1.pic_functionality_mapExitIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
+                                break;
+                        }
+                    }
+                }
+
+                if (Game1.getDungeonHandler().getPlayerLocation() == room.getGridLocation())
+                {
+                    sprites.Draw(Game1.pic_functionality_mapChampLoc, new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2,
+                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT),
+                    DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.White);
+                }
+
+                if (Game1.getHoveredClickable() == room)
+                {
+                    if (room.getHighlighted())
+                    {
+                        sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue);
+                    }
+
+                    //FIXIT info box for room contents?
+                }
+
+                //North connector
+                if (room.getRoom().getConnector(Dungeon.Connector.direction.north) != null)
+                {
+                    drawConnector(sprites, room, Dungeon.Connector.direction.north);
+                }
+                //East connector
+                if (room.getRoom().getConnector(Dungeon.Connector.direction.east) != null)
+                {
+                    drawConnector(sprites, room, Dungeon.Connector.direction.east);
+                }
+                //South connector
+                if (room.getRoom().getConnector(Dungeon.Connector.direction.south) != null)
+                {
+                    drawConnector(sprites, room, Dungeon.Connector.direction.south);
+                }
+                //West connector
+                if (room.getRoom().getConnector(Dungeon.Connector.direction.west) != null)
+                {
+                    drawConnector(sprites, room, Dungeon.Connector.direction.west);
+                }
+            }
+            else if (room.getRoom().isPartialRevealed())
+            {
+                sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.LightGray);
+            }
+        }
+
+        public void drawConnector(SpriteBatch sprites, UserInterface.Clickables.MapGrid room, Dungeon.Connector.direction dir)
+        {
+            //Currently every connector will be drawn twice unless the room on the other side isn't fully revealed, but that's fine for now
+
+            Dungeon.Connector connector = room.getRoom().getConnector(dir);
+
+            int xOffset = 0;
+            int yOffset = 0;
+            int width = DrawConstants.MAP_GRIDSPACE_WIDTH;
+            int height = DrawConstants.MAP_GRIDSPACE_HEIGHT;
+            Texture2D connectorTexture = Game1.pic_functionality_mapConnectorH;
+
+            switch (dir)
+            {
+                case Dungeon.Connector.direction.north:
+                    yOffset = DrawConstants.MAP_GRIDSPACE_HEIGHT;
+                    height = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    connectorTexture = Game1.pic_functionality_mapConnectorV;
+                    break;
+                case Dungeon.Connector.direction.east:
+                    xOffset = DrawConstants.MAP_GRIDSPACE_WIDTH;
+                    width = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    break;
+                case Dungeon.Connector.direction.south:
+                    yOffset = -DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    height = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    connectorTexture = Game1.pic_functionality_mapConnectorV;
+                    break;
+                case Dungeon.Connector.direction.west:
+                    xOffset = -DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    width = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    break;
+            }
+
+            switch (connector.getConnectorType())
+            {
+                case Dungeon.Connector.connectorType.open:
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Black);
+                    break;
+                case Dungeon.Connector.connectorType.none:
+                    //Draw nothing
+                    break;
+                default:
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Red);
+                    Game1.errorLog.Add("drawConnector connectorType is not yet implemented for drawing: " + connector.getConnectorType().ToString());
+                    break;
             }
         }
 

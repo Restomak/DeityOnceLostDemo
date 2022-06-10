@@ -92,6 +92,15 @@ namespace DeityOnceLost.Drawing
 
 
 
+        public const int MAP_GRIDSPACE_WIDTH = 64;
+        public const int MAP_GRIDSPACE_HEIGHT = 64;
+        public const int MAP_GRID_CONNECTOR_SPACING = 32;
+
+        public const int MAP_ROOM_CONTENTS_ICON_WIDTH = 32;
+        public const int MAP_ROOM_CONTENTS_ICON_HEIGHT = 32;
+
+
+
         public const int TEXT_8_HEIGHT = 12;
         public const int TEXT_10_HEIGHT = 14;
         public const int TEXT_11_HEIGHT = 15;
