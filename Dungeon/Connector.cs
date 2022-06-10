@@ -35,6 +35,7 @@ namespace DeityOnceLost.Dungeon
             open,
             closed,
             locked,
+            window,
             none
         }
 

@@ -105,6 +105,8 @@ namespace DeityOnceLost.Input
                         Game1.getDungeonHandler().updateMapUI();
                         break;
                 }
+
+                Game1.updateTopBar();
             }
         }
 

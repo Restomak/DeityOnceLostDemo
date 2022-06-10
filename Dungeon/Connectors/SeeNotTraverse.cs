@@ -12,7 +12,7 @@ namespace DeityOnceLost.Dungeon.Connectors
         {
             _passageGained = false;
             _blocksScouting = false;
-            _connectorType = connectorType.none;
+            _connectorType = connectorType.window;
         }
     }
 }

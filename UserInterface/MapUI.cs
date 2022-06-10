@@ -31,6 +31,8 @@ namespace DeityOnceLost.UserInterface
             {
                 activeUI.Add(_wholeUI[i]);
             }
+            
+            Game1.addTopBar();
         }
 
 
@@ -40,6 +42,8 @@ namespace DeityOnceLost.UserInterface
             _rooms.resetClickables();
 
             Clickables.MapGrid.setupRoomUI(_rooms, dungeonHandler.getCurrentFloor().getRooms());
+
+            Game1.updateTopBar();
         }
     }
 }

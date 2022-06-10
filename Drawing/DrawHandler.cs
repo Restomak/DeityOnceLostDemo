@@ -10,10 +10,36 @@ namespace DeityOnceLost.Drawing
 {
     class DrawHandler
     {
+        int _pulse, _pulseAtMax;
+        double _pulseIncrease;
+
         public DrawHandler()
         {
-
+            _pulse = 0;
+            _pulseAtMax = 0;
+            _pulseIncrease = DrawConstants.PULSE_START;
         }
+
+        public void pulse()
+        {
+            _pulse += (int)(_pulseIncrease + DrawConstants.PULSE_BOOST);
+            _pulseIncrease += DrawConstants.PULSE_STEP;
+
+            if (_pulse >= DrawConstants.PULSE_MAX)
+            {
+                _pulse = DrawConstants.PULSE_MAX;
+                _pulseAtMax += 1;
+
+                if (_pulseAtMax > DrawConstants.PULSE_TIME_AT_MAX)
+                {
+                    _pulse = 0;
+                    _pulseAtMax = 0;
+                    _pulseIncrease = DrawConstants.PULSE_START;
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
@@ -21,7 +47,7 @@ namespace DeityOnceLost.Drawing
         public void drawTitle_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_functionality_uiSketch, new Rectangle(
-                    0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+                0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
         }
 
         /// <summary>
@@ -46,7 +72,7 @@ namespace DeityOnceLost.Drawing
         public void drawMap_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_background_map, new Rectangle(
-                    0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+                0, DrawConstants.TOPBAR_HEIGHT, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT - DrawConstants.TOPBAR_HEIGHT), Color.White);
         }
 
         /// <summary>
@@ -55,6 +81,15 @@ namespace DeityOnceLost.Drawing
         public void drawMap_Foreground(SpriteBatch sprites)
         {
             //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it. Maybe this can be Midground, who knows
+        }
+
+        /// <summary>
+        /// Draws the space at the top of the screen behind the UI. Aesthetics only.
+        /// </summary>
+        public void drawTopBar_Background(SpriteBatch sprites)
+        {
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(
+                0, 0, Game1.VIRTUAL_WINDOW_WIDTH, DrawConstants.TOPBAR_HEIGHT), Color.DarkSlateBlue);
         }
 
         /// <summary>
@@ -140,6 +175,10 @@ namespace DeityOnceLost.Drawing
             else if (current.GetType() == typeof(UserInterface.Clickables.MapGrid))
             {
                 drawMapGrid(sprites, (UserInterface.Clickables.MapGrid)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.DynamicText))
+            {
+                drawDynamicText(sprites, (UserInterface.Clickables.Hovers.DynamicText)current);
             }
             else
             {
@@ -510,6 +549,15 @@ namespace DeityOnceLost.Drawing
             {
                 sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.Black);
 
+                if (Game1.getHoveredClickable() == room)
+                {
+                    if (room.getHighlighted())
+                    {
+                        sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue);
+                        sprites.Draw(Game1.pic_functionality_bar, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue * DrawConstants.MAP_GRIDSPACE_HIGHLIGHT_FADE);
+                    }
+                }
+
                 List<Dungeon.Room.roomContents> roomContents = room.getRoom().getRoomContents();
                 if (roomContents != null)
                 {
@@ -547,21 +595,21 @@ namespace DeityOnceLost.Drawing
                     }
                 }
 
+                if (Game1.getHoveredClickable() == room)
+                {
+                    //FIXIT info box for room contents?
+                }
+
                 if (Game1.getDungeonHandler().getPlayerLocation() == room.getGridLocation())
                 {
                     sprites.Draw(Game1.pic_functionality_mapChampLoc, new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2,
                     yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT),
                     DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.White);
-                }
 
-                if (Game1.getHoveredClickable() == room)
-                {
-                    if (room.getHighlighted())
-                    {
-                        sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue);
-                    }
-
-                    //FIXIT info box for room contents?
+                    sprites.Draw(Game1.pic_functionality_mapChampLoc, new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 - _pulse,
+                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - _pulse, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT + _pulse * 2),
+                    DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH + _pulse * 2, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT + _pulse * 2),
+                    Color.White * (DrawConstants.MAP_ROOM_PLAYER_PULSE_FADE - (float)_pulseAtMax * DrawConstants.MAP_ROOM_PLAYER_PULSE_FADE_STEP_AT_MAX));
                 }
 
                 //North connector
@@ -588,6 +636,10 @@ namespace DeityOnceLost.Drawing
             else if (room.getRoom().isPartialRevealed())
             {
                 sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.LightGray);
+
+                sprites.DrawString(Game1.roboto_black_24, "?",
+                    new Vector2(room._x + room._width / 2 - Game1.roboto_black_24.MeasureString("?").X / 2,
+                    yFromBottom(room._y + room._height / 2 - DrawConstants.TEXT_24_HEIGHT / 2, DrawConstants.TEXT_24_HEIGHT)), Color.Gray);
             }
         }
 
@@ -601,6 +653,7 @@ namespace DeityOnceLost.Drawing
             int yOffset = 0;
             int width = DrawConstants.MAP_GRIDSPACE_WIDTH;
             int height = DrawConstants.MAP_GRIDSPACE_HEIGHT;
+            bool horizontal = true;
             Texture2D connectorTexture = Game1.pic_functionality_mapConnectorH;
 
             switch (dir)
@@ -608,6 +661,7 @@ namespace DeityOnceLost.Drawing
                 case Dungeon.Connector.direction.north:
                     yOffset = DrawConstants.MAP_GRIDSPACE_HEIGHT;
                     height = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    horizontal = false;
                     connectorTexture = Game1.pic_functionality_mapConnectorV;
                     break;
                 case Dungeon.Connector.direction.east:
@@ -617,6 +671,7 @@ namespace DeityOnceLost.Drawing
                 case Dungeon.Connector.direction.south:
                     yOffset = -DrawConstants.MAP_GRID_CONNECTOR_SPACING;
                     height = DrawConstants.MAP_GRID_CONNECTOR_SPACING;
+                    horizontal = false;
                     connectorTexture = Game1.pic_functionality_mapConnectorV;
                     break;
                 case Dungeon.Connector.direction.west:
@@ -630,6 +685,17 @@ namespace DeityOnceLost.Drawing
                 case Dungeon.Connector.connectorType.open:
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Black);
                     break;
+                case Dungeon.Connector.connectorType.window:
+                    if (horizontal)
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorWindowH;
+                    }
+                    else
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorWindowV;
+                    }
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
+                    break;
                 case Dungeon.Connector.connectorType.none:
                     //Draw nothing
                     break;
@@ -637,6 +703,17 @@ namespace DeityOnceLost.Drawing
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Red);
                     Game1.errorLog.Add("drawConnector connectorType is not yet implemented for drawing: " + connector.getConnectorType().ToString());
                     break;
+            }
+        }
+
+        public void drawDynamicText(SpriteBatch sprites, UserInterface.Clickables.Hovers.DynamicText dynamicText)
+        {
+            drawShadowedText(sprites, dynamicText.getFont(), dynamicText.getDisplayText(), dynamicText._x + dynamicText._width / 2, dynamicText._y, dynamicText._height, dynamicText.getColor(), dynamicText.getShadowColor());
+
+            //Info box if hovered
+            if (dynamicText == Game1.getHoveredClickable())
+            {
+                drawInfoBox(sprites, dynamicText.getDescription(), new Rectangle(dynamicText._x, dynamicText._y, dynamicText._width, dynamicText._height));
             }
         }
 

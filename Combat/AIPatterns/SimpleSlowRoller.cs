@@ -12,6 +12,8 @@ namespace DeityOnceLost.Combat.AIPatterns
         public const int WEIGHT_BASIC_ATTACK = 6;
         public const int WEIGHT_ATTACK_AND_DEFEND = 8;
         public const int WEIGHT_HEAVY_ATTACK = 2;
+        public const int DEFAULT_BUFF_INTERVAL_MIN = 3;
+        public const int DEFAULT_BUFF_INTERVAL_MAX = 4;
 
         int _strengthGain, _buffIntervalMin, _buffIntervalMax, _turnsLeftUntilBuff;
         bool _canHeavyAttack;
@@ -32,7 +34,7 @@ namespace DeityOnceLost.Combat.AIPatterns
         /// • light attack + defend
         /// • (rarely, if enabled) heavy attack
         /// </summary>
-        public SimpleSlowRoller(int strengthGain, bool canHeavyAttack = true, int buffIntervalMin = 3, int buffIntervalMax = 4) : base()
+        public SimpleSlowRoller(int strengthGain, int buffIntervalMin = DEFAULT_BUFF_INTERVAL_MIN, int buffIntervalMax = DEFAULT_BUFF_INTERVAL_MAX, bool canHeavyAttack = true) : base()
         {
             _strengthGain = strengthGain;
             _canHeavyAttack = canHeavyAttack;

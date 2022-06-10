@@ -8,6 +8,29 @@ namespace DeityOnceLost.Drawing
 {
     class DrawConstants
     {
+        //Text constants
+        public const int TEXT_8_HEIGHT = 12;
+        public const int TEXT_10_HEIGHT = 15;
+        public const int TEXT_11_HEIGHT = 15;
+        public const int TEXT_12_HEIGHT = 18;
+        public const int TEXT_16_HEIGHT = 24;
+        public const int TEXT_20_HEIGHT = 30;
+        public const int TEXT_24_HEIGHT = 36;
+        public const int DEBUG_LOG_X = 10;
+        public const int DEBUG_LOG_Y_START = 10;
+        public const int INFO_BOX_BUFFER_BETWEEN_LINES = 2;
+        public const int INFO_BOX_BUFFER_EDGES = 8;
+
+
+
+        //Run constants
+        public const int TOPBAR_HEIGHT = 32;
+
+        public const int TOPBAR_CHAMPION_X = 32;
+        public const int TOPBAR_HP_X = 300;
+
+
+
         //Combat constants
         public const int COMBAT_ENDTURNBUTTON_X_FROMRIGHT = 220;
         public const int COMBAT_ENDTURNBUTTON_Y = 200;
@@ -92,25 +115,24 @@ namespace DeityOnceLost.Drawing
 
 
 
+        //Dungeon constants
         public const int MAP_GRIDSPACE_WIDTH = 64;
         public const int MAP_GRIDSPACE_HEIGHT = 64;
         public const int MAP_GRID_CONNECTOR_SPACING = 32;
+        public const float MAP_GRIDSPACE_HIGHLIGHT_FADE = 0.2f;
 
         public const int MAP_ROOM_CONTENTS_ICON_WIDTH = 32;
         public const int MAP_ROOM_CONTENTS_ICON_HEIGHT = 32;
+        public const float MAP_ROOM_PLAYER_PULSE_FADE = 0.2f;
+        public const float MAP_ROOM_PLAYER_PULSE_FADE_STEP_AT_MAX = 0.0125f;
 
 
 
-        public const int TEXT_8_HEIGHT = 12;
-        public const int TEXT_10_HEIGHT = 14;
-        public const int TEXT_11_HEIGHT = 15;
-        public const int TEXT_12_HEIGHT = 16;
-        public const int TEXT_16_HEIGHT = 20;
-        public const int TEXT_20_HEIGHT = 24;
-        public const int TEXT_24_HEIGHT = 28;
-        public const int DEBUG_LOG_X = 10;
-        public const int DEBUG_LOG_Y_START = 10;
-        public const int INFO_BOX_BUFFER_BETWEEN_LINES = 2;
-        public const int INFO_BOX_BUFFER_EDGES = 8;
+        //Animation constants
+        public const int PULSE_MAX = 24;
+        public const int PULSE_TIME_AT_MAX = 16;
+        public const double PULSE_START = 0.25;
+        public const double PULSE_STEP = 0.01;
+        public const double PULSE_BOOST = 0.4;
     }
 }

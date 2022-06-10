@@ -28,10 +28,13 @@ namespace DeityOnceLost
         private static Input.InputController _inputController;
         private static gameState _gameState;
         private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
+        private double timeSinceLastAnimationUpdate = 0; //used to make sure animation ticks are constrained
+        private int millisecondsPerAnimationUpdate = 16; //slightly over 60 per second
 
         //User Interface variables
         private static List<UserInterface.UserInterface> _activeUI;
         private static UserInterface.Clickable _currentHover;
+        private static UserInterface.TopBarUI _topBar;
 
         //Game structure variables
         private static Drawing.DrawHandler _drawHandler;
@@ -135,6 +138,16 @@ namespace DeityOnceLost
             _dungeonHandler.returnToDungeon(_activeUI);
         }
 
+        public static void addTopBar()
+        {
+            _topBar.addToActiveUI(_activeUI);
+        }
+
+        public static void updateTopBar()
+        {
+            _topBar.updateUI();
+        }
+
 
 
         /// <summary>
@@ -150,6 +163,7 @@ namespace DeityOnceLost
             this.IsMouseVisible = true;
 
             _activeUI = new List<UserInterface.UserInterface>();
+            _topBar = new UserInterface.TopBarUI();
 
             base.Initialize();
         }
@@ -190,6 +204,8 @@ namespace DeityOnceLost
             pic_functionality_mapStoryIcon = Content.Load<Texture2D>("functionality art/Map Story Icon");
             pic_functionality_mapCombatIcon = Content.Load<Texture2D>("functionality art/Map Combat Icon");
             pic_functionality_mapExitIcon = Content.Load<Texture2D>("functionality art/Map Exit Icon");
+            pic_functionality_mapConnectorWindowH = Content.Load<Texture2D>("functionality art/Map Window Connector H");
+            pic_functionality_mapConnectorWindowV = Content.Load<Texture2D>("functionality art/Map Window Connector V");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -250,7 +266,7 @@ namespace DeityOnceLost
             pic_functionality_targeting_faded_TL, pic_functionality_targeting_faded_TR, pic_functionality_targeting_faded_BR, pic_functionality_targeting_faded_BL,
             pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL,
             pic_functionality_mapRoom, pic_functionality_mapConnectorH, pic_functionality_mapConnectorV, pic_functionality_mapChampLoc, pic_functionality_mapStoryIcon,
-            pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon;
+            pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon, pic_functionality_mapConnectorWindowH, pic_functionality_mapConnectorWindowV;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
@@ -327,6 +343,7 @@ namespace DeityOnceLost
             _hero = new Characters.Hero();
             _champ = new Characters.Champion(_hero);
             _dungeonHandler.setupDungeon(_activeUI, new Dungeon.Locations.FirstDungeon());
+            _topBar.setupUI();
             
             _gameInitialized = true;
         }
@@ -406,10 +423,24 @@ namespace DeityOnceLost
             GraphicsDevice.Clear(new Color(36, 0, 72)); //dark indigo
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp);
             shader_Regular.CurrentTechnique.Passes[0].Apply();
-            
+
+
+
+            //Animation
+            timeSinceLastAnimationUpdate += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (timeSinceLastAnimationUpdate >= millisecondsPerAnimationUpdate)
+            {
+                timeSinceLastAnimationUpdate = 0;
+
+                //Animation logic goes here
+                _drawHandler.pulse();
+            }
+
 
 
             //Most draw logic goes here
+            _drawHandler.drawTopBar_Background(_spriteBatch); //Draw the top bar's background
+
             if (_gameState == gameState.title) //demo stuff, will be removed later
             {
                 _drawHandler.drawTitle_Background(_spriteBatch);

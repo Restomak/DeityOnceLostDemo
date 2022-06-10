@@ -96,6 +96,7 @@
     <Compile Include="UserInterface\Clickables\Avatar.cs" />
     <Compile Include="UserInterface\Clickables\Button.cs" />
     <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
+    <Compile Include="UserInterface\Clickables\Hovers\DynamicText.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\EnemyIntent.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\HPBar.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\Resource.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="UserInterface\Clickables\Target.cs" />
     <Compile Include="UserInterface\CombatUI.cs" />
     <Compile Include="UserInterface\MapUI.cs" />
+    <Compile Include="UserInterface\TopBarUI.cs" />
     <Compile Include="UserInterface\UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>

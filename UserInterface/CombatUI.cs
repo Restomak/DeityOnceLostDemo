@@ -80,6 +80,8 @@ namespace DeityOnceLost.UserInterface
             {
                 activeUI.Add(_wholeUI[i]);
             }
+
+            Game1.addTopBar();
         }
         public void setActiveCard(Clickables.HandCard card)
         {
@@ -138,6 +140,8 @@ namespace DeityOnceLost.UserInterface
             _resources.resetClickables();
             _resources.addClickableToBack(new Clickables.Hovers.Resource(new Point(Drawing.DrawConstants.COMBAT_DIVINITY_X, Drawing.DrawConstants.COMBAT_DIVINITY_Y),
                 (int)Game1.roboto_bold_16.MeasureString(Clickables.Hovers.Resource.DIVINITY_SAMPLE_STRING).X, Drawing.DrawConstants.TEXT_16_HEIGHT, DeckBuilder.CardEnums.CostType.DIVINITY));
+
+            Game1.updateTopBar();
         }
     }
 }
