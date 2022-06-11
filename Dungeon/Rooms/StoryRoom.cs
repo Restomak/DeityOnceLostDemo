@@ -8,12 +8,22 @@ namespace DeityOnceLost.Dungeon.Rooms
 {
     public class StoryRoom : Room
     {
-        //FIXIT add story stuff - for now it's being treated as an empty room
+        Events.Happening _roomEvent;
 
         public StoryRoom()
         {
             _randomBattleChanceOnReturn = NO_BATTLE_CHANCE_ON_RETURN;
             _roomContents.Add(roomContents.story);
+        }
+
+        public void setRoomEvent(Events.Happening roomEvent)
+        {
+            _roomEvent = roomEvent;
+        }
+
+        public override Events.Happening getRoomEvent()
+        {
+            return _roomEvent;
         }
     }
 }

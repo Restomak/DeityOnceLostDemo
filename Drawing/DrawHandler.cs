@@ -12,6 +12,7 @@ namespace DeityOnceLost.Drawing
     {
         int _pulse, _pulseAtMax;
         double _pulseIncrease;
+        EventTextBox _eventTextBox;
 
         public DrawHandler()
         {
@@ -39,12 +40,17 @@ namespace DeityOnceLost.Drawing
             }
         }
 
+        public void setEventTextBox(EventTextBox eventTextBox)
+        {
+            _eventTextBox = eventTextBox;
+        }
+
 
 
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
         /// </summary>
-        public void drawTitle_Background(SpriteBatch sprites)
+        public static void drawTitle_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_functionality_uiSketch, new Rectangle(
                 0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
@@ -53,15 +59,15 @@ namespace DeityOnceLost.Drawing
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
         /// </summary>
-        public void drawCombat_Background(SpriteBatch sprites)
+        public static void drawCombat_Background(SpriteBatch sprites)
         {
             //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it.
         }
 
         /// <summary>
-        /// Draws the space in front of the UI. Aesthetics only
+        /// Draws the space in front of the UI. Aesthetics only.
         /// </summary>
-        public void drawCombat_Foreground(SpriteBatch sprites)
+        public static void drawCombat_Foreground(SpriteBatch sprites)
         {
             //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it. Maybe this can be Midground, who knows
         }
@@ -69,24 +75,40 @@ namespace DeityOnceLost.Drawing
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
         /// </summary>
-        public void drawMap_Background(SpriteBatch sprites)
+        public static void drawMap_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_background_map, new Rectangle(
                 0, DrawConstants.TOPBAR_HEIGHT, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT - DrawConstants.TOPBAR_HEIGHT), Color.White);
         }
 
         /// <summary>
-        /// Draws the space in front of the UI. Aesthetics only
+        /// Draws the space in front of the UI. Aesthetics only.
         /// </summary>
-        public void drawMap_Foreground(SpriteBatch sprites)
+        public static void drawMap_Foreground(SpriteBatch sprites)
         {
             //Nothing yet. I will probably have to split the UI up into things that will be drawn before the foreground and things drawn after it. Maybe this can be Midground, who knows
         }
 
         /// <summary>
+        /// Draws the background for events. Aesthetics only. Drawn over whatever other
+        /// background is behind it, since it doesn't take up the whole screen.
+        /// </summary>
+        public void drawEvent_Background(SpriteBatch sprites)
+        {
+            sprites.Draw(Game1.pic_background_event, new Rectangle(
+                Game1.VIRTUAL_WINDOW_WIDTH / 2 - DrawConstants.EVENT_BACKGROUND_WIDTH / 2, Game1.VIRTUAL_WINDOW_HEIGHT / 2 - DrawConstants.EVENT_BACKGROUND_HEIGHT / 2,
+                DrawConstants.EVENT_BACKGROUND_WIDTH, DrawConstants.EVENT_BACKGROUND_HEIGHT), Color.White);
+
+            if (_eventTextBox != null)
+            {
+                _eventTextBox.draw(sprites);
+            }
+        }
+
+        /// <summary>
         /// Draws the space at the top of the screen behind the UI. Aesthetics only.
         /// </summary>
-        public void drawTopBar_Background(SpriteBatch sprites)
+        public static void drawTopBar_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_functionality_bar, new Rectangle(
                 0, 0, Game1.VIRTUAL_WINDOW_WIDTH, DrawConstants.TOPBAR_HEIGHT), Color.DarkSlateBlue);
@@ -180,13 +202,17 @@ namespace DeityOnceLost.Drawing
             {
                 drawDynamicText(sprites, (UserInterface.Clickables.Hovers.DynamicText)current);
             }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Decision))
+            {
+                drawDecision(sprites, (UserInterface.Clickables.Decision)current);
+            }
             else
             {
                 Game1.errorLog.Add("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
             }
         }
 
-        public void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
+        public static void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
         {
             String name = card.getCard().getName();
             List<String> description = card.getCard().getDescription(champ);
@@ -265,7 +291,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        private void drawCombat_CardPile(SpriteBatch sprites, UserInterface.Clickables.DeckOfCards deck, Characters.Champion champ)
+        private static void drawCombat_CardPile(SpriteBatch sprites, UserInterface.Clickables.DeckOfCards deck, Characters.Champion champ)
         {
             List<DeckBuilder.Card> pile = new List<DeckBuilder.Card>();
 
@@ -298,7 +324,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawUI_GlowCardPile(SpriteBatch sprites, UserInterface.Clickables.DeckOfCards deck, Characters.Champion champ)
+        public static void drawUI_GlowCardPile(SpriteBatch sprites, UserInterface.Clickables.DeckOfCards deck, Characters.Champion champ)
         {
             List<DeckBuilder.Card> pile = new List<DeckBuilder.Card>();
 
@@ -334,7 +360,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        private void drawButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
+        private static void drawButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
         {
             sprites.Draw(button.getTexture(), new Rectangle(button._x, yFromBottom(button._y, button._height), button._width, button._height), Color.White);
             
@@ -343,8 +369,8 @@ namespace DeityOnceLost.Drawing
                 drawInfoBox(sprites, button.getHoverDescription(), new Rectangle(button._x, button._y, button._width, button._height));
             }
         }
-        
-        public void drawUI_glowButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
+
+        public static void drawUI_glowButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
         {
             for (int i = 0; i < DrawConstants.BUTTON_GLOW_NUM_STEPS; i++)
             {
@@ -358,7 +384,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawEnemy(SpriteBatch sprites, UserInterface.Clickables.Opponent enemy)
+        public static void drawEnemy(SpriteBatch sprites, UserInterface.Clickables.Opponent enemy)
         {
             sprites.Draw(enemy.getEnemy()._texture, new Rectangle(enemy._x, yFromBottom(enemy._y, enemy._height), enemy._width, enemy._height), Color.White);
 
@@ -424,7 +450,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawHPBar(SpriteBatch sprites, UserInterface.Clickables.Hovers.HPBar hpBar)
+        public static void drawHPBar(SpriteBatch sprites, UserInterface.Clickables.Hovers.HPBar hpBar)
         {
             int defense = hpBar.getUnit().getDefense();
             Point anchor = new Point();
@@ -479,7 +505,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawEnemyIntent(SpriteBatch sprites, UserInterface.Clickables.Hovers.EnemyIntent enemyIntent)
+        public static void drawEnemyIntent(SpriteBatch sprites, UserInterface.Clickables.Hovers.EnemyIntent enemyIntent)
         {
             //Only draw info; the rest is handled in drawEnemy
             if (enemyIntent == Game1.getHoveredClickable())
@@ -488,7 +514,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawChampion(SpriteBatch sprites, UserInterface.Clickables.Avatar champUI, Characters.Champion champ)
+        public static void drawChampion(SpriteBatch sprites, UserInterface.Clickables.Avatar champUI, Characters.Champion champ)
         {
             sprites.Draw(Game1.pic_functionality_championSilhouette, new Rectangle(champUI._x, yFromBottom(champUI._y, champUI._height), champUI._width, champUI._height), Color.White);
 
@@ -500,7 +526,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawTarget(SpriteBatch sprites, UserInterface.Clickables.Target target)
+        public static void drawTarget(SpriteBatch sprites, UserInterface.Clickables.Target target)
         {
             float fadeFade = DrawConstants.COMBAT_TARGET_FADE_FADE;
             float backFade = DrawConstants.COMBAT_TARGET_BACK_FADE;
@@ -522,7 +548,7 @@ namespace DeityOnceLost.Drawing
             sprites.Draw(Game1.pic_functionality_targeting_faded_BL, target.getBottomLeftTargetPiece(), Color.White * fadeFade);
         }
 
-        public void drawResource(SpriteBatch sprites, UserInterface.Clickables.Hovers.Resource resource)
+        public static void drawResource(SpriteBatch sprites, UserInterface.Clickables.Hovers.Resource resource)
         {
             sprites.DrawString(Game1.roboto_bold_16, resource.getResourceText(),
                 new Vector2(resource._x - 1, yFromBottom(resource._y - 1, DrawConstants.TEXT_16_HEIGHT)), Color.Black);
@@ -643,7 +669,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawConnector(SpriteBatch sprites, UserInterface.Clickables.MapGrid room, Dungeon.Connector.direction dir)
+        public static void drawConnector(SpriteBatch sprites, UserInterface.Clickables.MapGrid room, Dungeon.Connector.direction dir)
         {
             //Currently every connector will be drawn twice unless the room on the other side isn't fully revealed, but that's fine for now
 
@@ -706,7 +732,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawDynamicText(SpriteBatch sprites, UserInterface.Clickables.Hovers.DynamicText dynamicText)
+        public static void drawDynamicText(SpriteBatch sprites, UserInterface.Clickables.Hovers.DynamicText dynamicText)
         {
             drawShadowedText(sprites, dynamicText.getFont(), dynamicText.getDisplayText(), dynamicText._x + dynamicText._width / 2, dynamicText._y, dynamicText._height, dynamicText.getColor(), dynamicText.getShadowColor());
 
@@ -717,39 +743,36 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-
-
-        /// <summary>
-        /// My function for replicating shadowed text through the process of drawing the
-        /// text five times - four times behind offset by 1 x & y, as the shadows - and
-        /// one time in front. Text can be made to glow in this manner as well if black
-        /// is not the color sent as the shadow.
-        /// </summary>
-        public void drawShadowedText(SpriteBatch sprites, SpriteFont font, String text, int textXFromCenter, int y, int height, Color textColor, Color shadowColor)
+        public static void drawDecision(SpriteBatch sprites, UserInterface.Clickables.Decision decision)
         {
-            sprites.DrawString(font, text,
-                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 + 1,
-                yFromBottom(y + 1, height)), shadowColor);
-            sprites.DrawString(font, text,
-                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 + 1,
-                yFromBottom(y - 1, height)), shadowColor);
-            sprites.DrawString(font, text,
-                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 - 1,
-                yFromBottom(y + 1, height)), shadowColor);
-            sprites.DrawString(font, text,
-                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 - 1,
-                yFromBottom(y - 1, height)), shadowColor);
+            //If hovered, glow
+            if (Game1.getHoveredClickable() == decision)
+            {
+                for (int i = 0; i < DrawConstants.CHOICE_GLOW_NUM_STEPS; i++)
+                {
+                    sprites.Draw(Game1.pic_functionality_bar,
+                        new Rectangle(decision._x - DrawConstants.CHOICE_GLOW_FURTHEST + DrawConstants.CHOICE_GLOW_STEP * i,
+                        yFromBottom(decision._y - DrawConstants.CHOICE_GLOW_FURTHEST + DrawConstants.CHOICE_GLOW_STEP * i,
+                        decision._height + DrawConstants.CHOICE_GLOW_FURTHEST * 2 - DrawConstants.CHOICE_GLOW_STEP * i * 2),
+                        decision._width + DrawConstants.CHOICE_GLOW_FURTHEST * 2 - DrawConstants.CHOICE_GLOW_STEP * i * 2,
+                        decision._height + DrawConstants.CHOICE_GLOW_FURTHEST * 2 - DrawConstants.CHOICE_GLOW_STEP * i * 2),
+                        Color.LightYellow * DrawConstants.CHOICE_GLOW_OPACITY);
+                }
+            }
 
-            sprites.DrawString(font, text,
-                new Vector2(textXFromCenter - font.MeasureString(text).X / 2,
-                yFromBottom(y, height)), textColor);
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(decision._x, yFromBottom(decision._y, decision._height), decision._width, decision._height),
+                new Color(DrawConstants.EVENT_CHOICE_BACKGROUND_RED, DrawConstants.EVENT_CHOICE_BACKGROUND_GREEN, DrawConstants.EVENT_CHOICE_BACKGROUND_BLUE));
+            
+            EventTextConverting.drawLineOfText(sprites, new Point(decision._x + DrawConstants.EVENT_CHOICE_TEXT_X_BUFFER, decision._y + decision._height / 2 - DrawConstants.TEXT_12_HEIGHT / 2), decision.getChoice().getText());
         }
+
+
 
         /// <summary>
         /// Calculates the dimensions of the info box and draws it at the corner of the
         /// anchor (prefers top-right, but will adjust if that's off the screen edges).
         /// </summary>
-        public void drawInfoBox(SpriteBatch sprites, List<String> contents, Rectangle anchor)
+        public static void drawInfoBox(SpriteBatch sprites, List<String> contents, Rectangle anchor)
         {
             //Point anchorPos = Game1.getInputController().getMousePos();
             Point anchorPos = new Point(anchor.Right, anchor.Bottom); //uses bottom because the y's are flipped
@@ -794,7 +817,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public void drawGameLogs(SpriteBatch sprites, List<String> log, Color textColor)
+        public static void drawGameLogs(SpriteBatch sprites, List<String> log, Color textColor)
         {
             for (int i = 0; i < log.Count; i++)
             {
@@ -810,6 +833,34 @@ namespace DeityOnceLost.Drawing
                 sprites.DrawString(Game1.roboto_bold_10, log[log.Count - 1 - i],
                     new Vector2(DrawConstants.DEBUG_LOG_X, yFromBottom(DrawConstants.DEBUG_LOG_Y_START + DrawConstants.TEXT_12_HEIGHT * i, DrawConstants.TEXT_10_HEIGHT)), textColor);
             }
+        }
+
+        
+
+        /// <summary>
+        /// My function for replicating shadowed text through the process of drawing the
+        /// text five times - four times behind offset by 1 x & y, as the shadows - and
+        /// one time in front. Text can be made to glow in this manner as well if black
+        /// is not the color sent as the shadow.
+        /// </summary>
+        public static void drawShadowedText(SpriteBatch sprites, SpriteFont font, String text, int textXFromCenter, int y, int height, Color textColor, Color shadowColor)
+        {
+            sprites.DrawString(font, text,
+                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 + 1,
+                yFromBottom(y + 1, height)), shadowColor);
+            sprites.DrawString(font, text,
+                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 + 1,
+                yFromBottom(y - 1, height)), shadowColor);
+            sprites.DrawString(font, text,
+                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 - 1,
+                yFromBottom(y + 1, height)), shadowColor);
+            sprites.DrawString(font, text,
+                new Vector2(textXFromCenter - font.MeasureString(text).X / 2 - 1,
+                yFromBottom(y - 1, height)), shadowColor);
+
+            sprites.DrawString(font, text,
+                new Vector2(textXFromCenter - font.MeasureString(text).X / 2,
+                yFromBottom(y, height)), textColor);
         }
 
 

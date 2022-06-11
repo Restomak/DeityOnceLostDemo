@@ -15,7 +15,8 @@ namespace DeityOnceLost
         {
             title,
             combat,
-            dungeon
+            dungeon,
+            happening
         }
 
         //Framework variables
@@ -26,13 +27,14 @@ namespace DeityOnceLost
         private static Random rand = new Random();
         private static Input.WindowControl _windowControl;
         private static Input.InputController _inputController;
-        private static gameState _gameState;
+        private static gameState _gameState, _previousGameState;
         private static bool _gameInitialized = false; //first loop through Update will initialize the game then set to true
         private double timeSinceLastAnimationUpdate = 0; //used to make sure animation ticks are constrained
         private int millisecondsPerAnimationUpdate = 16; //slightly over 60 per second
 
         //User Interface variables
         private static List<UserInterface.UserInterface> _activeUI;
+        private static List<UserInterface.UserInterface> _previousUI;
         private static UserInterface.Clickable _currentHover;
         private static UserInterface.TopBarUI _topBar;
 
@@ -41,6 +43,7 @@ namespace DeityOnceLost
         private static DeckBuilder.CardCollection _cardCollection_All;
         private static Combat.CombatHandler _combatHandler;
         private static Dungeon.DungeonHandler _dungeonHandler;
+        private static Events.EventHandler _eventHandler;
         private static Characters.Hero _hero; //Will probably be initialized elsewhere later post demo
         private static Characters.Champion _champ; //Will probably be initialized elsewhere later post demo
 
@@ -97,6 +100,10 @@ namespace DeityOnceLost
         {
             return _dungeonHandler;
         }
+        public static Events.EventHandler getEventHandler()
+        {
+            return _eventHandler;
+        }
 
         
         //User Interface setters
@@ -132,10 +139,34 @@ namespace DeityOnceLost
             _combatHandler.combatStart(_activeUI);
         }
 
-        public static void endCombat()
+        public static void returnToDungeon()
         {
             _gameState = gameState.dungeon;
             _dungeonHandler.returnToDungeon(_activeUI);
+            _drawHandler.setEventTextBox(null);
+        }
+
+        public static void startEvent(Dungeon.Room room)
+        {
+            startEvent(room.getRoomEvent());
+            _eventHandler.setCurrentRoom(room);
+        }
+        public static void startEvent(Events.Happening newEvent)
+        {
+            if (_gameState != gameState.happening)
+            {
+                _previousGameState = _gameState;
+                _previousUI = _activeUI;
+            }
+            _gameState = gameState.happening;
+            _eventHandler.setupNewEvent(_activeUI, newEvent);
+            _drawHandler.setEventTextBox(new Drawing.EventTextBox(newEvent.getWriting()));
+        }
+
+        public static void eventComplete()
+        {
+            _gameState = _previousGameState;
+            _activeUI = _previousUI;
         }
 
         public static void addTopBar()
@@ -146,6 +177,13 @@ namespace DeityOnceLost
         public static void updateTopBar()
         {
             _topBar.updateUI();
+        }
+
+        public static void setupRandomFirstChampion()
+        {
+            _hero = new Characters.Hero();
+            _champ = new Characters.Champion(_hero);
+            _topBar.setupUI();
         }
 
 
@@ -224,6 +262,10 @@ namespace DeityOnceLost
             roboto_medium_12 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-12");
             roboto_bold_12 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-12");
             roboto_black_12 = Content.Load<SpriteFont>("Fonts/Roboto-Black-12");
+            roboto_regular_14 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-14");
+            roboto_medium_14 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-14");
+            roboto_bold_14 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-14");
+            roboto_black_14 = Content.Load<SpriteFont>("Fonts/Roboto-Black-14");
             roboto_regular_16 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-16");
             roboto_medium_16 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-16");
             roboto_bold_16 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-16");
@@ -256,6 +298,7 @@ namespace DeityOnceLost
 
             //backgrounds
             pic_background_map = Content.Load<Texture2D>("Backgrounds/Map Background");
+            pic_background_event = Content.Load<Texture2D>("Backgrounds/Event Background");
         }
 
         /*____________________.Content Variables._____________________*/
@@ -273,6 +316,7 @@ namespace DeityOnceLost
             roboto_regular_10, roboto_medium_10, roboto_bold_10, roboto_black_10,
             roboto_regular_11, roboto_medium_11, roboto_bold_11, roboto_black_11,
             roboto_regular_12, roboto_medium_12, roboto_bold_12, roboto_black_12,
+            roboto_regular_14, roboto_medium_14, roboto_bold_14, roboto_black_14,
             roboto_regular_16, roboto_medium_16, roboto_bold_16, roboto_black_16,
             roboto_regular_20, roboto_medium_20, roboto_bold_20, roboto_black_20,
             roboto_regular_24, roboto_medium_24, roboto_bold_24, roboto_black_24;
@@ -288,7 +332,7 @@ namespace DeityOnceLost
         public static Effect shader_Regular, shader_CardGlow, shader_DeckGlow, shader_Experimental;
 
         //Backgrounds
-        public static Texture2D pic_background_map;
+        public static Texture2D pic_background_map, pic_background_event;
 
 
         /// <summary>
@@ -337,13 +381,11 @@ namespace DeityOnceLost
             Characters.Names.initializeNameList();
             _combatHandler = new Combat.CombatHandler();
             _dungeonHandler = new Dungeon.DungeonHandler();
+            _eventHandler = new Events.EventHandler();
             _gameState = gameState.title;
 
             //Temporary testing stuff
-            _hero = new Characters.Hero();
-            _champ = new Characters.Champion(_hero);
             _dungeonHandler.setupDungeon(_activeUI, new Dungeon.Locations.FirstDungeon());
-            _topBar.setupUI();
             
             _gameInitialized = true;
         }
@@ -398,6 +440,9 @@ namespace DeityOnceLost
                 case gameState.dungeon:
                     _dungeonHandler.handleDungeonLogic();
                     break;
+                case gameState.happening:
+                    _eventHandler.handleEventLogic();
+                    break;
             }
 
 
@@ -438,35 +483,56 @@ namespace DeityOnceLost
 
 
 
-            //Most draw logic goes here
-            _drawHandler.drawTopBar_Background(_spriteBatch); //Draw the top bar's background
+            /*____________________.Draw Logic._____________________*/
 
+
+            //Draw backgrounds
+            if (_gameState == gameState.title)
+            {
+                Drawing.DrawHandler.drawTitle_Background(_spriteBatch);
+            }
+            else if (_gameState == gameState.combat || _gameState == gameState.happening && _previousGameState == gameState.combat)
+            {
+                Drawing.DrawHandler.drawCombat_Background(_spriteBatch);
+            }
+            else if (_gameState == gameState.dungeon || _gameState == gameState.happening && _previousGameState == gameState.dungeon)
+            {
+                Drawing.DrawHandler.drawMap_Background(_spriteBatch);
+            }
+
+            if (_gameState == gameState.happening) //Draw over other backgrounds
+            {
+                _drawHandler.drawEvent_Background(_spriteBatch);
+            }
+
+            Drawing.DrawHandler.drawTopBar_Background(_spriteBatch); //Draw the top bar's background
+
+
+            //Draw UIs
             if (_gameState == gameState.title) //demo stuff, will be removed later
             {
-                _drawHandler.drawTitle_Background(_spriteBatch);
+                Drawing.DrawHandler.drawTitle_Background(_spriteBatch);
             }
-            else if (_gameState == gameState.combat)
+            else if (_gameState == gameState.combat || _gameState == gameState.happening && _previousGameState == gameState.combat)
             {
-                _drawHandler.drawCombat_Background(_spriteBatch);
-
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
 
                 if (_combatHandler.getCombatUI().getActiveCard() != null)
                 {
                     //Change up the shader for the glow
                     shader_CardGlow.CurrentTechnique.Passes[0].Apply();
-                    _drawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, true);
+                    Drawing.DrawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, true);
 
                     //Set it back to the regular shader
                     shader_Regular.CurrentTechnique.Passes[0].Apply();
-                    _drawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, false);
+                    Drawing.DrawHandler.drawCombat_HandCard(_spriteBatch, _combatHandler.getCombatUI().getActiveCard(), _champ, false);
                 }
                 if (_currentHover != null)
                 {
                     if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))
                     {
                         //Doesn't glow using a shader atm
-                        _drawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
+                        Drawing.DrawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
                     }
                     else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
                         ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION &&
@@ -474,7 +540,7 @@ namespace DeityOnceLost
                     {
                         //Change up the shader for the glow
                         shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
-                        _drawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
+                        Drawing.DrawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
                     }
 
                     //Set it back to the regular shader in case it was changed
@@ -482,10 +548,8 @@ namespace DeityOnceLost
                     _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
                 }
             }
-            else if (_gameState == gameState.dungeon)
+            else if (_gameState == gameState.dungeon || _gameState == gameState.happening && _previousGameState == gameState.dungeon)
             {
-                _drawHandler.drawMap_Background(_spriteBatch);
-
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
             }
 

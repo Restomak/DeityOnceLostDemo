@@ -9,14 +9,14 @@ namespace DeityOnceLost.Combat.Enemies
     class FanbladeGuard : Enemy
     {
         public const String NAME = "Fanblade Guard";
-        public const int HITPOINTS_MIN = 50;
-        public const int HITPOINTS_MAX = 60;
+        public const int HITPOINTS_MIN = 40;
+        public const int HITPOINTS_MAX = 50;
         public const int DEFAULT_STR = 0;
         public const int DEFAULT_DEX = 0;
         public const int DEFAULT_RES = 0;
-        public const int DEFAULT_DAMAGE = 14;
+        public const int DEFAULT_DAMAGE = 12;
         public const int DEFAULT_LIGHT_DAMAGE = 8;
-        public const int DEFAULT_HEAVY_DAMAGE = 16;
+        public const int DEFAULT_HEAVY_DAMAGE = 14;
         public const int DEFAULT_DEFENSE = 9;
         public const int BUFF_STRENGTH_GAIN = 3;
         public const int BUFF_INTERVAL_MIN = 2;

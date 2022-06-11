@@ -9,7 +9,7 @@ namespace DeityOnceLost.Characters
     public class Hero
     {
         List<DeckBuilder.Card> _defaultCards;
-        String _name, _they, _them, _their, _theirs;
+        String _name, _they, _them, _their, _theirs, _theyre, _theyve;
         int _maxHP;
         bool _dead;
 
@@ -53,6 +53,14 @@ namespace DeityOnceLost.Characters
         {
             return _theirs;
         }
+        public String getPronoun_theyre()
+        {
+            return _theyre;
+        }
+        public String getPronoun_theyve()
+        {
+            return _theyve;
+        }
         public int getDefaultStrength()
         {
             return _defaultStrength;
@@ -84,6 +92,14 @@ namespace DeityOnceLost.Characters
         public void setPronouns_theirs(String theirs)
         {
             _theirs = theirs;
+        }
+        public void setPronouns_theyre(String theyre)
+        {
+            _theyre = theyre;
+        }
+        public void setPronouns_theyve(String theyve)
+        {
+            _theyve = theyve;
         }
         public bool isAlive()
         {
@@ -124,6 +140,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_HEHIM;
                 _their = HeroConstants.THEIR_HEHIM;
                 _theirs = HeroConstants.THEIRS_HEHIM;
+                _theyre = HeroConstants.THEYRE_HEHIM;
+                _theyve = HeroConstants.THEYVE_HEHIM;
             }
             else if (randomPronoun <= HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE)
             {
@@ -131,6 +149,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_SHEHER;
                 _their = HeroConstants.THEIR_SHEHER;
                 _theirs = HeroConstants.THEIRS_SHEHER;
+                _theyre = HeroConstants.THEYRE_SHEHER;
+                _theyve = HeroConstants.THEYVE_SHEHER;
             }
             else if (randomPronoun <= HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE + HeroConstants.PRONOUN_WEIGHT_THEY)
             {
@@ -138,6 +158,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_THEYTHEM;
                 _their = HeroConstants.THEIR_THEYTHEM;
                 _theirs = HeroConstants.THEIRS_THEYTHEM;
+                _theyre = HeroConstants.THEYRE_THEYTHEM;
+                _theyve = HeroConstants.THEYVE_THEYTHEM;
             }
             else if (randomPronoun <= HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE + HeroConstants.PRONOUN_WEIGHT_THEY + HeroConstants.PRONOUN_WEIGHT_XE)
             {
@@ -145,6 +167,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_XEXIR;
                 _their = HeroConstants.THEIR_XEXIR;
                 _theirs = HeroConstants.THEIRS_XEXIR;
+                _theyre = HeroConstants.THEYRE_XEXIR;
+                _theyve = HeroConstants.THEYVE_XEXIR;
             }
             else if (randomPronoun <= HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE + HeroConstants.PRONOUN_WEIGHT_THEY + HeroConstants.PRONOUN_WEIGHT_XE + HeroConstants.PRONOUN_WEIGHT_VE)
             {
@@ -152,6 +176,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_VEVER;
                 _their = HeroConstants.THEIR_VEVER;
                 _theirs = HeroConstants.THEIRS_VEVER;
+                _theyre = HeroConstants.THEYRE_VEVER;
+                _theyve = HeroConstants.THEYVE_VEVER;
             }
             else
             {
@@ -160,6 +186,8 @@ namespace DeityOnceLost.Characters
                 _them = HeroConstants.THEM_THEYTHEM;
                 _their = HeroConstants.THEIR_THEYTHEM;
                 _theirs = HeroConstants.THEIRS_THEYTHEM;
+                _theyre = HeroConstants.THEYRE_THEYTHEM;
+                _theyve = HeroConstants.THEYVE_THEYTHEM;
             }
         }
 
@@ -283,7 +311,9 @@ namespace DeityOnceLost.Characters
         {
             int maxHP_1 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_2 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
-            _maxHP = (maxHP_1 + maxHP_2) / 2; //tends towards the average rather than the extremes
+            int maxHP_3 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
+            int maxHP_4 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
+            _maxHP = (maxHP_1 + maxHP_2 + maxHP_3 + maxHP_4) / 4; //tends towards the average rather than the extremes
         }
     }
 }

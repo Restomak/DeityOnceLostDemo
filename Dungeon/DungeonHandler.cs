@@ -100,7 +100,15 @@ namespace DeityOnceLost.Dungeon
                             Game1.enterNewCombat(currentRoom.getRoomCombat(), currentRoom);
                             break;
                         case Room.roomContents.story:
-                            currentRoom.finishTopContent(); //FIXIT actually do story stuff
+                            if (currentRoom.getRoomEvent() != null)
+                            {
+                                Game1.startEvent(currentRoom);
+                            }
+                            else
+                            {
+                                currentRoom.finishTopContent();
+                                Game1.errorLog.Add("Skipping currentRoom.getRoomEvent because it's null");
+                            }
                             break;
                         default:
                             Game1.errorLog.Add("handleDungeonLogic attempting to handle roomContents that haven't been implemented: " + _currentContentHandled[0].ToString());

@@ -103,6 +103,7 @@ namespace DeityOnceLost.Drawing
 
 
 
+        //Glow constants
         public const int HANDCARD_GLOW_FURTHEST = 12;
         public const int HANDCARD_GLOW_STEP = 1;
         public const float HANDCARD_GLOW_OPACITY = 0.1f;
@@ -112,6 +113,11 @@ namespace DeityOnceLost.Drawing
         public const int BUTTON_GLOW_STEP = 1;
         public const float BUTTON_GLOW_OPACITY = 0.15f;
         public const int BUTTON_GLOW_NUM_STEPS = 6;
+
+        public const int CHOICE_GLOW_FURTHEST = 6;
+        public const int CHOICE_GLOW_STEP = 1;
+        public const float CHOICE_GLOW_OPACITY = 0.15f;
+        public const int CHOICE_GLOW_NUM_STEPS = 6;
 
 
 
@@ -125,6 +131,39 @@ namespace DeityOnceLost.Drawing
         public const int MAP_ROOM_CONTENTS_ICON_HEIGHT = 32;
         public const float MAP_ROOM_PLAYER_PULSE_FADE = 0.2f;
         public const float MAP_ROOM_PLAYER_PULSE_FADE_STEP_AT_MAX = 0.0125f;
+
+
+
+        //Event constants
+        public const int EVENT_BACKGROUND_WIDTH = 1200;
+        public const int EVENT_BACKGROUND_HEIGHT = 675;
+
+        public const int EVENT_CHOICE_WIDTH = 1000;
+        public const int EVENT_CHOICE_HEIGHT = 32;
+        public const int EVENT_CHOICE_BUFFER = 16;
+        public const int EVENT_CHOICE_INTIAL_BUFFER = 40;
+        public const int EVENT_CHOICE_TEXT_X_BUFFER = 16;
+
+        public const int EVENT_TEXT_X_BUFFER = 48;
+        public const int EVENT_TEXT_Y_BUFFER = 24; //includes the text - not just the space between
+        public const int EVENT_TEXT_Y_START = 64;
+
+
+
+        //Color constants
+        public const int EVENT_CHOICE_BACKGROUND_RED = 35;
+        public const int EVENT_CHOICE_BACKGROUND_GREEN = 20;
+        public const int EVENT_CHOICE_BACKGROUND_BLUE = 99;
+
+        public const int DARK_PURPLE_RED = 64;
+        public const int DARK_PURPLE_GREEN = 0;
+        public const int DARK_PURPLE_BLUE = 96;
+        public const int DARKER_GRAY_RED = 64;
+        public const int DARKER_GRAY_GREEN = 64;
+        public const int DARKER_GRAY_BLUE = 64;
+        public const int DARKER_RED_RED = 64;
+        public const int DARKER_RED_GREEN = 0;
+        public const int DARKER_RED_BLUE = 0;
 
 
 

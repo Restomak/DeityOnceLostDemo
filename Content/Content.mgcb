@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Backgrounds/Event Background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Event Background.png
+
 #begin Backgrounds/Map Background.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -130,6 +142,13 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Black-12.spritefont
 
+#begin Fonts/Roboto-Black-14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-14.spritefont
+
 #begin Fonts/Roboto-Black-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -178,6 +197,13 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Bold-12.spritefont
+
+#begin Fonts/Roboto-Bold-14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-14.spritefont
 
 #begin Fonts/Roboto-Bold-16.spritefont
 /importer:FontDescriptionImporter
@@ -228,6 +254,13 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Medium-12.spritefont
 
+#begin Fonts/Roboto-Medium-14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-14.spritefont
+
 #begin Fonts/Roboto-Medium-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -276,6 +309,13 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-12.spritefont
+
+#begin Fonts/Roboto-Regular-14.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-14.spritefont
 
 #begin Fonts/Roboto-Regular-16.spritefont
 /importer:FontDescriptionImporter

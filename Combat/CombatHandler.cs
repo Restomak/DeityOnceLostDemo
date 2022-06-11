@@ -266,7 +266,7 @@ namespace DeityOnceLost.Combat
             if (enemiesDefeated)
             {
                 _currentRoom.finishTopContent();
-                Game1.endCombat();
+                Game1.returnToDungeon();
             }
             else //the champion has died and no party members can replace them
             {

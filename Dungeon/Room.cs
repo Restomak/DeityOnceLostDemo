@@ -122,11 +122,12 @@ namespace DeityOnceLost.Dungeon
             return null;
         }
 
-        //FIXIT implement these
-        /*public virtual Events.Event getRoomEvent()
+        public virtual Events.Happening getRoomEvent()
         {
             return null;
-        }*/
+        }
+
+        //FIXIT implement
         /*public virtual Treasures.Loot getRoomTreasure()
         {
             return null;
