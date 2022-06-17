@@ -8,6 +8,13 @@ namespace DeityOnceLost.Combat
 {
     public abstract class Unit
     {
+        public enum statType
+        {
+            strength,
+            dexterity,
+            resilience
+        }
+
         protected String _name;
         protected int _currentHP, _maxHP;
         protected bool _isEnemy, _downed;

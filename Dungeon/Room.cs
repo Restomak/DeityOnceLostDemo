@@ -26,7 +26,8 @@ namespace DeityOnceLost.Dungeon
         protected Room _northRoom, _eastRoom, _southRoom, _westRoom;
         protected Connector _northConnector, _eastConnector, _southConnector, _westConnector;
         protected List<roomContents> _roomContents;
-        bool _revealed, _partialRevealed;
+        protected bool _revealed, _partialRevealed;
+        protected Combat.Encounter _roomEncounter;
 
         public Room()
         {
@@ -119,7 +120,7 @@ namespace DeityOnceLost.Dungeon
 
         public virtual Combat.Encounter getRoomCombat()
         {
-            return null;
+            return _roomEncounter;
         }
 
         public virtual Events.Happening getRoomEvent()
@@ -173,7 +174,7 @@ namespace DeityOnceLost.Dungeon
         {
             _roomContents.Clear();
         }
-        public void finishTopContent()
+        public virtual void finishTopContent()
         {
             if (_roomContents.Count > 0)
             {

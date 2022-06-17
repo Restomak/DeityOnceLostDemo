@@ -26,22 +26,22 @@ namespace DeityOnceLost.UserInterface.Clickables
 
         public Rectangle getTopLeftTargetPiece()
         {
-            return new Rectangle(_x, _y - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT * 2,
+            return new Rectangle(_x, Drawing.DrawHandler.yFromBottom(_y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
                 Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT);
         }
         public Rectangle getTopRightTargetPiece()
         {
-            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, _y - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT * 2,
+            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawHandler.yFromBottom(_y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
                 Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT);
         }
         public Rectangle getBottomRightTargetPiece()
         {
-            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, _y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT,
+            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawHandler.yFromBottom(_y, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
                 Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT);
         }
         public Rectangle getBottomLeftTargetPiece()
         {
-            return new Rectangle(_x, _y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT,
+            return new Rectangle(_x, Drawing.DrawHandler.yFromBottom(_y, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
                 Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT);
         }
 

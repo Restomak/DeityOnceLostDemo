@@ -361,6 +361,10 @@ namespace DeityOnceLost.Drawing
             {
                 return new Color(DrawConstants.DARKER_RED_RED, DrawConstants.DARKER_RED_GREEN, DrawConstants.DARKER_RED_BLUE);
             }
+            else if (piece == "Darker Purple")
+            {
+                return new Color(DrawConstants.DARK_PURPLE_RED, DrawConstants.DARK_PURPLE_GREEN, DrawConstants.DARK_PURPLE_BLUE);
+            }
 
             Game1.errorLog.Add("Attempting to get Color from getColorFromText but " + piece + " not implemented");
             return color;

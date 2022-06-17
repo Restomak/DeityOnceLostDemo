@@ -28,7 +28,10 @@ namespace DeityOnceLost.DeckBuilder
             _allCards.Add(new Cards.DefaultCards.Punch());
 
             //Common Cards
-
+            _allCards.Add(new Cards.CommonCards.GatherStrength());
+            _allCards.Add(new Cards.CommonCards.HeroicBlow());
+            _allCards.Add(new Cards.CommonCards.RollingKick());
+            _allCards.Add(new Cards.CommonCards.DodgeAndRoll());
 
             //Rare Cards
 

@@ -82,8 +82,7 @@ namespace DeityOnceLost.Dungeon.Floors
 
             setupSecondStoryRoom(new Point(eventX, eventY));
 
-            Rooms.CombatRoom combatRoom = new Rooms.CombatRoom(new Combat.Encounters.SingleFanblade()); //FIXIT make sure loot can only be a new card
-            replaceRoom(combatRoom, new Point(combatX, combatY));
+            setupThirdStoryRoom(new Point(combatX, combatY));
 
             //Remove the ability to go straight from start to exit by changing it to a connector you can scout through, but not traverse
             Room.connectRooms(_rooms[startX][startY], dirToEnd, _rooms[endX][endY], new Connectors.SeeNotTraverse());
@@ -108,7 +107,7 @@ namespace DeityOnceLost.Dungeon.Floors
             //Set up the follow-up event
             List<Events.Choice> startRoomResultChoices = new List<Events.Choice>();
             startRoomResultChoices.Add(new Events.Choice("[f: 12 bb]Continue."));
-            startRoomEventChoices[0].getResult().setChoices(startRoomResultChoices);
+            startRoomEventChoices[0].getResultingEvent().setChoices(startRoomResultChoices);
 
             startRoom.getRoomEvent().setChoices(startRoomEventChoices);
         }
@@ -116,22 +115,65 @@ namespace DeityOnceLost.Dungeon.Floors
         private void setupSecondStoryRoom(Point location)
         {
             //Create the room & replace it in the 2D list
-            Rooms.StoryRoom eventRoom = new Rooms.StoryRoom();
-            replaceRoom(eventRoom, location);
+            Rooms.StoryRoom secondRoom = new Rooms.StoryRoom();
+            replaceRoom(secondRoom, location);
 
             //Set up the event
-            eventRoom.setRoomEvent(new Events.Happening(getSecondStory()));
-            List<Events.Choice> eventRoomEventChoices = new List<Events.Choice>();
-            eventRoomEventChoices.Add(new Events.Choice(Story.StoryConstants.INTRO_ROOM2_CHOICE));
-            eventRoomEventChoices[0].setResult(new Events.Happening(getSecondStoryResult()));
-            eventRoom.getRoomEvent().setChoices(eventRoomEventChoices);
+            Events.Happening secondStoryEvent = new Events.Happening(getSecondStory());
+            List<Events.Choice> secondRoomEventChoices = new List<Events.Choice>();
+            Events.Choice secondStoryEvent_onlyChoice = new Events.Choice(Story.StoryConstants.INTRO_ROOM2_CHOICE);
 
             //Set up the follow-up event
-            List<Events.Choice> eventRoomResultChoices = new List<Events.Choice>();
-            eventRoomResultChoices.Add(new Events.Choice("[f: 12 bb]Continue."));
-            eventRoomEventChoices[0].getResult().setChoices(eventRoomResultChoices);
+            Events.Happening secondStoryResult = new Events.Happening(getSecondStoryResult());
+            List<Events.Choice> secondRoomResultChoices = new List<Events.Choice>();
+            Events.Choice fight = new Events.Choice("[c: Red][f: 12 bb]Fight!");
 
-            eventRoom.getRoomEvent().setChoices(eventRoomEventChoices);
+            //Set up the combat
+            Combat.Encounter secondRoomCombat = new Combat.Encounters.SingleLabTestSlime(); //FIXIT SingleFanblade(); //FIXIT make sure loot can only be a new card
+
+            //Set up the combat loot
+            Treasury.Loot secondRoomLoot = new Treasury.Loot(UserInterface.Menus.LootMenu.COMBAT_LOOT);
+            secondRoomLoot.addTreasure(new Treasury.Treasures.AddCardToDeck(Treasury.Treasures.AddCardToDeck.getRandomCards(Treasury.LootConstants.ADDCARD_DEFAULT_CHOICE_AMOUNT)));
+            //FIXIT add money
+
+
+            //Put it all together
+            secondRoomCombat.setLoot(secondRoomLoot);
+            fight.setResult(secondRoomCombat);
+            secondRoomResultChoices.Add(fight);
+            secondStoryResult.setChoices(secondRoomResultChoices);
+            secondStoryEvent_onlyChoice.setResult(secondStoryResult);
+            secondRoomEventChoices.Add(secondStoryEvent_onlyChoice);
+            secondStoryEvent.setChoices(secondRoomEventChoices);
+            secondRoom.setRoomEvent(secondStoryEvent);
+        }
+
+        private void setupThirdStoryRoom(Point location)
+        {
+            //Create the room & replace it in the 2D list
+            Rooms.StoryRoom thirdRoom = new Rooms.StoryRoom();
+            replaceRoom(thirdRoom, location);
+
+            //Set up the event
+            Events.Happening thirdStoryEvent = new Events.Happening(getThirdStory());
+            List<Events.Choice> thirdRoomEventChoices = new List<Events.Choice>();
+            Events.Choice thirdStoryEvent_onlyChoice = new Events.Choice("[c: Gold][f: 12 bb]Add a card to your deck.");
+
+            //Set up the card choice
+            Treasury.Loot thirdRoomLoot = new Treasury.Loot(""); //the string doesn't matter since we won't see the loot screen; it'll skip to the card choice
+            List<DeckBuilder.Card> thirdRoomCardChoices = new List<DeckBuilder.Card>();
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow());
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow()); //FIXIT make godly-rarity cards for this
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow());
+            Treasury.Treasures.AddCardToDeck thirdRoomCardAddition = new Treasury.Treasures.AddCardToDeck(thirdRoomCardChoices);
+
+
+            //Put it all together
+            thirdRoomLoot.addTreasure(thirdRoomCardAddition);
+            thirdStoryEvent_onlyChoice.setResult(thirdRoomLoot);
+            thirdRoomEventChoices.Add(thirdStoryEvent_onlyChoice);
+            thirdStoryEvent.setChoices(thirdRoomEventChoices);
+            thirdRoom.setRoomEvent(thirdStoryEvent);
         }
 
         private List<String> getIntroStory()
@@ -205,6 +247,26 @@ namespace DeityOnceLost.Dungeon.Floors
             result.Add(Story.StoryConstants.INTRO_ROOM2_RESULT_LINE_5);
 
             return result;
+        }
+
+        private List<String> getThirdStory()
+        {
+            List<String> thirdStory = new List<string>();
+
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_1);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_2);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_3);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_4);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_5);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_6);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_7);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_8);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_9);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_10);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_11);
+            thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_12);
+
+            return thirdStory;
         }
     }
 }

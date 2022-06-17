@@ -9,6 +9,7 @@ namespace DeityOnceLost.Combat
     public abstract class Encounter
     {
         protected List<Enemy> _enemies;
+        protected Treasury.Loot _loot;
 
         public Encounter()
         {
@@ -50,6 +51,21 @@ namespace DeityOnceLost.Combat
             }
 
             return true;
+        }
+
+        public Treasury.Loot getLoot()
+        {
+            if (_loot != null)
+            {
+                return _loot;
+            }
+
+            return Treasury.Loot.generateDefaultLoot(UserInterface.Menus.LootMenu.COMBAT_LOOT);
+        }
+
+        public void setLoot(Treasury.Loot loot)
+        {
+            _loot = loot;
         }
 
         public abstract void initialize();

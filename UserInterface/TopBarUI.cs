@@ -17,6 +17,11 @@ namespace DeityOnceLost.UserInterface
             _topBar = new UserInterface();
         }
 
+        public List<UserInterface> getUIForLateDraw()
+        {
+            return new List<UserInterface>() { _topBar };
+        }
+
         public void addToActiveUI(List<UserInterface> activeUI)
         {
             activeUI.Add(_topBar);

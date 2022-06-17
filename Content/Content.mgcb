@@ -121,6 +121,18 @@
 /processorParam:TextureFormat=Color
 /build:Enemies/Fanblade Guard.png
 
+#begin Enemies/Lab Test Slime.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemies/Lab Test Slime.png
+
 #begin Fonts/Roboto-Black-10.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -369,6 +381,30 @@
 /processorParam:TextureFormat=Color
 /build:functionality art/Card Back laid down.png;functionality art/Card Down.png
 
+#begin functionality art/Card Blood Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Card Blood Icon.png
+
+#begin functionality art/Card Divinity Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Card Divinity Icon.png
+
 #begin functionality art/Defense.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -572,6 +608,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/silhouette.png
+
+#begin functionality art/Skip Button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Skip Button.png
 
 #begin functionality art/targeting back - bottom left.png
 /importer:TextureImporter

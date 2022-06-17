@@ -31,7 +31,7 @@ namespace DeityOnceLost.Story
         public const String INTRO_LINE_4 = "consciousness so weak, it seems to make the time drag on, and on, and on...";
         public const String INTRO_LINE_5 = "";
         public const String INTRO_LINE_6 = "With effort, you remember a little. You need |[c: Powder Blue][f: 12 bb]followers|. Belief and worship are what power a deity. Without them, you see nothing, you feel nothing.";
-        public const String INTRO_LINE_7 = "Without them, you |[f: 12 bb][s: Black]are| nothing but a |[s: Purple][c: Black]shadow| of yourself.";
+        public const String INTRO_LINE_7 = "Without them, you |[f: 12 bb][s: Black]are| nothing but a |[s: Darker Purple][c: Purple]shadow| of yourself.";
         public const String INTRO_LINE_8 = "";
         public const String INTRO_LINE_9 = "A voice sounds in your mind, faint and desperate. |[c: Lawn Green][f: 10 b]\"...please...\"";
         public const String INTRO_LINE_10 = "";
@@ -57,19 +57,32 @@ namespace DeityOnceLost.Story
         public const String INTRO_RESULT_LINE_13 = "";
         public const String INTRO_RESULT_LINE_14 = "[They: c] shall be your |[c: Gold][f: 12 bb]champion|.";
 
-        public const String INTRO_ROOM2_LINE_1 = "As you reach the cell door, controlling the body of your new champion, you can feel [their: c] confidence |[c: Powder Blue][f: 12 bb]growing|. You can tell that [they're: c] a fighter among";
-        public const String INTRO_ROOM2_LINE_2 = "[their: c] people, and combined with your power [they've: c] become a |[f: 12 bb]force to be reckoned with|.";
+        public const String INTRO_ROOM2_LINE_1 = "As you reach the cell door with your new champion, you can feel [their: c] confidence |[c: Powder Blue][f: 12 bb]growing|. You can tell that [they're: c] a fighter among [their: c] people, and";
+        public const String INTRO_ROOM2_LINE_2 = "under your control [they're: c] a |[f: 12 bb]force to be reckoned with|.";
         public const String INTRO_ROOM2_LINE_3 = "";
         public const String INTRO_ROOM2_LINE_4 = "A |[c: Dark Red][s: Darker Red][f: 12 bb]dungeon guard| leans against the wall by the cell door, scowling at your champion and [their: c] people. You can sense that the guard is itching for a";
         public const String INTRO_ROOM2_LINE_5 = "reason to |[c: Red][f: 12 bb]fight|.";
         public const String INTRO_ROOM2_LINE_6 = "";
-        public const String INTRO_ROOM2_LINE_7 = "With your deific power, a simple dungeon door is |[f: 12 bb]nothing| to you. You shall give them their wish.";
+        public const String INTRO_ROOM2_LINE_7 = "With your deific power, a simple dungeon door is |[f: 12 bb]nothing| to you. You shall give the guard their wish.";
         public const String INTRO_ROOM2_CHOICE = "[f: 12 bb]Break down the door.";
 
         public const String INTRO_ROOM2_RESULT_LINE_1 = "[s: Monogame Orange][f: 14 bb]CRASH";
         public const String INTRO_ROOM2_RESULT_LINE_2 = "";
-        public const String INTRO_ROOM2_RESULT_LINE_3 = "Your champion and [their: c] people are free.";
+        public const String INTRO_ROOM2_RESULT_LINE_3 = "The guard jumps, surprise on their face. They quickly recover, however, and step forward, |[c: Dark Red][f: 12 bb]weapon| drawn.";
         public const String INTRO_ROOM2_RESULT_LINE_4 = "";
-        public const String INTRO_ROOM2_RESULT_LINE_5 = "The now-nervous dungeon guard awaits, |[c: Dark Red][s: Darker Red][f: 12 bb]weapon| drawn. It's time to get your new followers out of here.";
+        public const String INTRO_ROOM2_RESULT_LINE_5 = "A |[f: 12 bb][c: Red]wicked grin| forms on the guard's face, thinking this will be a |[c: Darker Red][s: Red][f: 12 bb]slaughter|, but you will |[c: Powder Blue][f: 12 bb]not| let them reach your soon-to-be followers.";
+
+        public const String INTRO_ROOM3_LINE_1 = "With the defeated dungeon guard behind you, you have your champion stand for a moment as you contemplate your victory. You can sense the";
+        public const String INTRO_ROOM3_LINE_2 = "pleasure they feel over it, but to you, that fight felt sloppy. It was an |[c: Red][f: 12 bb]unrefined melee| between mortals, and you know that |[f: 12 bb]you| can do |[f: 12 bb]better|.";
+        public const String INTRO_ROOM3_LINE_3 = "You could infuse |[f: 12 bb]more| of yourself into your champion, if only you could remember your own powers a little better...";
+        public const String INTRO_ROOM3_LINE_4 = "";
+        public const String INTRO_ROOM3_LINE_5 = "You focus inward, looking through the vastness of your very being. Long has it been since you've known anything other than the |[s: Darker Purple][c: Purple]void|.";
+        public const String INTRO_ROOM3_LINE_6 = "";
+        public const String INTRO_ROOM3_LINE_7 = "Something catches your attention. A hint of |[s: Purple][c: Powder Blue][f: 12 bb]something greater|- a fragment of a memory long lost- gains some tenuous hold in your mind.";
+        public const String INTRO_ROOM3_LINE_8 = "";
+        public const String INTRO_ROOM3_LINE_9 = "Without hesitation, you |[s: Monogame Orange][f: 14 bb]PULL| on that fragment, forcing it forward, |[c: Red][f: 12 bb]pushing| it into your champion. You feel [them: c] shudder at the sudden invasion,";
+        public const String INTRO_ROOM3_LINE_10 = "but [their: c] discomfort passes. Left in its place, infusing [them: c], is a fragment of your former |[c: Gold][s: Dark Goldenrod][f: 12 bb]power|. You can feel [their: c] awe.";
+        public const String INTRO_ROOM3_LINE_11 = "";
+        public const String INTRO_ROOM3_LINE_12 = "This is |[f: 12 bb]much| better.";
     }
 }

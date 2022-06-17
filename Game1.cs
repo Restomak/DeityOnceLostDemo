@@ -37,6 +37,7 @@ namespace DeityOnceLost
         private static List<UserInterface.UserInterface> _previousUI;
         private static UserInterface.Clickable _currentHover;
         private static UserInterface.TopBarUI _topBar;
+        private static List<UserInterface.MenuUI> _menus;
 
         //Game structure variables
         private static Drawing.DrawHandler _drawHandler;
@@ -103,6 +104,10 @@ namespace DeityOnceLost
         public static Events.EventHandler getEventHandler()
         {
             return _eventHandler;
+        }
+        public static DeckBuilder.CardCollection getCardCollection()
+        {
+            return _cardCollection_All;
         }
 
         
@@ -179,6 +184,31 @@ namespace DeityOnceLost
             _topBar.updateUI();
         }
 
+        public static void addToMenus(UserInterface.MenuUI newMenu)
+        {
+            _menus.Add(newMenu);
+            updateMenus();
+        }
+
+        public static void closeMenu(UserInterface.MenuUI menu)
+        {
+            _menus.Remove(menu);
+            updateMenus();
+        }
+
+        public static void updateMenus()
+        {
+            for (int i = 0; i < _menus.Count; i++)
+            {
+                _menus[i].updateUI();
+            }
+        }
+
+        public bool menuActive()
+        {
+            return (_menus.Count > 0);
+        }
+
         public static void setupRandomFirstChampion()
         {
             _hero = new Characters.Hero();
@@ -202,6 +232,7 @@ namespace DeityOnceLost
 
             _activeUI = new List<UserInterface.UserInterface>();
             _topBar = new UserInterface.TopBarUI();
+            _menus = new List<UserInterface.MenuUI>();
 
             base.Initialize();
         }
@@ -244,6 +275,9 @@ namespace DeityOnceLost
             pic_functionality_mapExitIcon = Content.Load<Texture2D>("functionality art/Map Exit Icon");
             pic_functionality_mapConnectorWindowH = Content.Load<Texture2D>("functionality art/Map Window Connector H");
             pic_functionality_mapConnectorWindowV = Content.Load<Texture2D>("functionality art/Map Window Connector V");
+            pic_functionality_skipButton = Content.Load<Texture2D>("functionality art/Skip Button");
+            pic_functionality_cardDivinityIcon = Content.Load<Texture2D>("functionality art/Card Divinity Icon");
+            pic_functionality_cardBloodIcon = Content.Load<Texture2D>("functionality art/Card Blood Icon");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -289,6 +323,7 @@ namespace DeityOnceLost
 
             //enemies
             pic_enemy_fanbladeGuard = Content.Load<Texture2D>("Enemies/Fanblade Guard");
+            pic_enemy_labTestSlime = Content.Load<Texture2D>("Enemies/Lab Test Slime");
 
             //shaders
             shader_Regular = Content.Load<Effect>("Shaders/Regular");
@@ -305,7 +340,7 @@ namespace DeityOnceLost
         //Functionality Art
         public static Texture2D pic_functionality_uiSketch, pic_functionality_endTurnButton, pic_functionality_cardDown, pic_functionality_bar,
             pic_functionality_intent_AoE, pic_functionality_intent_Attack, pic_functionality_intent_Buff, pic_functionality_intent_Debuff, pic_functionality_intent_Defend,
-            pic_functionality_defenseIcon, pic_functionality_championSilhouette,
+            pic_functionality_defenseIcon, pic_functionality_championSilhouette, pic_functionality_skipButton, pic_functionality_cardDivinityIcon, pic_functionality_cardBloodIcon,
             pic_functionality_targeting_faded_TL, pic_functionality_targeting_faded_TR, pic_functionality_targeting_faded_BR, pic_functionality_targeting_faded_BL,
             pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL,
             pic_functionality_mapRoom, pic_functionality_mapConnectorH, pic_functionality_mapConnectorV, pic_functionality_mapChampLoc, pic_functionality_mapStoryIcon,
@@ -326,7 +361,7 @@ namespace DeityOnceLost
             pic_card_front_epic, pic_card_front_godly, pic_card_front_void;
 
         //Enemies
-        public static Texture2D pic_enemy_fanbladeGuard;
+        public static Texture2D pic_enemy_fanbladeGuard, pic_enemy_labTestSlime;
         
         //Shaders
         public static Effect shader_Regular, shader_CardGlow, shader_DeckGlow, shader_Experimental;
@@ -351,6 +386,14 @@ namespace DeityOnceLost
         public static int randint(int min, int max)
         {
             return rand.Next(min, max + 1);
+        }
+
+        /// <summary>
+        /// Supply the chance of something happening, and the function will return whether or not it should.
+        /// </summary>
+        public static bool randChance(double chance)
+        {
+            return (rand.NextDouble() <= chance);
         }
         
         /// <summary>
@@ -412,9 +455,23 @@ namespace DeityOnceLost
             //Input
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            _inputController.updateInput(_windowControl, _activeUI, _gameState);
 
-            //Debug log on screen
+            List<UserInterface.UserInterface> inputUI = _activeUI;
+            if (_menus.Count > 0) //make sure the active UI is the most recent menu, if one exists
+            {
+                inputUI = _menus[_menus.Count - 1].getUI();
+
+                if (_menus[_menus.Count - 1].addTopBar())
+                {
+                    _topBar.addToActiveUI(inputUI);
+                }
+            }
+
+            _inputController.updateInput(_windowControl, inputUI, _gameState);
+
+
+
+            //Game logs display input
             if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 showDebugLog = true;
@@ -432,17 +489,20 @@ namespace DeityOnceLost
 
 
             //Game Logic
-            switch (_gameState)
+            if (_menus.Count == 0)
             {
-                case gameState.combat:
-                    _combatHandler.handleCombat();
-                    break;
-                case gameState.dungeon:
-                    _dungeonHandler.handleDungeonLogic();
-                    break;
-                case gameState.happening:
-                    _eventHandler.handleEventLogic();
-                    break;
+                switch (_gameState)
+                {
+                    case gameState.combat:
+                        _combatHandler.handleCombat();
+                        break;
+                    case gameState.dungeon:
+                        _dungeonHandler.handleDungeonLogic();
+                        break;
+                    case gameState.happening:
+                        _eventHandler.handleEventLogic();
+                        break;
+                }
             }
 
 
@@ -542,6 +602,12 @@ namespace DeityOnceLost
                         shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
                         Drawing.DrawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
                     }
+                    else if (_currentHover.GetType() == typeof(UserInterface.Clickables.CardChoice))
+                    {
+                        //Change up the shader for the glow
+                        shader_CardGlow.CurrentTechnique.Passes[0].Apply();
+                        Drawing.DrawHandler.drawCardChoice(_spriteBatch, (UserInterface.Clickables.CardChoice)_currentHover, _champ, true);
+                    }
 
                     //Set it back to the regular shader in case it was changed
                     shader_Regular.CurrentTechnique.Passes[0].Apply();
@@ -551,6 +617,41 @@ namespace DeityOnceLost
             else if (_gameState == gameState.dungeon || _gameState == gameState.happening && _previousGameState == gameState.dungeon)
             {
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
+            }
+
+
+
+            //Draw menus on top
+            for (int i = 0; i < _menus.Count; i++)
+            {
+                Drawing.DrawHandler.drawMenuBackground(_spriteBatch, _menus[i]);
+                _drawHandler.drawUI(_spriteBatch, _menus[i].getUI(), _champ);
+            }
+
+            if (_menus.Count > 0)
+            {
+                //Redraw top bar in case a large (scrollable) menu was over the top bar, which is technically on top of the rest of the UI where input is concerned
+                _drawHandler.drawUI(_spriteBatch, _topBar.getUIForLateDraw(), _champ);
+
+                //Draw menu current hover last //FIXIT more clickables here will need logic for glowing (currently only Button is covered)
+                if (_currentHover != null)
+                {
+                    if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))
+                    {
+                        //Doesn't glow using a shader atm
+                        Drawing.DrawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
+                    }
+                    else if (_currentHover.GetType() == typeof(UserInterface.Clickables.CardChoice))
+                    {
+                        //Change up the shader for the glow
+                        shader_CardGlow.CurrentTechnique.Passes[0].Apply();
+                        Drawing.DrawHandler.drawCardChoice(_spriteBatch, (UserInterface.Clickables.CardChoice)_currentHover, _champ, true);
+                    }
+
+                    //Set it back to the regular shader in case it was changed
+                    shader_Regular.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
+                }
             }
 
 

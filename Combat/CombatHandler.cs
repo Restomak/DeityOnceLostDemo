@@ -48,6 +48,7 @@ namespace DeityOnceLost.Combat
         Encounter _currentEncounter;
         combatTurn _turn;
         Dungeon.Room _currentRoom;
+        bool lootHandled;
 
         public CombatHandler()
         {
@@ -141,6 +142,9 @@ namespace DeityOnceLost.Combat
             _turn = combatTurn.ROUND_START;
             _champ.resetDivinity();
             _champ.resetDefense();
+            _champ.resetStrength();
+            _champ.resetDexterity();
+            _champ.resetResilience();
             if (_partyMembers != null)
             {
                 foreach (Unit party in _partyMembers)
@@ -148,9 +152,10 @@ namespace DeityOnceLost.Combat
                     party.resetDefense();
                 }
             }
-            _currentEncounter.resetDefense();
 
             _champ.getDeck().start();
+
+            lootHandled = false;
         }
 
         /// <summary>
@@ -265,8 +270,20 @@ namespace DeityOnceLost.Combat
         {
             if (enemiesDefeated)
             {
-                _currentRoom.finishTopContent();
-                Game1.returnToDungeon();
+                if (!lootHandled)
+                {
+                    //Set stats in a way that they don't affect card numbers
+                    _champ.tempSetStrengthTo0();
+                    _champ.tempSetDexterityTo0();
+                    _champ.tempSetResilienceTo0();
+                    Game1.addToMenus(new UserInterface.Menus.LootMenu(_currentEncounter.getLoot(), UserInterface.Menus.LootMenu.COMBAT_LOOT));
+                    lootHandled = true;
+                }
+                else
+                {
+                    _currentRoom.finishTopContent();
+                    Game1.returnToDungeon();
+                }
             }
             else //the champion has died and no party members can replace them
             {

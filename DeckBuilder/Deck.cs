@@ -51,8 +51,8 @@ namespace DeityOnceLost.DeckBuilder
             _removedCards.Clear();
 
             _drawPile = shuffle(_deck);
-            
-            Game1.debugLog.Add("Deck start() called");
+
+            Game1.debugLog.Add("Deck start() called. Deck size: " + _deck.Count);
         }
 
         /// <summary>
@@ -84,18 +84,34 @@ namespace DeityOnceLost.DeckBuilder
 
         public List<Card> shuffle(List<Card> cards)
         {
+            List<Card> unshuffledCards = new List<Card>();
             List<Card> shuffledCards = new List<Card>();
             int emergencyExitCounter = 0;
             int randomIndex;
 
-            while (cards.Count > 0 && emergencyExitCounter < EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT)
+            //Copy deck into unshuffled list
+            for (int i = 0; i < cards.Count; i++)
             {
-                randomIndex = Game1.randint(0, cards.Count - 1);
-                shuffledCards.Add(cards[randomIndex]);
-                cards.RemoveAt(randomIndex);
+                unshuffledCards.Add(cards[i]);
             }
 
+            //Move unshuffled list into shuffled list
+            while (unshuffledCards.Count > 0 && emergencyExitCounter < EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT)
+            {
+                randomIndex = Game1.randint(0, unshuffledCards.Count - 1);
+                shuffledCards.Add(unshuffledCards[randomIndex]);
+                unshuffledCards.RemoveAt(randomIndex);
+
+                emergencyExitCounter++;
+            }
+
+            //If emergency exit was hit, make sure the rest of the cards still get added in
             Game1.debugLog.Add("Deck shuffled. emergencyExitCounter: " + emergencyExitCounter);
+            for (int i = 0; i < unshuffledCards.Count; i++)
+            {
+                shuffledCards.Add(cards[i]);
+            }
+
             return shuffledCards;
         }
 

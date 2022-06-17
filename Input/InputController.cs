@@ -106,6 +106,7 @@ namespace DeityOnceLost.Input
                         break;
                 }
 
+                Game1.updateMenus();
                 Game1.updateTopBar();
             }
         }

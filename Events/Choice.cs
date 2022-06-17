@@ -9,7 +9,9 @@ namespace DeityOnceLost.Events
     public class Choice
     {
         String _choiceText;
-        Happening _result;
+        Happening _resultingEvent;
+        Combat.Encounter _resultingEncounter;
+        Treasury.Loot _resultingLoot;
         Action _onChoose;
 
         public Choice(String choiceText)
@@ -24,7 +26,21 @@ namespace DeityOnceLost.Events
         //Setters
         public void setResult(Happening result)
         {
-            _result = result;
+            _resultingEvent = result;
+            _resultingEncounter = null;
+            _resultingLoot = null;
+        }
+        public void setResult(Combat.Encounter result)
+        {
+            _resultingEvent = null;
+            _resultingEncounter = result;
+            _resultingLoot = null;
+        }
+        public void setResult(Treasury.Loot result)
+        {
+            _resultingEvent = null;
+            _resultingEncounter = null;
+            _resultingLoot = result;
         }
 
         public void setOnChoose(Action onChoose)
@@ -35,9 +51,17 @@ namespace DeityOnceLost.Events
 
         
         //Getters
-        public Happening getResult()
+        public Happening getResultingEvent()
         {
-            return _result;
+            return _resultingEvent;
+        }
+        public Combat.Encounter getResultingEncounter()
+        {
+            return _resultingEncounter;
+        }
+        public Treasury.Loot getResultingLoot()
+        {
+            return _resultingLoot;
         }
 
         public String getText()

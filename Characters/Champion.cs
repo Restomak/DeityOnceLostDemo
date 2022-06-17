@@ -114,7 +114,22 @@ namespace DeityOnceLost.Characters
         }
 
 
-        
+
+        public void tempSetStrengthTo0()
+        {
+            _strength = 0;
+        }
+        public void tempSetDexterityTo0()
+        {
+            _dexterity = 0;
+        }
+        public void tempSetResilienceTo0()
+        {
+            _resilience = 0;
+        }
+
+
+
         /// <summary>
         /// Used when calculating damage shown on enemy intents
         /// </summary>
