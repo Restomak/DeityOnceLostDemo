@@ -162,9 +162,9 @@ namespace DeityOnceLost.Dungeon.Floors
             //Set up the card choice
             Treasury.Loot thirdRoomLoot = new Treasury.Loot(""); //the string doesn't matter since we won't see the loot screen; it'll skip to the card choice
             List<DeckBuilder.Card> thirdRoomCardChoices = new List<DeckBuilder.Card>();
-            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow());
-            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow()); //FIXIT make godly-rarity cards for this
-            thirdRoomCardChoices.Add(new DeckBuilder.Cards.CommonCards.HeroicBlow());
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.GodlyCards.FistOfTheStars());
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.GodlyCards.FistOfTheStars()); //FIXIT make godly-rarity cards for this
+            thirdRoomCardChoices.Add(new DeckBuilder.Cards.GodlyCards.FistOfTheStars());
             Treasury.Treasures.AddCardToDeck thirdRoomCardAddition = new Treasury.Treasures.AddCardToDeck(thirdRoomCardChoices);
 
 

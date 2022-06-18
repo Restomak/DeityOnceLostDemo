@@ -158,6 +158,16 @@ namespace DeityOnceLost.UserInterface.Clickables
                 case DeckBuilder.CardEnums.TargetingType.champion:
                     ui.addClickableToBack(new Target(champion, DeckBuilder.CardEnums.TargetingType.champion));
                     break;
+                case DeckBuilder.CardEnums.TargetingType.aoeEnemies:
+                    //FIXIT they need to all highlight when you hover one
+                    for (int i = 0; i < enemies.getClickables().Count; i++)
+                    {
+                        ui.addClickableToBack(new Target(enemies.getClickables()[i], DeckBuilder.CardEnums.TargetingType.enemies));
+                    }
+                    break;
+                case DeckBuilder.CardEnums.TargetingType.aoeParty:
+                    //FIXIT
+                    break;
                 default:
                     Game1.errorLog.Add("Game1.getTargetsOfCard trying to get a target from a targetingType that wasn't previously defined: " + targetType.ToString());
                     break;

@@ -32,6 +32,7 @@ namespace DeityOnceLost.DeckBuilder
             _allCards.Add(new Cards.CommonCards.HeroicBlow());
             _allCards.Add(new Cards.CommonCards.RollingKick());
             _allCards.Add(new Cards.CommonCards.DodgeAndRoll());
+            _allCards.Add(new Cards.CommonCards.Cleave());
 
             //Rare Cards
 
@@ -40,6 +41,7 @@ namespace DeityOnceLost.DeckBuilder
 
 
             //Godly Cards
+            _allCards.Add(new Cards.GodlyCards.FistOfTheStars());
 
 
             //Void Cards

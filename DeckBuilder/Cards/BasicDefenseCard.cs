@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeityOnceLost.DeckBuilder
+namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class AttackAndDefenseCard : BasicAttackCard, IDefendingCard
+    abstract class BasicDefenseCard : Card, IDefendingCard
     {
         protected int _defense;
 
-        public AttackAndDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage, int defense) : base(name, cardType, rarity, damage)
+        public BasicDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense) : base(name, cardType, rarity, CardEnums.TargetingType.champion)
         {
             _defense = defense;
         }
@@ -22,7 +22,6 @@ namespace DeityOnceLost.DeckBuilder
 
         public override void onPlay()
         {
-            dealDamage();
             gainDefense();
         }
 
@@ -35,9 +34,7 @@ namespace DeityOnceLost.DeckBuilder
         {
             List<String> desc = new List<string>();
             int defense = champ.getDexterity() + _defense;
-            int damage = champ.getStrength() + _damage;
 
-            desc.Add("Deal " + damage + " damage.");
             desc.Add("Gain " + defense + " defense.");
 
             return desc;

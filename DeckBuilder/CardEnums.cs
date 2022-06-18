@@ -39,7 +39,9 @@ namespace DeityOnceLost.DeckBuilder
             champion,
             party,
             friendlies, //champion & party
-            all //anyone
+            all, //anyone
+            aoeEnemies, //all enemies at once
+            aoeParty //all party members at once
         }
 
         public static String costTypeToString(CostType ct)

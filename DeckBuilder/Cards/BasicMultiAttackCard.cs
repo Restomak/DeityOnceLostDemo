@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeityOnceLost.DeckBuilder
+namespace DeityOnceLost.DeckBuilder.Cards
 {
-    abstract class BasicAttackCard : Card, IDamagingCard
+    class BasicMultiAttackCard : BasicAttackCard, IMultiAttack
     {
-        protected int _damage;
+        protected int _numHits;
 
-        public BasicAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage) : base(name, cardType, rarity, CardEnums.TargetingType.enemies)
+        public BasicMultiAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage, int numHits) : base(name, cardType, rarity, damage)
         {
-            _damage = damage;
+            _numHits = numHits;
         }
 
-        public int damage
+        public int numHits
         {
-            get => _damage;
+            get => _numHits;
         }
 
         public override void onPlay()
@@ -25,11 +25,14 @@ namespace DeityOnceLost.DeckBuilder
             dealDamage();
         }
 
-        public void dealDamage()
+        public override void dealDamage()
         {
             if (_target != null)
             {
-                _target.takeDamage(_damage);
+                for (int i = 0; i < _numHits; i++)
+                {
+                    _target.takeDamage(_damage);
+                }
             }
             else
             {
@@ -42,7 +45,8 @@ namespace DeityOnceLost.DeckBuilder
             List<String> desc = new List<string>();
             int damage = champ.getStrength() + _damage;
 
-            desc.Add("Deal " + damage + " damage.");
+            desc.Add("Deal " + damage + " damage " + numHits);
+            desc.Add("times.");
 
             return desc;
         }

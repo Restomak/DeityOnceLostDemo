@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeityOnceLost.DeckBuilder
+namespace DeityOnceLost.DeckBuilder.Cards
 {
-    abstract class BasicDefenseCard : Card, IDefendingCard
+    class ReplayableSelfBuffAndDefenseCard : BasicReplayableSelfBuffCard, IDefendingCard
     {
         protected int _defense;
 
-        public BasicDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense) : base(name, cardType, rarity, CardEnums.TargetingType.champion)
+        public ReplayableSelfBuffAndDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int buffAmount, Combat.Unit.statType buffType, int defense) :
+            base(name, cardType, rarity, buffAmount, buffType)
         {
             _defense = defense;
         }
@@ -22,6 +23,7 @@ namespace DeityOnceLost.DeckBuilder
 
         public override void onPlay()
         {
+            applyBuff();
             gainDefense();
         }
 
@@ -35,6 +37,7 @@ namespace DeityOnceLost.DeckBuilder
             List<String> desc = new List<string>();
             int defense = champ.getDexterity() + _defense;
 
+            desc.Add("Gain " + _buffAmount + " " + _buffType.ToString() + ".");
             desc.Add("Gain " + defense + " defense.");
 
             return desc;

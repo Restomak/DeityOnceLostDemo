@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeityOnceLost.DeckBuilder
+namespace DeityOnceLost.DeckBuilder.Cards
 {
     abstract class BasicReplayableSelfBuffCard : Card, IBuffCard
     {
