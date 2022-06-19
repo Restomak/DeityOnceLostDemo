@@ -31,7 +31,8 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
         public Rectangle getTopRightTargetPiece()
         {
-            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawHandler.yFromBottom(_y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
+            return new Rectangle(_x + _width - Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH,
+                Drawing.DrawHandler.yFromBottom(_y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
                 Drawing.DrawConstants.COMBAT_TARGET_CORNER_WIDTH, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT);
         }
         public Rectangle getBottomRightTargetPiece()
@@ -159,10 +160,15 @@ namespace DeityOnceLost.UserInterface.Clickables
                     ui.addClickableToBack(new Target(champion, DeckBuilder.CardEnums.TargetingType.champion));
                     break;
                 case DeckBuilder.CardEnums.TargetingType.aoeEnemies:
-                    //FIXIT they need to all highlight when you hover one
+                    List<MultiTarget> multitargets = new List<MultiTarget>();
                     for (int i = 0; i < enemies.getClickables().Count; i++)
                     {
-                        ui.addClickableToBack(new Target(enemies.getClickables()[i], DeckBuilder.CardEnums.TargetingType.enemies));
+                        multitargets.Add(new MultiTarget(enemies.getClickables()[i], DeckBuilder.CardEnums.TargetingType.enemies));
+                    }
+                    for (int i = 0; i < multitargets.Count; i++)
+                    {
+                        multitargets[i].linkMultiTargets(multitargets);
+                        ui.addClickableToBack(multitargets[i]);
                     }
                     break;
                 case DeckBuilder.CardEnums.TargetingType.aoeParty:

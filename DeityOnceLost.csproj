@@ -120,7 +120,9 @@
     <Compile Include="Treasury\LootConstants.cs" />
     <Compile Include="Treasury\Treasure.cs" />
     <Compile Include="Treasury\Treasures\AddCardToDeck.cs" />
+    <Compile Include="Treasury\Treasures\Gold.cs" />
     <Compile Include="UserInterface\Clickable.cs" />
+    <Compile Include="UserInterface\Clickables\AestheticOnly.cs" />
     <Compile Include="UserInterface\Clickables\Avatar.cs" />
     <Compile Include="UserInterface\Clickables\Button.cs" />
     <Compile Include="UserInterface\Clickables\CardChoice.cs" />
@@ -132,6 +134,8 @@
     <Compile Include="UserInterface\Clickables\Hovers\Resource.cs" />
     <Compile Include="UserInterface\Clickables\LootableTreasure.cs" />
     <Compile Include="UserInterface\Clickables\MapGrid.cs" />
+    <Compile Include="UserInterface\Clickables\MenuCard.cs" />
+    <Compile Include="UserInterface\Clickables\MultiTarget.cs" />
     <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
     <Compile Include="UserInterface\Clickables\HoverInfo.cs" />
@@ -139,6 +143,8 @@
     <Compile Include="UserInterface\CombatUI.cs" />
     <Compile Include="UserInterface\EventUI.cs" />
     <Compile Include="UserInterface\MapUI.cs" />
+    <Compile Include="UserInterface\Menus\CardCollectionMenu.cs" />
+    <Compile Include="UserInterface\Menus\CardMenu.cs" />
     <Compile Include="UserInterface\Menus\LootMenu.cs" />
     <Compile Include="UserInterface\Menus\NewCardChoiceMenu.cs" />
     <Compile Include="UserInterface\MenuUI.cs" />

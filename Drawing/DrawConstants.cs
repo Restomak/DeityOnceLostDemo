@@ -13,7 +13,9 @@ namespace DeityOnceLost.Drawing
         public const int TEXT_10_HEIGHT = 15;
         public const int TEXT_11_HEIGHT = 15;
         public const int TEXT_12_HEIGHT = 18;
+        public const int TEXT_15_HEIGHT = 23;
         public const int TEXT_16_HEIGHT = 24;
+        public const int TEXT_18_HEIGHT = 27;
         public const int TEXT_20_HEIGHT = 30;
         public const int TEXT_24_HEIGHT = 36;
         public const int DEBUG_LOG_X = 10;
@@ -28,6 +30,13 @@ namespace DeityOnceLost.Drawing
 
         public const int TOPBAR_CHAMPION_X = 32;
         public const int TOPBAR_HP_X = 300;
+        public const int TOPBAR_GOLD_X = 450;
+        public const int TOPBAR_DECK_TEXT_X = 600;
+
+        public const int TOPBAR_DECK_ICON_X = 648;
+        public const int TOPBAR_DECK_ICON_Y_BUFFER = 4;
+        public const int TOPBAR_DECK_ICON_WIDTH = 29;
+        public const int TOPBAR_DECK_ICON_HEIGHT = 24;
 
 
 
@@ -137,6 +146,12 @@ namespace DeityOnceLost.Drawing
         public const float CARDCHOICE_GLOW_OPACITY = 0.1f;
         public const int CARDCHOICE_GLOW_NUM_STEPS = 12;
 
+        public const int TOPBARDECK_GLOW_FURTHEST = 3;
+        public const int TOPBARDECK_GLOW_STEP = 1;
+        public const float TOPBARDECK_GLOW_OPACITY = 0.15f;
+        public const int TOPBARDECK_GLOW_NUM_STEPS = 3;
+        public const int TOPBARDECK_GLOW_EXTRA_X_PER_STEP = 1;
+
 
 
         //Dungeon constants
@@ -196,12 +211,13 @@ namespace DeityOnceLost.Drawing
         public const int CARDSELECTIONMENU_WIDTH = 1600;
         public const int CARDSELECTIONMENU_HEIGHT = Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT;
         public const int CARDSELECTIONMENU_MIN_HEIGHT = 700;
-        public const int CARDSELECTIONMENU_TITLE_Y_FROM_TOP = 30;
-        public const float CARDCHOICE_BACKGROUND_FADE = 0.75f;
-        public const int CARDSELECTIONMENU_Y_BUFFER = 30;
-        public const int CARDSELECTIONMENU_CARD_WIDTH = 282;
-        public const int CARDSELECTIONMENU_CARD_HEIGHT = 390;
-        public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN = 30;
+        public const int CARDSELECTIONMENU_TITLE_Y_FROM_TOP = 32;
+        public const float CARDCHOICE_BACKGROUND_FADE = 0.95f;
+        public const int CARDSELECTIONMENU_Y_BUFFER = 32;
+        public const int CARDSELECTIONMENU_CARD_WIDTH = 212;//282;
+        public const int CARDSELECTIONMENU_CARD_HEIGHT = 293;//390;
+        public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN = 32;
+        public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN_UNDER4 = 64;
         public const int CARDSELECTIONMENU_SKIP_BUTTON_WIDTH = 120;
         public const int CARDSELECTIONMENU_SKIP_BUTTON_HEIGHT = 50;
         public const int CARDSELECTIONMENU_MAX_CARDS_PER_ROW = 5;
@@ -243,5 +259,10 @@ namespace DeityOnceLost.Drawing
         public const double PULSE_START = 0.25;
         public const double PULSE_STEP = 0.01;
         public const double PULSE_BOOST = 0.4;
+
+
+
+        //Scroll Wheel
+        public const int SCROLL_Y_WHEEL_TICK_AMOUNT = 32;
     }
 }

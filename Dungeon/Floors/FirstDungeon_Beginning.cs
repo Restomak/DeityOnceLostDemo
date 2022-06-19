@@ -13,7 +13,10 @@ namespace DeityOnceLost.Dungeon.Floors
         public const int BEGINNING_MAP_WIDTH = 2;
         public const int BEGINNING_MAP_HEIGHT = 2;
 
-        public FirstDungeon_Beginning() : base (BEGINNING_MAP_WIDTH, BEGINNING_MAP_HEIGHT)
+        public const int DEFAULT_GOLD_FROM_COMBAT_MIN = 12;
+        public const int DEFAULT_GOLD_FROM_COMBAT_MAX = 22;
+
+        public FirstDungeon_Beginning() : base (BEGINNING_MAP_WIDTH, BEGINNING_MAP_HEIGHT, DEFAULT_GOLD_FROM_COMBAT_MIN, DEFAULT_GOLD_FROM_COMBAT_MAX)
         {
             //Randomize start point
             int startPoint = Game1.randint(1, 4); //four corners
@@ -134,6 +137,7 @@ namespace DeityOnceLost.Dungeon.Floors
             //Set up the combat loot
             Treasury.Loot secondRoomLoot = new Treasury.Loot(UserInterface.Menus.LootMenu.COMBAT_LOOT);
             secondRoomLoot.addTreasure(new Treasury.Treasures.AddCardToDeck(Treasury.Treasures.AddCardToDeck.getRandomCards(Treasury.LootConstants.ADDCARD_DEFAULT_CHOICE_AMOUNT)));
+            secondRoomLoot.addTreasure(new Treasury.Treasures.Gold(Game1.randint(DEFAULT_GOLD_FROM_COMBAT_MIN, DEFAULT_GOLD_FROM_COMBAT_MAX)));
             //FIXIT add money
 
 

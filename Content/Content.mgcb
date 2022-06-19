@@ -161,12 +161,26 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Black-14.spritefont
 
+#begin Fonts/Roboto-Black-15.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-15.spritefont
+
 #begin Fonts/Roboto-Black-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Black-16.spritefont
+
+#begin Fonts/Roboto-Black-18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Black-18.spritefont
 
 #begin Fonts/Roboto-Black-20.spritefont
 /importer:FontDescriptionImporter
@@ -217,12 +231,26 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Bold-14.spritefont
 
+#begin Fonts/Roboto-Bold-15.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-15.spritefont
+
 #begin Fonts/Roboto-Bold-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Bold-16.spritefont
+
+#begin Fonts/Roboto-Bold-18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Bold-18.spritefont
 
 #begin Fonts/Roboto-Bold-20.spritefont
 /importer:FontDescriptionImporter
@@ -273,12 +301,26 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Medium-14.spritefont
 
+#begin Fonts/Roboto-Medium-15.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-15.spritefont
+
 #begin Fonts/Roboto-Medium-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Medium-16.spritefont
+
+#begin Fonts/Roboto-Medium-18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Medium-18.spritefont
 
 #begin Fonts/Roboto-Medium-20.spritefont
 /importer:FontDescriptionImporter
@@ -329,12 +371,26 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-14.spritefont
 
+#begin Fonts/Roboto-Regular-15.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-15.spritefont
+
 #begin Fonts/Roboto-Regular-16.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Roboto-Regular-16.spritefont
+
+#begin Fonts/Roboto-Regular-18.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Roboto-Regular-18.spritefont
 
 #begin Fonts/Roboto-Regular-20.spritefont
 /importer:FontDescriptionImporter
@@ -428,6 +484,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/End Turn Button.png
+
+#begin functionality art/Exit Button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Exit Button.png
 
 #begin functionality art/Intent AoE.png
 /importer:TextureImporter
@@ -716,6 +784,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/targeting faded - top right.png
+
+#begin functionality art/Top Bar Deck Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Top Bar Deck Icon.png
 
 #begin functionality art/UI Sketch.png
 /importer:TextureImporter

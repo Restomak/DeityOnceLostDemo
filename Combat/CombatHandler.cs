@@ -272,6 +272,8 @@ namespace DeityOnceLost.Combat
             {
                 if (!lootHandled)
                 {
+                    Game1.debugLog.Add("Enemies defeated; generating loot.");
+
                     //Set stats in a way that they don't affect card numbers
                     _champ.tempSetStrengthTo0();
                     _champ.tempSetDexterityTo0();

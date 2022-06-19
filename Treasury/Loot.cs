@@ -63,10 +63,19 @@ namespace DeityOnceLost.Treasury
         {
             Loot defaultLoot = new Loot(lootTitle);
             //FIXIT add chance for other treasures when implemented
-            //FIXIT add money
             List<DeckBuilder.Card> defaultRandomCards = Treasures.AddCardToDeck.getRandomCards(LootConstants.ADDCARD_DEFAULT_CHOICE_AMOUNT);
+            Treasures.Gold money = new Treasures.Gold(Game1.randint(Game1.getDungeonHandler().getCurrentFloor().getDefaultGoldFromCombat_Min(),
+                Game1.getDungeonHandler().getCurrentFloor().getDefaultGoldFromCombat_Max()));
 
             defaultLoot.addTreasure(new Treasures.AddCardToDeck(defaultRandomCards));
+            defaultLoot.addTreasure(money);
+
+            String log = "Generated default loot. Cards choices: ";
+            foreach (DeckBuilder.Card card in defaultRandomCards)
+            {
+                log += card.getName() + ", ";
+            }
+            Game1.debugLog.Add(log);
 
             return defaultLoot;
         }

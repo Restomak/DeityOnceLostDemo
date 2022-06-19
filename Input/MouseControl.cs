@@ -12,12 +12,16 @@ namespace DeityOnceLost.Input
     {
         private MouseState mouseState;
         private double mouseX, mouseYFromBottom;
-        private bool leftClicked, rightClicked, leftClickHeld, rightClickHeld;
+        private int oldScrollWheel;
+        private bool leftClicked, rightClicked, leftClickHeld, rightClickHeld, scrollWheelUp, scrollWheelDown;
 
         public MouseControl()
         {
             leftClickHeld = false;
             rightClickHeld = false;
+            scrollWheelUp = false;
+            scrollWheelDown = false;
+            oldScrollWheel = 0;
         }
 
         //Getters
@@ -40,6 +44,14 @@ namespace DeityOnceLost.Input
         public bool isRightHeld()
         {
             return rightClickHeld;
+        }
+        public bool didScrollUp()
+        {
+            return scrollWheelUp;
+        }
+        public bool didScrollDown()
+        {
+            return scrollWheelDown;
         }
 
 
@@ -98,6 +110,24 @@ namespace DeityOnceLost.Input
                 {
                     rightClicked = false;
                     rightClickHeld = false;
+                }
+
+                //Mouse Scroll Wheel
+                scrollWheelUp = false;
+                scrollWheelDown = false;
+                int newScrollWheel = mouseState.ScrollWheelValue;
+                if (oldScrollWheel != newScrollWheel)
+                {
+                    if (oldScrollWheel < newScrollWheel)
+                    {
+                        scrollWheelUp = true;
+                    }
+                    else if (oldScrollWheel > newScrollWheel)
+                    {
+                        scrollWheelDown = true;
+                    }
+
+                    oldScrollWheel = newScrollWheel;
                 }
             }
             else

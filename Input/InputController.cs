@@ -91,6 +91,30 @@ namespace DeityOnceLost.Input
             }
 
 
+            //Mouse scroll wheel logic
+            if (Game1.menuActive() && Game1.getTopMenu().isScrollable())
+            {
+                if (mouseControl.didScrollUp())
+                {
+                    Game1.getTopMenu()._scrollY += Drawing.DrawConstants.SCROLL_Y_WHEEL_TICK_AMOUNT;
+                    if (Game1.getHoveredClickable() != null)
+                    {
+                        Game1.getHoveredClickable().onHoverEnd();
+                    }
+                    gameChanged = true;
+                }
+                else if (mouseControl.didScrollDown())
+                {
+                    Game1.getTopMenu()._scrollY -= Drawing.DrawConstants.SCROLL_Y_WHEEL_TICK_AMOUNT;
+                    if (Game1.getHoveredClickable() != null)
+                    {
+                        Game1.getHoveredClickable().onHoverEnd();
+                    }
+                    gameChanged = true;
+                }
+            }
+
+
 
             /*____________________.Cleanup._____________________*/
 

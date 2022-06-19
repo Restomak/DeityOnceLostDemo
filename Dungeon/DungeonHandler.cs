@@ -16,11 +16,13 @@ namespace DeityOnceLost.Dungeon
         Point _playerLocation;
         bool _currentRoomHandled;
         List<Room.roomContents> _currentContentHandled;
+        int _gold;
 
         public DungeonHandler()
         {
             _mapUI = new UserInterface.MapUI(this);
             _currentContentHandled = new List<Room.roomContents>();
+            _gold = 0;
         }
 
         //Getters
@@ -32,6 +34,10 @@ namespace DeityOnceLost.Dungeon
         {
             return _currentFloor;
         }
+        public int getGold()
+        {
+            return _gold;
+        }
 
         //Setters
         public void movePlayer(Point newLoc)
@@ -42,6 +48,10 @@ namespace DeityOnceLost.Dungeon
             _currentContentHandled.Clear();
 
             _currentFloor.scout(_playerLocation);
+        }
+        public void addGold(int amount)
+        {
+            _gold += amount;
         }
 
 

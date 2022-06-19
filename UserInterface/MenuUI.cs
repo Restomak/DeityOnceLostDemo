@@ -17,6 +17,8 @@ namespace DeityOnceLost.UserInterface
         protected String _titleString;
         protected SpriteFont _titleFont;
         public int _titleX, _titleY, _titleFontHeight;
+        protected bool _scrollable;
+        public int _scrollY;
 
         public MenuUI(int x, int y, int width, int height, Texture2D backgroundTexture, Color backgroundColor,
             String titleString, int titleX, int titleY, SpriteFont titleFont, int titleFontHeight, Color titleColor, Color titleShadowColor)
@@ -36,36 +38,39 @@ namespace DeityOnceLost.UserInterface
             _titleFontHeight = titleFontHeight;
             _titleColor = titleColor;
             _titleShadowColor = titleShadowColor;
+
+            _scrollable = false;
+            _scrollY = 0;
         }
 
+        //Getters
         public List<UserInterface> getUI()
         {
             return _wholeUI;
         }
-
         public Color getBackgroundColor()
         {
             return _backgroundColor;
         }
-
         public String getTitle()
         {
             return _titleString;
         }
-
         public SpriteFont getTitleFont()
         {
             return _titleFont;
         }
-
         public Color getTitleColor()
         {
             return _titleColor;
         }
-
         public Color getTitleShadowColor()
         {
             return _titleShadowColor;
+        }
+        public bool isScrollable()
+        {
+            return _scrollable;
         }
 
 

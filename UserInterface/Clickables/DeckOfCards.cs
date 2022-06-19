@@ -84,7 +84,13 @@ namespace DeityOnceLost.UserInterface.Clickables
                     _height += Drawing.DrawConstants.COMBAT_DRAW_PILE_BUFFER;
                     break;
                 case typeOfDeck.DECK:
-                    //FIXIT implement
+                    if (champ.getDeck() != null)
+                    {
+                        _x = Drawing.DrawConstants.TOPBAR_DECK_ICON_X;
+                        _y = Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT + Drawing.DrawConstants.TOPBAR_DECK_ICON_Y_BUFFER;
+                        _width = Drawing.DrawConstants.TOPBAR_DECK_ICON_WIDTH;
+                        _height = Drawing.DrawConstants.TOPBAR_DECK_ICON_HEIGHT;
+                    }
                     break;
                 case typeOfDeck.WHOLECOLLECTION:
                     //FIXIT implement
@@ -137,7 +143,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// <summary>
         /// Handles what happens in logic when the user has clicked one of the various decks:
         /// the draw pile, discard pile, current deck, or entire collection (at base).
-        /// Regarldess of which deck was clicked, the result will be a new UserInterface
+        /// Regarldess of which deck was clicked, the result will be a new CardCollectionMenu
         /// popping up displaying each card in the deck.
         /// </summary>
         public override void onClick()
@@ -149,7 +155,26 @@ namespace DeityOnceLost.UserInterface.Clickables
                 activeCard.deactivate();
             }
 
-            //FIXIT implement, regardless of the deck, it pops up a new UserInterface that is a list of the cards in the deck
+            switch (_typeOfDeck)
+            {
+                case typeOfDeck.DRAWPILE:
+                    Game1.addToMenus(new Menus.CardCollectionMenu(Game1.getChamp().getDeck().getDrawPile(), true, "Draw Pile"));
+                    break;
+                case typeOfDeck.DISCARDPILE:
+                    Game1.addToMenus(new Menus.CardCollectionMenu(Game1.getChamp().getDeck().getDiscardPile(), true, "Discard Pile"));
+                    break;
+                case typeOfDeck.REMOVEDPILE:
+                    Game1.addToMenus(new Menus.CardCollectionMenu(Game1.getChamp().getDeck().getRemovedCards(), true, "Dissipated Cards"));
+                    break;
+                case typeOfDeck.DECK:
+                    Game1.addToMenus(new Menus.CardCollectionMenu(Game1.getChamp().getDeck().getDeck(), false, "Deck"));
+                    break;
+                case typeOfDeck.WHOLECOLLECTION:
+                    //FIXIT implement
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

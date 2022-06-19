@@ -204,9 +204,19 @@ namespace DeityOnceLost
             }
         }
 
-        public bool menuActive()
+        public static bool menuActive()
         {
             return (_menus.Count > 0);
+        }
+
+        public static UserInterface.MenuUI getTopMenu()
+        {
+            if (menuActive())
+            {
+                return _menus[_menus.Count - 1];
+            }
+
+            return null;
         }
 
         public static void setupRandomFirstChampion()
@@ -278,6 +288,8 @@ namespace DeityOnceLost
             pic_functionality_skipButton = Content.Load<Texture2D>("functionality art/Skip Button");
             pic_functionality_cardDivinityIcon = Content.Load<Texture2D>("functionality art/Card Divinity Icon");
             pic_functionality_cardBloodIcon = Content.Load<Texture2D>("functionality art/Card Blood Icon");
+            pic_functionality_exitButton = Content.Load<Texture2D>("functionality art/Exit Button");
+            pic_functionality_topBarDeckIcon = Content.Load<Texture2D>("functionality art/Top Bar Deck Icon");
 
             //fonts
             roboto_regular_8 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-8");
@@ -300,10 +312,18 @@ namespace DeityOnceLost
             roboto_medium_14 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-14");
             roboto_bold_14 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-14");
             roboto_black_14 = Content.Load<SpriteFont>("Fonts/Roboto-Black-14");
+            roboto_regular_15 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-15");
+            roboto_medium_15 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-15");
+            roboto_bold_15 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-15");
+            roboto_black_15 = Content.Load<SpriteFont>("Fonts/Roboto-Black-15");
             roboto_regular_16 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-16");
             roboto_medium_16 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-16");
             roboto_bold_16 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-16");
             roboto_black_16 = Content.Load<SpriteFont>("Fonts/Roboto-Black-16");
+            roboto_regular_18 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-18");
+            roboto_medium_18 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-18");
+            roboto_bold_18 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-18");
+            roboto_black_18 = Content.Load<SpriteFont>("Fonts/Roboto-Black-18");
             roboto_regular_20 = Content.Load<SpriteFont>("Fonts/Roboto-Regular-20");
             roboto_medium_20 = Content.Load<SpriteFont>("Fonts/Roboto-Medium-20");
             roboto_bold_20 = Content.Load<SpriteFont>("Fonts/Roboto-Bold-20");
@@ -344,7 +364,8 @@ namespace DeityOnceLost
             pic_functionality_targeting_faded_TL, pic_functionality_targeting_faded_TR, pic_functionality_targeting_faded_BR, pic_functionality_targeting_faded_BL,
             pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL,
             pic_functionality_mapRoom, pic_functionality_mapConnectorH, pic_functionality_mapConnectorV, pic_functionality_mapChampLoc, pic_functionality_mapStoryIcon,
-            pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon, pic_functionality_mapConnectorWindowH, pic_functionality_mapConnectorWindowV;
+            pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon, pic_functionality_mapConnectorWindowH, pic_functionality_mapConnectorWindowV,
+            pic_functionality_exitButton, pic_functionality_topBarDeckIcon;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
@@ -352,7 +373,9 @@ namespace DeityOnceLost
             roboto_regular_11, roboto_medium_11, roboto_bold_11, roboto_black_11,
             roboto_regular_12, roboto_medium_12, roboto_bold_12, roboto_black_12,
             roboto_regular_14, roboto_medium_14, roboto_bold_14, roboto_black_14,
+            roboto_regular_15, roboto_medium_15, roboto_bold_15, roboto_black_15,
             roboto_regular_16, roboto_medium_16, roboto_bold_16, roboto_black_16,
+            roboto_regular_18, roboto_medium_18, roboto_bold_18, roboto_black_18,
             roboto_regular_20, roboto_medium_20, roboto_bold_20, roboto_black_20,
             roboto_regular_24, roboto_medium_24, roboto_bold_24, roboto_black_24;
 
@@ -450,12 +473,9 @@ namespace DeityOnceLost
                 InitializeGame();
             }
 
-
+            
 
             //Input
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             List<UserInterface.UserInterface> inputUI = _activeUI;
             if (_menus.Count > 0) //make sure the active UI is the most recent menu, if one exists
             {
@@ -468,6 +488,14 @@ namespace DeityOnceLost
             }
 
             _inputController.updateInput(_windowControl, inputUI, _gameState);
+
+
+
+            //Dev exit
+            if (Keyboard.GetState().IsKeyDown(Keys.OemTilde) && Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                Exit();
+            }
 
 
 
@@ -565,8 +593,6 @@ namespace DeityOnceLost
                 _drawHandler.drawEvent_Background(_spriteBatch);
             }
 
-            Drawing.DrawHandler.drawTopBar_Background(_spriteBatch); //Draw the top bar's background
-
 
             //Draw UIs
             if (_gameState == gameState.title) //demo stuff, will be removed later
@@ -595,8 +621,7 @@ namespace DeityOnceLost
                         Drawing.DrawHandler.drawUI_glowButton(_spriteBatch, (UserInterface.Clickables.Button)_currentHover);
                     }
                     else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
-                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION &&
-                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() != UserInterface.Clickables.DeckOfCards.typeOfDeck.WHOLECOLLECTION)
                     {
                         //Change up the shader for the glow
                         shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
@@ -617,6 +642,21 @@ namespace DeityOnceLost
             else if (_gameState == gameState.dungeon || _gameState == gameState.happening && _previousGameState == gameState.dungeon)
             {
                 _drawHandler.drawUI(_spriteBatch, _activeUI, _champ);
+
+                if (_currentHover != null)
+                {
+                    if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
+                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() == UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                    {
+                        //Change up the shader for the glow
+                        shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
+                        Drawing.DrawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
+                    }
+
+                    //Set it back to the regular shader in case it was changed
+                    shader_Regular.CurrentTechnique.Passes[0].Apply();
+                    _drawHandler.drawInterface(_spriteBatch, _currentHover, _champ);
+                }
             }
 
 
@@ -646,6 +686,19 @@ namespace DeityOnceLost
                         //Change up the shader for the glow
                         shader_CardGlow.CurrentTechnique.Passes[0].Apply();
                         Drawing.DrawHandler.drawCardChoice(_spriteBatch, (UserInterface.Clickables.CardChoice)_currentHover, _champ, true);
+                    }
+                    else if (_currentHover.GetType() == typeof(UserInterface.Clickables.MenuCard))
+                    {
+                        //Change up the shader for the glow
+                        shader_CardGlow.CurrentTechnique.Passes[0].Apply();
+                        Drawing.DrawHandler.drawMenuCard(_spriteBatch, (UserInterface.Clickables.MenuCard)_currentHover, _champ, true);
+                    }
+                    else if (_currentHover.GetType() == typeof(UserInterface.Clickables.DeckOfCards) &&
+                        ((UserInterface.Clickables.DeckOfCards)_currentHover).getDeckType() == UserInterface.Clickables.DeckOfCards.typeOfDeck.DECK)
+                    {
+                        //Change up the shader for the glow
+                        shader_DeckGlow.CurrentTechnique.Passes[0].Apply();
+                        Drawing.DrawHandler.drawUI_GlowCardPile(_spriteBatch, (UserInterface.Clickables.DeckOfCards)_currentHover, _champ);
                     }
 
                     //Set it back to the regular shader in case it was changed

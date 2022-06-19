@@ -381,5 +381,52 @@ namespace DeityOnceLost.DeckBuilder
         {
             return _removedCards;
         }
+
+
+
+        public static List<Card> shuffleAndSortByRarity(List<Card> cards)
+        {
+            List<Card> defaultCards = new List<Card>();
+            List<Card> commonCards = new List<Card>();
+            List<Card> rareCards = new List<Card>();
+            List<Card> epicCards = new List<Card>();
+            List<Card> godlyCards = new List<Card>();
+            List<Card> otherCards = new List<Card>();
+            List<Card> allCards = new List<Card>();
+
+            for (int i = 0; i < cards.Count; i++)
+            {
+                switch (cards[i].getCardRarity())
+                {
+                    case CardEnums.CardRarity.DEFAULT:
+                        defaultCards.Insert(Game1.randint(0, defaultCards.Count), cards[i]);
+                        break;
+                    case CardEnums.CardRarity.COMMON:
+                        commonCards.Insert(Game1.randint(0, commonCards.Count), cards[i]);
+                        break;
+                    case CardEnums.CardRarity.RARE:
+                        rareCards.Insert(Game1.randint(0, rareCards.Count), cards[i]);
+                        break;
+                    case CardEnums.CardRarity.EPIC:
+                        epicCards.Insert(Game1.randint(0, epicCards.Count), cards[i]);
+                        break;
+                    case CardEnums.CardRarity.GODLY:
+                        godlyCards.Insert(Game1.randint(0, godlyCards.Count), cards[i]);
+                        break;
+                    default:
+                        otherCards.Insert(Game1.randint(0, otherCards.Count), cards[i]);
+                        break;
+                }
+            }
+
+            allCards.AddRange(godlyCards);
+            allCards.AddRange(epicCards);
+            allCards.AddRange(rareCards);
+            allCards.AddRange(commonCards);
+            allCards.AddRange(defaultCards);
+            allCards.AddRange(otherCards);
+
+            return allCards;
+        }
     }
 }

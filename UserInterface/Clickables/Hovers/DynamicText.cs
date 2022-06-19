@@ -70,7 +70,10 @@ namespace DeityOnceLost.UserInterface.Clickables.Hovers
 
         public void onUpdate()
         {
-            _onUpdate();
+            if (_onUpdate != null)
+            {
+                _onUpdate();
+            }
         }
     }
 }
