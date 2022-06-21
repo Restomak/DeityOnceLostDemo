@@ -283,9 +283,17 @@ namespace DeityOnceLost.Combat
                 }
                 else
                 {
-                    _currentRoom.finishTopContent();
+                    if (Game1.getDungeonHandler().isRandomEncounter())
+                    {
+                        Game1.getDungeonHandler().randomEncounterComplete();
+                    }
+                    else
+                    {
+                        _currentRoom.finishTopContent();
+                    }
                     Game1.returnToDungeon();
                 }
+
             }
             else //the champion has died and no party members can replace them
             {

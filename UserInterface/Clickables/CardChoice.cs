@@ -8,9 +8,9 @@ namespace DeityOnceLost.UserInterface.Clickables
 {
     public class CardChoice : MenuCard
     {
-        Menus.NewCardChoiceMenu _cardChoiceMenu;
+        Menus.CardMenu _cardChoiceMenu;
 
-        public CardChoice(DeckBuilder.Card card, Menus.NewCardChoiceMenu cardChoiceMenu) : base (card)
+        public CardChoice(DeckBuilder.Card card, Menus.CardMenu cardChoiceMenu) : base (card)
         {
             _cardChoiceMenu = cardChoiceMenu;
         }
@@ -21,10 +21,21 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// Handles what happens in logic when the user clicks on the card. It will tell the
         /// NewCardChoiceMenu that this was the chosen card, so that it will be added to the
         /// deck.
+        /// 
+        /// Updated to include RemoveCardChoiceMenu, which has the same result except that
+        /// the card will instead be removed from the deck.
         /// </summary>
         public override void onClick()
         {
-            _cardChoiceMenu.chooseCard(this);
+            if (_cardChoiceMenu.GetType() == typeof(Menus.NewCardChoiceMenu))
+            {
+                ((Menus.NewCardChoiceMenu)_cardChoiceMenu).chooseCard(this);
+            }
+            else if (_cardChoiceMenu.GetType() == typeof(Menus.RemoveCardChoiceMenu))
+            {
+                ((Menus.RemoveCardChoiceMenu)_cardChoiceMenu).chooseCard(this);
+            }
+
             onHoverEnd();
         }
     }

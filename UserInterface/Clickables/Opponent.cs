@@ -54,20 +54,8 @@ namespace DeityOnceLost.UserInterface.Clickables
                 {
                     Opponent opponent = new Opponent(currentEnemy, i);
 
-                    //FIXIT the actual Encounters subclasses should be setting up enemy spacing (x & y) so it looks better
-                    //opponent._y = encounter.getEnemyY(i);
-                    //opponent._x = encounter.getEnemyX(i);
-
-                    //Temp: for testing
-                    if (!currentEnemy._isFlyer)
-                    {
-                        opponent._y = Drawing.DrawConstants.COMBAT_ENEMY_Y;
-                    }
-                    else
-                    {
-                        opponent._y = Drawing.DrawConstants.COMBAT_FLYING_ENEMY_Y;
-                    }
-                    opponent._x = Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENEMY_SPACE_WIDTH / 2 - currentEnemy._width / 2;
+                    opponent._x = currentEnemy._drawX;
+                    opponent._y = currentEnemy._drawY;
 
                     opponent._width = currentEnemy._width;
                     opponent._height = currentEnemy._height;

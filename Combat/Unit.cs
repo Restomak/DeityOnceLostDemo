@@ -127,6 +127,18 @@ namespace DeityOnceLost.Combat
         }
 
         /// <summary>
+        /// Healing is currently unaffected by anything, but will eventually be affected by debuffs/blessings/curses/etc.
+        /// </summary>
+        public virtual void heal(int amount)
+        {
+            _currentHP += amount;
+            if (_currentHP > _maxHP)
+            {
+                _currentHP = _maxHP;
+            }
+        }
+
+        /// <summary>
         /// Meant for buffs and debuffs (accepts negative amounts as well). Strength increases or
         /// decreases the amount of damage dealt by attacks.
         /// </summary>

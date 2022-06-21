@@ -10,6 +10,35 @@ namespace DeityOnceLost.Dungeon.Floors
 {
     class FirstDungeon_Beginning : Floor
     {
+        /* First Dungeon - First Floor
+         * 
+         * This floor should introduce the most basic of mechanics:
+         * • Basic moving around on the map
+         * • Combat:
+         *    - Very basics (the simple fact you have cards, etc)
+         *    - Enemy intents, turn order, divinity, etc (more basics)
+         *    - Enemy defense, enemy buffing, enemy damage, etc
+         * • Loot after combat (money, new card)
+         * • Events - one with combat and one with a card choice
+         * • Stairs being the exit to the next floor
+         * 
+         * This floor also hints at some more complicated mechanics:
+         * • Window connectors (see but don't traverse)
+         * • Scouting ahead (the opposite corner isn't visible immediately)
+         * • Backtracking on the map
+         * 
+         * The layout of this floor is linear, though in a 2x2 layout. It forces
+         * the player to learn each important thing one step at a time, and
+         * prepares them for there being more to come.
+         * • First room: start room, introduces you to your champion
+         * • Second room: event that leads into the first combat of the game
+         * • Third room: first event of the game that has a treasure reward, lets
+         *    you customize your deck a bit before moving forward
+         * • Fourth room: stairs to the next floor
+         * The rooms are always in the same order, though the locations of the
+         * start and end of the path are randomized.
+         */
+
         public const int BEGINNING_MAP_WIDTH = 2;
         public const int BEGINNING_MAP_HEIGHT = 2;
 
@@ -136,9 +165,8 @@ namespace DeityOnceLost.Dungeon.Floors
 
             //Set up the combat loot
             Treasury.Loot secondRoomLoot = new Treasury.Loot(UserInterface.Menus.LootMenu.COMBAT_LOOT);
-            secondRoomLoot.addTreasure(new Treasury.Treasures.AddCardToDeck(Treasury.Treasures.AddCardToDeck.getRandomCards(Treasury.LootConstants.ADDCARD_DEFAULT_CHOICE_AMOUNT)));
+            secondRoomLoot.addTreasure(new Treasury.Treasures.AddCardToDeck(Treasury.Treasures.AddCardToDeck.getRandomCards(Treasury.LootConstants.ADDCARD_DEFAULT_CHOICE_AMOUNT, true)));
             secondRoomLoot.addTreasure(new Treasury.Treasures.Gold(Game1.randint(DEFAULT_GOLD_FROM_COMBAT_MIN, DEFAULT_GOLD_FROM_COMBAT_MAX)));
-            //FIXIT add money
 
 
             //Put it all together
@@ -271,6 +299,16 @@ namespace DeityOnceLost.Dungeon.Floors
             thirdStory.Add(Story.StoryConstants.INTRO_ROOM3_LINE_12);
 
             return thirdStory;
+        }
+
+        public override Combat.Encounter getRandomEncounter()
+        {
+            return null; //There are no random encounters on this floor
+        }
+
+        protected override int getRemainingRandomEncounters()
+        {
+            return 0; //There are no random encounters on this floor
         }
     }
 }

@@ -27,5 +27,11 @@ namespace DeityOnceLost.Dungeon
 
             return _floors[_currentFloor];
         }
+
+        public Floor getNextFloor()
+        {
+            _currentFloor++;
+            return getFloor();
+        }
     }
 }

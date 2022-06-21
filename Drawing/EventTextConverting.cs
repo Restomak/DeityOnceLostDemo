@@ -37,6 +37,7 @@ namespace DeityOnceLost.Drawing
         public static void drawLineOfText(SpriteBatch sprites, Point drawStartLoc, String text)
         {
             text = insertPronouns(text);
+            text = insertChampionHitpoints(text);
 
             List<String> pieces = trimToPieces(text);
             List<StringWithData> piecesWithData = new List<StringWithData>();
@@ -102,6 +103,33 @@ namespace DeityOnceLost.Drawing
             }
 
             //FIXIT implement non-champion pronouns when party is implemented
+
+            return text;
+        }
+
+        private static String insertChampionHitpoints(String text)
+        {
+            if (Game1.getChamp() != null)
+            {
+                bool done = false;
+                while (!done)
+                {
+                    if (text.Contains("[HP: "))
+                    {
+                        int index = text.IndexOf("[HP: ");
+                        text = text.Remove(index, 5);
+                        int index2 = text.IndexOf("%]");
+                        int percentage = Int32.Parse(text.Substring(index, index2 - index));
+                        int hpAmount = (int)Math.Round((double)Game1.getChamp().getMaxHP() * ((double)percentage / 100.0));
+                        text = text.Remove(index, index2 - index + 2);
+                        text = text.Insert(index, hpAmount.ToString());
+                    }
+                    else
+                    {
+                        done = true;
+                    }
+                }
+            }
 
             return text;
         }

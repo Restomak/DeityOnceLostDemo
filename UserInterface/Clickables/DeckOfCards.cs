@@ -148,6 +148,9 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
+            //Close any deck menu that's already open
+            Game1.closeCardCollectionMenus();
+
             //Deactivate current active card first
             HandCard activeCard = Game1.getCombatHandler().getCombatUI().getActiveCard();
             if (activeCard != null)

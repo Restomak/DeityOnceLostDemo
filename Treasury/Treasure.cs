@@ -13,9 +13,11 @@ namespace DeityOnceLost.Treasury
         public enum treasureType
         {
             addCard,
-            addInventoryItem,
+            removeCard,
             money,
-            relic
+            blessing,
+            curse,
+            addInventoryItem
         }
 
         private treasureType _treasureType;
@@ -51,11 +53,15 @@ namespace DeityOnceLost.Treasury
             {
                 case treasureType.addCard:
                     break;
-                case treasureType.addInventoryItem:
+                case treasureType.removeCard:
                     break;
                 case treasureType.money:
                     break;
-                case treasureType.relic:
+                case treasureType.blessing:
+                    break;
+                case treasureType.curse:
+                    break;
+                case treasureType.addInventoryItem:
                     break;
             }
 

@@ -25,7 +25,8 @@ namespace DeityOnceLost.Combat.Enemies
         public const int WIDTH = 180;
         public const int HEIGHT = 240;
 
-        public FanbladeGuard() : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.SimpleSlowRoller(BUFF_STRENGTH_GAIN, BUFF_INTERVAL_MIN, BUFF_INTERVAL_MAX), Game1.pic_enemy_fanbladeGuard, WIDTH, HEIGHT)
+        public FanbladeGuard(int drawX, int drawY) : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.SimpleSlowRoller(BUFF_STRENGTH_GAIN, BUFF_INTERVAL_MIN, BUFF_INTERVAL_MAX),
+            Game1.pic_enemy_fanbladeGuard, WIDTH, HEIGHT, drawX, drawY)
         {
             resetStrength();
             resetDexterity();

@@ -30,6 +30,8 @@ namespace DeityOnceLost.Events
 
             _event = newEvent;
 
+            _eventUI = new UserInterface.EventUI(this);
+
             _eventUI.setupNewEvent(activeUI, this, newEvent);
         }
 
@@ -57,7 +59,13 @@ namespace DeityOnceLost.Events
             {
                 Game1.enterNewCombat(nextCombat, _currentRoom);
             }
-            else if (loot != null)
+            else if (loot == null) //all three are null
+            {
+                _currentRoom.finishTopContent();
+                Game1.returnToDungeon();
+            }
+
+            if (loot != null) //done separately since loot can happen simultaneously as one of the other two
             {
                 //Check if it's an entire loot window or just a new card to deck
                 if (loot.getTreasures().Count == 1)
@@ -65,18 +73,28 @@ namespace DeityOnceLost.Events
                     if (loot.getTreasures()[0].GetType() == typeof(Treasury.Treasures.AddCardToDeck))
                     {
                         Game1.addToMenus(new UserInterface.Menus.NewCardChoiceMenu(((Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0]).getChoices(), (Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0]));
-                        eventFinished = true;
+                        if (nextEvent == null && nextCombat == null)
+                        {
+                            eventFinished = true;
+                        }
+                        return;
+                    }
+                    else if (loot.getTreasures()[0].GetType() == typeof(Treasury.Treasures.RemoveCardFromDeck))
+                    {
+                        Game1.addToMenus(new UserInterface.Menus.RemoveCardChoiceMenu((Treasury.Treasures.RemoveCardFromDeck)loot.getTreasures()[0]));
+                        if (nextEvent == null && nextCombat == null)
+                        {
+                            eventFinished = true;
+                        }
                         return;
                     }
                 }
 
                 Game1.addToMenus(new UserInterface.Menus.LootMenu(loot, UserInterface.Menus.LootMenu.CHEST_LOOT)); //FIXIT make an event loot constant?
-                eventFinished = true;
-            }
-            else
-            {
-                _currentRoom.finishTopContent();
-                Game1.returnToDungeon();
+                if (nextEvent == null && nextCombat == null)
+                {
+                    eventFinished = true;
+                }
             }
         }
     }

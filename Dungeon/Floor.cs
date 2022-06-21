@@ -13,8 +13,7 @@ namespace DeityOnceLost.Dungeon
         protected List<List<Room>> _rooms;
         protected int _width, _height; //length is a better word but it's easier to visualize as height from a top-down view
         protected Point _start, _end;
-        protected List<Combat.Encounter> _randomEncounter;
-        protected int _defaultGoldFromCombat_Min, _defaultGoldFromCombat_Max;
+        protected int _defaultGoldFromCombat_Min, _defaultGoldFromCombat_Max, _remainingRandomEncounters;
 
         public Floor(int width, int height, int defaultGoldFromCombat_Min, int defaultGoldFromCombat_Max)
         {
@@ -26,8 +25,6 @@ namespace DeityOnceLost.Dungeon
             _defaultGoldFromCombat_Max = defaultGoldFromCombat_Max;
 
             initializeAllRooms();
-
-            _randomEncounter = new List<Combat.Encounter>();
         }
 
         //Setters
@@ -61,6 +58,8 @@ namespace DeityOnceLost.Dungeon
         {
             return _defaultGoldFromCombat_Max;
         }
+        public abstract Combat.Encounter getRandomEncounter();
+        protected abstract int getRemainingRandomEncounters();
 
 
 

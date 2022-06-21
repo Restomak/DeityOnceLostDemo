@@ -28,18 +28,14 @@ namespace DeityOnceLost.Events
         {
             _resultingEvent = result;
             _resultingEncounter = null;
-            _resultingLoot = null;
         }
         public void setResult(Combat.Encounter result)
         {
             _resultingEvent = null;
             _resultingEncounter = result;
-            _resultingLoot = null;
         }
         public void setResult(Treasury.Loot result)
         {
-            _resultingEvent = null;
-            _resultingEncounter = null;
             _resultingLoot = result;
         }
 

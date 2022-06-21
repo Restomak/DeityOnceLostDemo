@@ -23,6 +23,8 @@ namespace DeityOnceLost.Story
          * Note that tags in the pronouns that have upper-case letters (eg. [They: c]) will use that upper-case letter
          * 
          * The same above format works with [Name: c] as well, for their name.
+         * 
+         * Edit: now implemented [HP: 20%] for 20% of the champion's HP. Percentages must be whole numbers.
          */
 
         public const String INTRO_LINE_1 = "[f: 14 bb]Emptiness";
@@ -84,5 +86,27 @@ namespace DeityOnceLost.Story
         public const String INTRO_ROOM3_LINE_10 = "but [their: c] discomfort passes. Left in its place, infusing [them: c], is a fragment of your former |[c: Gold][s: Dark Goldenrod][f: 12 bb]power|. You can feel [their: c] awe.";
         public const String INTRO_ROOM3_LINE_11 = "";
         public const String INTRO_ROOM3_LINE_12 = "This is |[f: 12 bb]much| better.";
+
+        public const String INTRO_F2_RANDOM_ROOM_LINE_1 = "The prisoners that you freed have been following you. They keep their distance, letting your champion deal with the |[c: Dark Red][f: 12 bb]dangers| ahead. You can";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_2 = "see |[c: Powder Blue][f: 12 bb]hope| kindling in their spirits as they slowly shed their feelings of hopelessness and numbness to despair.";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_3 = "";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_4 = "Emotions build in your champion as you watch through [their: c] eyes. You feel [their: c] resolve |[f: 12 bb][c: Lawn Green]strengthen|. [Their: c] desire to save these people is |[f: 12 bb]strong|.";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_5 = "";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_6 = "It is a desire you will see |[c: Powder Blue][f: 12 bb]fulfilled|.";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_7 = "";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_8 = "One of the freed prisoners approaches you, |[f: 12 bb]trembling| yet |[s: Purple][c: Powder Blue][f: 12 bb]brave|. Cautious optimism fills her expression as she looks to you, hoping,";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_9 = "waiting for something.";
+        public const String INTRO_F2_RANDOM_ROOM_CHOICE_1 = "[f: 12 bb]Pass on a self-defense technique |[c: Gold][f: 12 bb](Remove a card from your deck)";
+        public const String INTRO_F2_RANDOM_ROOM_CHOICE_2 = "[f: 12 bb]Inspire her with a new move |[c: Gold][f: 12 bb](Add a card to your deck)";
+
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C1_1 = "Confidence bolstered and appreciative, she moves back to the group, speaking in a hushed voice. Many of them look at you with awe, but some";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C1_2 = "display a new expression on their faces: one of |[c: Powder Blue][f: 12 bb]faith|.";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C1_3 = "";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C1_4 = "Feeling |[c: Powder Blue][f: 12 bb]invigorated|, you continue on.";
+
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_1 = "Face filled with awe, she stays for a moment before moving back to the group, speaking in a hushed yet excited voice. Many of them look at you with awe, but some";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_2 = "display a new expression on their faces: one of |[c: Powder Blue][f: 12 bb]faith|.";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_3 = "";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_4 = "Feeling |[c: Powder Blue][f: 12 bb]invigorated|, you continue on.";
     }
 }

@@ -78,8 +78,8 @@ namespace DeityOnceLost.Dungeon.Rooms
                     case roomContents.combat:
                         _roomEncounters.RemoveAt(0);
                         break;
-                    case roomContents.happening:
                     case roomContents.story:
+                    case roomContents.happening:
                         _roomEvents.RemoveAt(0);
                         break;
                     case roomContents.treasure:

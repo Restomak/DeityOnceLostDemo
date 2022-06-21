@@ -14,7 +14,7 @@ namespace DeityOnceLost.Dungeon
         Floor _currentFloor;
         UserInterface.MapUI _mapUI;
         Point _playerLocation;
-        bool _currentRoomHandled;
+        bool _currentRoomHandled, _isRandomEncounter;
         List<Room.roomContents> _currentContentHandled;
         int _gold;
 
@@ -23,6 +23,7 @@ namespace DeityOnceLost.Dungeon
             _mapUI = new UserInterface.MapUI(this);
             _currentContentHandled = new List<Room.roomContents>();
             _gold = 0;
+            _isRandomEncounter = false;
         }
 
         //Getters
@@ -38,6 +39,10 @@ namespace DeityOnceLost.Dungeon
         {
             return _gold;
         }
+        public bool isRandomEncounter()
+        {
+            return _isRandomEncounter;
+        }
 
         //Setters
         public void movePlayer(Point newLoc)
@@ -48,10 +53,16 @@ namespace DeityOnceLost.Dungeon
             _currentContentHandled.Clear();
 
             _currentFloor.scout(_playerLocation);
+
+            _isRandomEncounter = false;
         }
         public void addGold(int amount)
         {
             _gold += amount;
+        }
+        public void randomEncounterComplete()
+        {
+            _isRandomEncounter = false;
         }
 
 
@@ -74,6 +85,24 @@ namespace DeityOnceLost.Dungeon
             _currentFloor.scout(_playerLocation);
 
             _mapUI.updateMapUI(this);
+        }
+
+        private void proceedToNextFloor()
+        {
+            Game1.debugLog.Add("Proceeding to the next floor");
+
+            _currentFloor = _dungeon.getNextFloor();
+
+            if (_currentFloor == null)
+            {
+                Game1.errorLog.Add("Next floor or end of dungeon run not yet implemented!"); //FIXIT implement
+            }
+            
+            _playerLocation = _currentFloor.getStart();
+            _currentRoomHandled = false;
+            _currentContentHandled.Clear();
+
+            _currentFloor.scout(_playerLocation);
         }
 
         public void returnToDungeon(List<UserInterface.UserInterface> activeUI)
@@ -99,6 +128,11 @@ namespace DeityOnceLost.Dungeon
                 //Check if there's anything left
                 if (_currentContentHandled.Count == 0)
                 {
+                    if (_currentFloor.getRooms()[_playerLocation.X][_playerLocation.Y].onVisit_hasRandomEncounter())
+                    {
+                        _isRandomEncounter = true;
+                        Game1.enterNewCombat(_currentFloor.getRandomEncounter(), currentRoom);
+                    }
                     _currentRoomHandled = true;
                 }
                 else
@@ -110,6 +144,7 @@ namespace DeityOnceLost.Dungeon
                             Game1.enterNewCombat(currentRoom.getRoomCombat(), currentRoom);
                             break;
                         case Room.roomContents.story:
+                        case Room.roomContents.happening:
                             if (currentRoom.getRoomEvent() != null)
                             {
                                 Game1.startEvent(currentRoom);
@@ -119,6 +154,10 @@ namespace DeityOnceLost.Dungeon
                                 currentRoom.finishTopContent();
                                 Game1.errorLog.Add("Skipping currentRoom.getRoomEvent because it's null");
                             }
+                            break;
+                        case Room.roomContents.exit:
+                            proceedToNextFloor();
+                            Game1.returnToDungeon();
                             break;
                         default:
                             Game1.errorLog.Add("handleDungeonLogic attempting to handle roomContents that haven't been implemented: " + _currentContentHandled[0].ToString());

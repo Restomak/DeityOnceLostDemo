@@ -701,6 +701,7 @@ namespace DeityOnceLost.Drawing
                         switch (roomContents[i])
                         {
                             case Dungeon.Room.roomContents.story:
+                            case Dungeon.Room.roomContents.happening: //FIXIT?
                                 sprites.Draw(Game1.pic_functionality_mapStoryIcon,
                                     new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
                                     yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
@@ -811,6 +812,16 @@ namespace DeityOnceLost.Drawing
             {
                 case Dungeon.Connector.connectorType.open:
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Black);
+
+                    if (horizontal)
+                    {
+                        connectorTexture = Game1.pic_functionality_mapOpenConnectorH;
+                    }
+                    else
+                    {
+                        connectorTexture = Game1.pic_functionality_mapOpenConnectorV;
+                    }
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
                     break;
                 case Dungeon.Connector.connectorType.window:
                     if (horizontal)
@@ -820,6 +831,32 @@ namespace DeityOnceLost.Drawing
                     else
                     {
                         connectorTexture = Game1.pic_functionality_mapConnectorWindowV;
+                    }
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
+                    break;
+                case Dungeon.Connector.connectorType.closed:
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Black);
+
+                    if (horizontal)
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorDoorH;
+                    }
+                    else
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorDoorV;
+                    }
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
+                    break;
+                case Dungeon.Connector.connectorType.locked:
+                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Red);
+
+                    if (horizontal)
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorDoorH;
+                    }
+                    else
+                    {
+                        connectorTexture = Game1.pic_functionality_mapConnectorDoorV;
                     }
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
                     break;

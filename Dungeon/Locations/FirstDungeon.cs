@@ -11,6 +11,7 @@ namespace DeityOnceLost.Dungeon.Locations
         public FirstDungeon()
         {
             _floors.Add(new Floors.FirstDungeon_Beginning());
+            _floors.Add(new Floors.FirstDungeon_SecondFloor());
         }
     }
 }

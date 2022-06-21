@@ -11,11 +11,12 @@ namespace DeityOnceLost.Dungeon
         public enum roomContents
         {
             start,
-            combat,
             story,
             happening,
-            treasure,
+            combat,
+            miniboss,
             boss,
+            treasure,
             exit
         }
 
@@ -26,7 +27,7 @@ namespace DeityOnceLost.Dungeon
         protected Room _northRoom, _eastRoom, _southRoom, _westRoom;
         protected Connector _northConnector, _eastConnector, _southConnector, _westConnector;
         protected List<roomContents> _roomContents;
-        protected bool _revealed, _partialRevealed;
+        protected bool _revealed, _partialRevealed, _visited;
         protected Combat.Encounter _roomEncounter;
 
         public Room()
@@ -35,6 +36,7 @@ namespace DeityOnceLost.Dungeon
             _roomContents = new List<roomContents>();
             _revealed = false;
             _partialRevealed = false;
+            _visited = false;
         }
 
         //Setters
@@ -184,6 +186,21 @@ namespace DeityOnceLost.Dungeon
             {
                 Game1.errorLog.Add("Attempted to remove the top of _roomContents but there was nothing in the list");
             }
+        }
+        public bool onVisit_hasRandomEncounter()
+        {
+            if (!_visited)
+            {
+                _visited = true;
+                return false;
+            }
+
+            if (Game1.randChance(_randomBattleChanceOnReturn))
+            {
+                return true;
+            }
+
+            return false;
         }
 
 

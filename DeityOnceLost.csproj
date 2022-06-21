@@ -46,11 +46,16 @@
     <Compile Include="Characters\HeroConstants.cs" />
     <Compile Include="Characters\Names.cs" />
     <Compile Include="Combat\AIPattern.cs" />
+    <Compile Include="Combat\AIPatterns\AttackAndEnfeeble.cs" />
     <Compile Include="Combat\AIPatterns\SimpleSlowRoller.cs" />
     <Compile Include="Combat\CombatHandler.cs" />
     <Compile Include="Combat\Encounter.cs" />
     <Compile Include="Combat\Encounters\SingleFanblade.cs" />
     <Compile Include="Combat\Encounters\SingleLabTestSlime.cs" />
+    <Compile Include="Combat\Encounters\ThreeCrawlers.cs" />
+    <Compile Include="Combat\Encounters\TwoCrawlers.cs" />
+    <Compile Include="Combat\Encounters\TwoFanblades.cs" />
+    <Compile Include="Combat\Enemies\Crawler.cs" />
     <Compile Include="Combat\Enemies\FanbladeGuard.cs" />
     <Compile Include="Combat\Enemies\LabTestSlime.cs" />
     <Compile Include="Combat\Enemy.cs" />
@@ -92,14 +97,18 @@
     <Compile Include="Drawing\EventTextBox.cs" />
     <Compile Include="Drawing\EventTextConverting.cs" />
     <Compile Include="Dungeon\Connector.cs" />
+    <Compile Include="Dungeon\Connectors\Door.cs" />
+    <Compile Include="Dungeon\Connectors\LockedDoor.cs" />
     <Compile Include="Dungeon\Connectors\SeeNotTraverse.cs" />
     <Compile Include="Dungeon\Dungeon.cs" />
     <Compile Include="Dungeon\DungeonHandler.cs" />
     <Compile Include="Dungeon\Floor.cs" />
     <Compile Include="Dungeon\Floors\FirstDungeon_Beginning.cs" />
+    <Compile Include="Dungeon\Floors\FirstDungeon_SecondFloor.cs" />
     <Compile Include="Dungeon\Locations\FirstDungeon.cs" />
     <Compile Include="Dungeon\Room.cs" />
     <Compile Include="Dungeon\Rooms\CombatRoom.cs" />
+    <Compile Include="Dungeon\Rooms\EventRoom.cs" />
     <Compile Include="Dungeon\Rooms\ExitRoom.cs" />
     <Compile Include="Dungeon\Rooms\MultiContentRoom.cs" />
     <Compile Include="Dungeon\Rooms\StartRoom.cs" />
@@ -107,6 +116,9 @@
     <Compile Include="Events\Choice.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\Happening.cs" />
+    <Compile Include="Events\RandomEvents\CommonEvents\ShrineToTheCosmos.cs" />
+    <Compile Include="Events\RandomEvents\CommonRandomEvent.cs" />
+    <Compile Include="Events\RandomEvents\RandomEvent.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Input\GamepadControl.cs" />
     <Compile Include="Input\InputController.cs" />
@@ -120,7 +132,11 @@
     <Compile Include="Treasury\LootConstants.cs" />
     <Compile Include="Treasury\Treasure.cs" />
     <Compile Include="Treasury\Treasures\AddCardToDeck.cs" />
+    <Compile Include="Treasury\Treasures\Blessing.cs" />
+    <Compile Include="Treasury\Treasures\Curse.cs" />
     <Compile Include="Treasury\Treasures\Gold.cs" />
+    <Compile Include="Treasury\Treasures\Relic.cs" />
+    <Compile Include="Treasury\Treasures\RemoveCardFromDeck.cs" />
     <Compile Include="UserInterface\Clickable.cs" />
     <Compile Include="UserInterface\Clickables\AestheticOnly.cs" />
     <Compile Include="UserInterface\Clickables\Avatar.cs" />
@@ -147,6 +163,7 @@
     <Compile Include="UserInterface\Menus\CardMenu.cs" />
     <Compile Include="UserInterface\Menus\LootMenu.cs" />
     <Compile Include="UserInterface\Menus\NewCardChoiceMenu.cs" />
+    <Compile Include="UserInterface\Menus\RemoveCardChoiceMenu.cs" />
     <Compile Include="UserInterface\MenuUI.cs" />
     <Compile Include="UserInterface\TopBarUI.cs" />
     <Compile Include="UserInterface\UserInterface.cs" />
@@ -168,6 +185,8 @@
   <ItemGroup>
     <Folder Include="Characters\Traits\" />
     <Folder Include="Dungeon\Subsections\" />
+    <Folder Include="Treasury\Treasures\Blessings\" />
+    <Folder Include="Treasury\Treasures\Curses\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

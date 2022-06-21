@@ -196,6 +196,17 @@ namespace DeityOnceLost
             updateMenus();
         }
 
+        public static void closeCardCollectionMenus()
+        {
+            for (int i = 0; i < _menus.Count; i++)
+            {
+                if (_menus[i].GetType() == typeof(UserInterface.Menus.CardCollectionMenu))
+                {
+                    closeMenu(_menus[i]);
+                }
+            }
+        }
+
         public static void updateMenus()
         {
             for (int i = 0; i < _menus.Count; i++)
@@ -277,14 +288,18 @@ namespace DeityOnceLost
             pic_functionality_targeting_back_BR = Content.Load<Texture2D>("functionality art/targeting back - bottom right");
             pic_functionality_targeting_back_BL = Content.Load<Texture2D>("functionality art/targeting back - bottom left");
             pic_functionality_mapRoom = Content.Load<Texture2D>("functionality art/Map Room");
-            pic_functionality_mapConnectorH = Content.Load<Texture2D>("functionality art/Map Open Connector H");
-            pic_functionality_mapConnectorV = Content.Load<Texture2D>("functionality art/Map Open Connector V");
+            pic_functionality_mapConnectorH = Content.Load<Texture2D>("functionality art/Map Connector H");
+            pic_functionality_mapConnectorV = Content.Load<Texture2D>("functionality art/Map Connector V");
+            pic_functionality_mapOpenConnectorH = Content.Load<Texture2D>("functionality art/Map Open Connector H");
+            pic_functionality_mapOpenConnectorV = Content.Load<Texture2D>("functionality art/Map Open Connector V");
             pic_functionality_mapChampLoc = Content.Load<Texture2D>("functionality art/Map Champion Location");
             pic_functionality_mapStoryIcon = Content.Load<Texture2D>("functionality art/Map Story Icon");
             pic_functionality_mapCombatIcon = Content.Load<Texture2D>("functionality art/Map Combat Icon");
             pic_functionality_mapExitIcon = Content.Load<Texture2D>("functionality art/Map Exit Icon");
             pic_functionality_mapConnectorWindowH = Content.Load<Texture2D>("functionality art/Map Window Connector H");
             pic_functionality_mapConnectorWindowV = Content.Load<Texture2D>("functionality art/Map Window Connector V");
+            pic_functionality_mapConnectorDoorH = Content.Load<Texture2D>("functionality art/Map Door Connector H");
+            pic_functionality_mapConnectorDoorV = Content.Load<Texture2D>("functionality art/Map Door Connector V");
             pic_functionality_skipButton = Content.Load<Texture2D>("functionality art/Skip Button");
             pic_functionality_cardDivinityIcon = Content.Load<Texture2D>("functionality art/Card Divinity Icon");
             pic_functionality_cardBloodIcon = Content.Load<Texture2D>("functionality art/Card Blood Icon");
@@ -344,6 +359,7 @@ namespace DeityOnceLost
             //enemies
             pic_enemy_fanbladeGuard = Content.Load<Texture2D>("Enemies/Fanblade Guard");
             pic_enemy_labTestSlime = Content.Load<Texture2D>("Enemies/Lab Test Slime");
+            pic_enemy_crawler = Content.Load<Texture2D>("Enemies/Crawler");
 
             //shaders
             shader_Regular = Content.Load<Effect>("Shaders/Regular");
@@ -365,7 +381,8 @@ namespace DeityOnceLost
             pic_functionality_targeting_back_TL, pic_functionality_targeting_back_TR, pic_functionality_targeting_back_BR, pic_functionality_targeting_back_BL,
             pic_functionality_mapRoom, pic_functionality_mapConnectorH, pic_functionality_mapConnectorV, pic_functionality_mapChampLoc, pic_functionality_mapStoryIcon,
             pic_functionality_mapCombatIcon, pic_functionality_mapExitIcon, pic_functionality_mapConnectorWindowH, pic_functionality_mapConnectorWindowV,
-            pic_functionality_exitButton, pic_functionality_topBarDeckIcon;
+            pic_functionality_exitButton, pic_functionality_topBarDeckIcon, pic_functionality_mapConnectorDoorH, pic_functionality_mapConnectorDoorV,
+            pic_functionality_mapOpenConnectorH, pic_functionality_mapOpenConnectorV;
 
         //Fonts
         public static SpriteFont roboto_regular_8, roboto_medium_8, roboto_bold_8, roboto_black_8,
@@ -384,7 +401,7 @@ namespace DeityOnceLost
             pic_card_front_epic, pic_card_front_godly, pic_card_front_void;
 
         //Enemies
-        public static Texture2D pic_enemy_fanbladeGuard, pic_enemy_labTestSlime;
+        public static Texture2D pic_enemy_fanbladeGuard, pic_enemy_labTestSlime, pic_enemy_crawler;
         
         //Shaders
         public static Effect shader_Regular, shader_CardGlow, shader_DeckGlow, shader_Experimental;
@@ -538,6 +555,10 @@ namespace DeityOnceLost
             if (Keyboard.GetState().IsKeyDown(Keys.Space) && _gameState == gameState.title)
             {
                 _gameState = gameState.dungeon;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                closeCardCollectionMenus();
             }
 
 

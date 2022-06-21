@@ -28,7 +28,7 @@ namespace DeityOnceLost.Input
 
 
 
-            /*____________________.Perform Logic._____________________*/
+            /*____________________.Perform Logic: Mouse._____________________*/
             
 
             //Hover logic - only do if the left mouse button isn't currently held down
@@ -113,6 +113,12 @@ namespace DeityOnceLost.Input
                     gameChanged = true;
                 }
             }
+
+
+
+            /*____________________.Perform Logic: Keyboard._____________________*/
+            
+            //FIXIT implement hitting escape closing CardCollectionMenus
 
 
 

@@ -28,7 +28,8 @@ namespace DeityOnceLost.Combat.Enemies
         public const int WIDTH = 120;
         public const int HEIGHT = 90;
 
-        public LabTestSlime() : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.SimpleSlowRoller(BUFF_STRENGTH_GAIN, BUFF_INTERVAL_MIN, BUFF_INTERVAL_MAX), Game1.pic_enemy_labTestSlime, WIDTH, HEIGHT)
+        public LabTestSlime(int drawX, int drawY) : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.SimpleSlowRoller(BUFF_STRENGTH_GAIN, BUFF_INTERVAL_MIN, BUFF_INTERVAL_MAX),
+            Game1.pic_enemy_labTestSlime, WIDTH, HEIGHT, drawX, drawY)
         {
             resetStrength();
             resetDexterity();

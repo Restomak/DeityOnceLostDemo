@@ -16,7 +16,7 @@ namespace DeityOnceLost.Combat
 
         protected AIPattern _aiPattern;
         public Texture2D _texture;
-        public int _width, _height;
+        public int _width, _height, _drawX, _drawY;
         public bool _isFlyer = false; //most won't be fliers; this is only for graphics anyway
 
         /// <summary>
@@ -31,12 +31,14 @@ namespace DeityOnceLost.Combat
         /// • supplying the raw stats (texture, name, hp, etc)
         /// • supplying damage & defense amounts
         /// </summary>
-        public Enemy(String name, int hitPoints, AIPattern aiPattern, Texture2D texture, int width, int height) : base(name, hitPoints, true)
+        public Enemy(String name, int hitPoints, AIPattern aiPattern, Texture2D texture, int width, int height, int drawX, int drawY) : base(name, hitPoints, true)
         {
             _aiPattern = aiPattern;
             _texture = texture;
             _width = width;
             _height = height;
+            _drawX = drawX;
+            _drawY = drawY;
         }
 
         public AIPattern getAIPattern()
