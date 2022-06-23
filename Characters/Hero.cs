@@ -12,22 +12,29 @@ namespace DeityOnceLost.Characters
         String _name, _they, _them, _their, _theirs, _theyre, _theyve;
         int _maxHP;
         bool _dead;
+        Treasury.Treasures.PartyBuff _partyMemberBuff;
 
-        //stats
-        int _defaultStrength, _defaultDexterity, _defaultResilience;
-
-        public Hero()
+        public Hero(Treasury.Treasures.PartyBuff partyMemberBuff = null)
         {
             _dead = false;
 
             _defaultCards = new List<DeckBuilder.Card>();
 
+            generateRandomPronouns();
             generateRandomName();
             //generateRandomApperance();
-            generateRandomPronouns();
             generateRandomTraits(); //for now just defaults stats to 0
             generateRandomDefaultDeck();
             generateRandomHP();
+
+            if (partyMemberBuff == null)
+            {
+                generateRandomPartyMemberBuff();
+            }
+            else
+            {
+                _partyMemberBuff = partyMemberBuff;
+            }
         }
 
 
@@ -60,18 +67,6 @@ namespace DeityOnceLost.Characters
         public String getPronoun_theyve()
         {
             return _theyve;
-        }
-        public int getDefaultStrength()
-        {
-            return _defaultStrength;
-        }
-        public int getDefaultDexterity()
-        {
-            return _defaultDexterity;
-        }
-        public int getDefaultResilience()
-        {
-            return _defaultResilience;
         }
         public void setName(String name)
         {
@@ -113,6 +108,10 @@ namespace DeityOnceLost.Characters
         {
             return _defaultCards;
         }
+        public Treasury.Treasures.PartyBuff getPartyMemberBuff()
+        {
+            return _partyMemberBuff;
+        }
 
         //Playing with life
         public void kill()
@@ -128,7 +127,51 @@ namespace DeityOnceLost.Characters
 
         private void generateRandomName()
         {
-            _name = Names.heroNames[Game1.randint(0, Names.heroNames.Count - 1)];
+            List<String> names = new List<String>();
+
+            if (Game1.randChance(Names.CHANCE_OF_WHATEVER))
+            {
+                names.AddRange(Names.heroNames_masc);
+                names.AddRange(Names.heroNames_femme);
+                names.AddRange(Names.heroNames_nonbinary);
+                names.AddRange(Names.heroNames_androgynous);
+            }
+            else
+            {
+                if (_they == HeroConstants.THEY_HEHIM)
+                {
+                    names.AddRange(Names.heroNames_masc);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_nonbinary);
+                    }
+                }
+                else if (_they == HeroConstants.THEY_SHEHER)
+                {
+                    names.AddRange(Names.heroNames_femme);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_nonbinary);
+                    }
+                }
+                else
+                {
+                    names.AddRange(Names.heroNames_nonbinary);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_masc);
+                        names.AddRange(Names.heroNames_femme);
+                    }
+                }
+            }
+
+            _name = names[Game1.randint(0, names.Count - 1)];
         }
 
         private void generateRandomPronouns()
@@ -194,10 +237,6 @@ namespace DeityOnceLost.Characters
         private void generateRandomTraits()
         {
             //FIXIT make this function when traits are added
-
-            _defaultStrength = 0;
-            _defaultDexterity = 0;
-            _defaultResilience = 0;
         }
 
         private void generateRandomDefaultDeck()
@@ -314,6 +353,11 @@ namespace DeityOnceLost.Characters
             int maxHP_3 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_4 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             _maxHP = (maxHP_1 + maxHP_2 + maxHP_3 + maxHP_4) / 4; //tends towards the average rather than the extremes
+        }
+
+        private void generateRandomPartyMemberBuff()
+        {
+            //FIXIT implement
         }
     }
 }

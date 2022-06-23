@@ -21,7 +21,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         /// <summary>
-        /// Sets up the enemies in combat as a UserInterface so they're interactable
+        /// Sets up the champion in combat as a UserInterface so they're interactable
         /// </summary>
         public static void setupChampionUI(Avatar champUI, Characters.Champion champ, UserInterface hoverUI)
         {
@@ -32,8 +32,35 @@ namespace DeityOnceLost.UserInterface.Clickables
             Hovers.HPBar hpBar = new Hovers.HPBar(new Point(champUI._x + Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER, champUI._y - Drawing.DrawConstants.COMBAT_ENEMY_HP_BUFFER_TO_TOP - Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT),
                 champUI._width - Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER * 2, Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT, champ, Hovers.HPBar.hpBarType.champion);
             hoverUI.addClickableToBack(hpBar); //order doesn't matter
+            
+            if (champ.getBuffs().Count > 0)
+            {
+                int row = 0;
+                int index = 0;
 
-            //FIXIT add buffs/debuffs
+                for (int i = 0; i < champ.getBuffs().Count; i++)
+                {
+                    //Set up buff/debuff
+                    Point loc = new Point(hpBar._x + index * (Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2),
+                        hpBar._y - Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT - Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2 -
+                        row * (Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2) -
+                        Drawing.DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER);
+
+                    //Buffs/debuffs
+                    Hovers.StatusEffect status = new Hovers.StatusEffect(loc, Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2, champ.getBuffs()[i]);
+                    hoverUI.addClickableToBack(status); //order doesn't matter
+
+
+                    //Set up next buff/debuff's draw location
+                    index += 1;
+                    if (index * Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2 > hpBar._width)
+                    {
+                        index = 0;
+                        row += 1;
+                    }
+                }
+            }
         }
 
 

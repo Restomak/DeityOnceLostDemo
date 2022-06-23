@@ -73,14 +73,44 @@ namespace DeityOnceLost.UserInterface.Clickables
         private static void setupEnemyHoversUI(UserInterface hoverUI, Opponent enemy)
         {
             //HP bar
-            Hovers.HPBar hpBar = new Hovers.HPBar(new Point(enemy._x + Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER, enemy._y - Drawing.DrawConstants.COMBAT_ENEMY_HP_BUFFER_TO_TOP - Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT),
+            Hovers.HPBar hpBar = new Hovers.HPBar(new Point(enemy._x + Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER,
+                enemy._y - Drawing.DrawConstants.COMBAT_ENEMY_HP_BUFFER_TO_TOP - Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT),
                 enemy._width - Drawing.DrawConstants.COMBAT_ENEMY_HP_WIDTHBUFFER * 2, Drawing.DrawConstants.COMBAT_ENEMY_HP_HEIGHT, enemy.getEnemy(), Hovers.HPBar.hpBarType.enemy);
             hoverUI.addClickableToBack(hpBar); //order doesn't matter
 
-            //FIXIT add buffs/debuffs
+            //Buffs/debuffs
+            if (enemy.getEnemy().getBuffs().Count > 0)
+            {
+                int row = 0;
+                int index = 0;
 
-            //FIXIT add intents
-            Hovers.EnemyIntent intentBox = new Hovers.EnemyIntent(new Point(enemy._x + enemy._width / 2 - Drawing.DrawConstants.COMBAT_INTENTS_AOE_TOTALWIDTH / 2, enemy._y + enemy._height + Drawing.DrawConstants.COMBAT_INTENTS_BUFFER),
+                for (int i = 0; i < enemy.getEnemy().getBuffs().Count; i++)
+                {
+                    //Set up buff/debuff
+                    Point loc = new Point(hpBar._x + index * (Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2),
+                        hpBar._y - Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT - Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2 -
+                        row * (Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2) -
+                        Drawing.DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER);
+
+                    Hovers.StatusEffect status = new Hovers.StatusEffect(loc, Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2, enemy.getEnemy().getBuffs()[i]);
+                    hoverUI.addClickableToBack(status); //order doesn't matter
+
+
+                    //Set up next buff/debuff's draw location
+                    index += 1;
+                    if (index * Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH + Drawing.DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2 > hpBar._width)
+                    {
+                        index = 0;
+                        row += 1;
+                    }
+                }
+            }
+
+            enemy.getEnemy().getAIPattern().updateIntents(); //Make sure they're updated
+
+            Hovers.EnemyIntent intentBox = new Hovers.EnemyIntent(new Point(enemy._x + enemy._width / 2 - Drawing.DrawConstants.COMBAT_INTENTS_AOE_TOTALWIDTH / 2,
+                enemy._y + enemy._height + Drawing.DrawConstants.COMBAT_INTENTS_BUFFER),
                 Drawing.DrawConstants.COMBAT_INTENTS_AOE_TOTALWIDTH, Drawing.DrawConstants.COMBAT_INTENTS_HEIGHT, enemy.getEnemy().getAIPattern());
             hoverUI.addClickableToBack(intentBox); //order doesn't matter
         }

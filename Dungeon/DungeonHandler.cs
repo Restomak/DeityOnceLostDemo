@@ -17,6 +17,7 @@ namespace DeityOnceLost.Dungeon
         bool _currentRoomHandled, _isRandomEncounter;
         List<Room.roomContents> _currentContentHandled;
         int _gold;
+        List<Treasury.Treasures.Relic> _relics;
 
         public DungeonHandler()
         {
@@ -24,6 +25,7 @@ namespace DeityOnceLost.Dungeon
             _currentContentHandled = new List<Room.roomContents>();
             _gold = 0;
             _isRandomEncounter = false;
+            _relics = new List<Treasury.Treasures.Relic>();
         }
 
         //Getters
@@ -42,6 +44,10 @@ namespace DeityOnceLost.Dungeon
         public bool isRandomEncounter()
         {
             return _isRandomEncounter;
+        }
+        public List<Treasury.Treasures.Relic> getRelics()
+        {
+            return _relics;
         }
 
         //Setters
@@ -63,6 +69,14 @@ namespace DeityOnceLost.Dungeon
         public void randomEncounterComplete()
         {
             _isRandomEncounter = false;
+        }
+        public void setStartingRelics(List<Treasury.Treasures.Relic> startingRelics)
+        {
+            _relics = startingRelics;
+        }
+        public void addRelic(Treasury.Treasures.Relic relic)
+        {
+            _relics.Add(relic);
         }
 
 

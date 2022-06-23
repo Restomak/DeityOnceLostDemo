@@ -17,17 +17,17 @@ namespace DeityOnceLost.Dungeon.Floors
          * • Locked door connectors, that you need a key to open
          * • Backtracking on the map (the key is in a dead end)
          * • Multiple paths, meaning decision-making on routing (optional combat)
-         * • Gaining a new party member
+         * • Gaining party members
          * • Combat:
          *    - More than one enemy
          *    - Enemy debuffs
-         *    - Having a party member in combat
+         *    - Having party members in combat
          * • Events with multiple choices
          * 
          * This floor will hint at a few more mechanics:
+         * • Treasure room (if they don't avoid it)
          * • Random encounters (if they do a lot of backtracking)
          * • A few randomized rooms (not noticeable unless it's not their first time through)
-         * • Party member controls in combat (they won't get attacked yet)
          * 
          * Floor layout:
          * • 4x4, but with a few unused rooms so it doesn't have a square shape
@@ -75,6 +75,9 @@ namespace DeityOnceLost.Dungeon.Floors
 
             //Combat & two events, but locations randomized
             setupRandomRooms();
+
+            //Party member story room
+            setupPartyStoryRoom();
 
             //Add window connectors
             Room.connectRooms(_rooms[start.X][start.Y], Connector.direction.south, _rooms[end.X][end.Y], new Connectors.SeeNotTraverse());
@@ -217,6 +220,23 @@ namespace DeityOnceLost.Dungeon.Floors
             replaceRoom(rooms[2], new Point(1, 0));
         }
 
+        private void setupPartyStoryRoom()
+        {
+            //Event
+            Events.Happening partyStoryEvent = new Events.Happening(getPartyStoryWriting());
+            Events.Choice onlyChoice = new Events.Choice(Story.StoryConstants.INTRO_F2_PARTY_ROOM_CHOICE);
+            onlyChoice.setOnChoose(() =>
+            {
+                Game1.setupRandomFirstPartyMembers();
+            });
+            partyStoryEvent.setChoices(new List<Events.Choice>() { onlyChoice });
+
+            //Put it together
+            Rooms.StoryRoom partyStoryRoom = new Rooms.StoryRoom();
+            partyStoryRoom.setRoomEvent(partyStoryEvent);
+            replaceRoom(partyStoryRoom, new Point(3, 0));
+        }
+
         private List<String> getEventStory()
         {
             List<String> eventStory = new List<string>();
@@ -257,6 +277,30 @@ namespace DeityOnceLost.Dungeon.Floors
 
             return resultingStory;
         }
+
+        private List<String> getPartyStoryWriting()
+        {
+            List<String> storyText = new List<string>();
+
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_1);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_2);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_3);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_4);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_5);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_6);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_7);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_8);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_9);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_10);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_11);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_12);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_13);
+            storyText.Add(Story.StoryConstants.INTRO_F2_PARTY_ROOM_LINE_14);
+
+            return storyText;
+        }
+
+
 
         public override Combat.Encounter getRandomEncounter()
         {

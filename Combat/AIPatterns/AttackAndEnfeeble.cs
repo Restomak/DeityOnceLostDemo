@@ -79,18 +79,36 @@ namespace DeityOnceLost.Combat.AIPatterns
             return _intentsForThisTurn;
         }
 
+        public override List<intent> updateIntents()
+        {
+            switch (_specificIntent)
+            {
+                case specificIntent.ATTACK:
+                    _intendedDamage = _enemy.getRegularDamage();
+                    break;
+                case specificIntent.ENFEEBLE:
+                    //Nothing changes
+                    break;
+                case specificIntent.HEAVY_ATTACK:
+                    _intendedDamage = _enemy.getHeavyDamage();
+                    break;
+            }
+
+            return _intentsForThisTurn; //no change
+        }
+
         public override void doTurnAction(Champion champ, List<PartyMember> party)
         {
             switch (_specificIntent)
             {
                 case specificIntent.ATTACK:
-                    champ.takeDamage(_enemy.getRegularDamage());
+                    champ.takeDamage(_enemy.getDamageAffectedByBuffs(_enemy.getRegularDamage()));
                     break;
                 case specificIntent.ENFEEBLE:
-                    //FIXIT implement debuffs: Feeble
+                    Game1.getChamp().gainBuff(new Buff(Buff.buffType.feeble, _feebleAmount, 1, true, false, true));
                     break;
                 case specificIntent.HEAVY_ATTACK:
-                    champ.takeDamage(_enemy.getHeavyDamage());
+                    champ.takeDamage(_enemy.getDamageAffectedByBuffs(_enemy.getHeavyDamage()));
                     break;
                 default:
                     break;

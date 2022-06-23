@@ -103,6 +103,12 @@ namespace DeityOnceLost.Combat
         public abstract List<intent> determineIntents(Characters.Champion champ, List<PartyMember> party);
 
         /// <summary>
+        /// Call each time a card is played to make sure the enemies' intents haven't changed (eg. damage
+        /// lowered on debuff application).
+        /// </summary>
+        public abstract List<intent> updateIntents();
+
+        /// <summary>
         /// Call when it's this enemy's turn to actually perform the action shown by the intent
         /// </summary>
         public abstract void doTurnAction(Characters.Champion champ, List<PartyMember> party);

@@ -104,23 +104,44 @@ namespace DeityOnceLost.Combat.AIPatterns
             return _intentsForThisTurn;
         }
 
+        public override List<intent> updateIntents()
+        {
+            switch (_specificIntent)
+            {
+                case specificIntent.BUFF_AND_DEFEND:
+                    //Nothing changes
+                    break;
+                case specificIntent.BASIC_ATTACK:
+                    _intendedDamage = _enemy.getRegularDamage();
+                    break;
+                case specificIntent.ATTACK_AND_DEFEND:
+                    _intendedDamage = _enemy.getLightDamage();
+                    break;
+                case specificIntent.HEAVY_ATTACK:
+                    _intendedDamage = _enemy.getHeavyDamage();
+                    break;
+            }
+
+            return _intentsForThisTurn; //no change
+        }
+
         public override void doTurnAction(Champion champ, List<PartyMember> party)
         {
             switch (_specificIntent)
             {
                 case specificIntent.BUFF_AND_DEFEND:
                     _enemy.gainDefense(_enemy.getBasicDefense());
-                    _enemy.affectStrength(_strengthGain);
+                    _enemy.gainBuff(new Buff(Buff.buffType.strength, -1, _strengthGain, false, true, false));
                     break;
                 case specificIntent.BASIC_ATTACK:
-                    champ.takeDamage(_enemy.getRegularDamage());
+                    champ.takeDamage(_enemy.getDamageAffectedByBuffs(_enemy.getRegularDamage()));
                     break;
                 case specificIntent.ATTACK_AND_DEFEND:
                     _enemy.gainDefense(_enemy.getBasicDefense());
-                    champ.takeDamage(_enemy.getLightDamage());
+                    champ.takeDamage(_enemy.getDamageAffectedByBuffs(_enemy.getLightDamage()));
                     break;
                 case specificIntent.HEAVY_ATTACK:
-                    champ.takeDamage(_enemy.getHeavyDamage());
+                    champ.takeDamage(_enemy.getDamageAffectedByBuffs(_enemy.getHeavyDamage()));
                     break;
                 default:
                     break;

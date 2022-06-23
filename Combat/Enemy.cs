@@ -17,7 +17,6 @@ namespace DeityOnceLost.Combat
         protected AIPattern _aiPattern;
         public Texture2D _texture;
         public int _width, _height, _drawX, _drawY;
-        public bool _isFlyer = false; //most won't be fliers; this is only for graphics anyway
 
         /// <summary>
         /// Every Enemy has one AIPattern, while each AIPattern can be associated with more than one enemy.
@@ -45,23 +44,47 @@ namespace DeityOnceLost.Combat
         {
             return _aiPattern;
         }
-        public void setFlying(bool isFlying)
-        {
-            _isFlyer = isFlying;
-        }
 
         //Abstracts
         public abstract int getBasicDamage_noStrength();
         public abstract int getBasicDefense();
 
+        
 
+        public int getDamageAffectedByBuffs(int damage)
+        {
+            if (!_feeble && !Game1.getChamp().vulnerable())
+            {
+                return damage + _strength;
+            }
 
-        /// <summary>
-        /// Adds strength to getBasicDamage so that it's not done there
-        /// </summary>
+            double newDamage = damage + _strength;
+
+            if (_feeble)
+            {
+                newDamage = newDamage * Buff.FEEBLE_MODIFIER;
+            }
+
+            if (Game1.getChamp().vulnerable())
+            {
+                newDamage = newDamage * Buff.VULNERABLE_MODIFIER;
+            }
+
+            return (int)(Math.Round(newDamage));
+        }
+
+    
+
         public virtual int getRegularDamage()
         {
-            return getBasicDamage_noStrength() + _strength;
+            if (!Game1.getChamp().feeble())
+            {
+                return getBasicDamage_noStrength();
+            }
+            else
+            {
+                return getBasicDamage_noStrength();
+            }
         }
 
         /// <summary>
@@ -69,7 +92,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public virtual int getLightDamage()
         {
-            return getBasicDamage_noStrength() / 2 + _strength;
+            return getBasicDamage_noStrength() / 2;
         }
 
         /// <summary>
@@ -77,7 +100,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public virtual int getHeavyDamage()
         {
-            return (int)((double)getBasicDamage_noStrength() * 3.0 / 2.0) + _strength;
+            return (int)((double)getBasicDamage_noStrength() * 3.0 / 2.0);
         }
 
         /// <summary>
@@ -85,7 +108,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public virtual int getMultiAttackDamage()
         {
-            return getBasicDamage_noStrength() + _strength;
+            return getBasicDamage_noStrength();
         }
 
         /// <summary>
@@ -93,7 +116,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public virtual int aoeDamage()
         {
-            return DEFAULT_AOE_DAMAGE + _strength;
+            return DEFAULT_AOE_DAMAGE;
         }
     }
 }

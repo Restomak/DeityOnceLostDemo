@@ -25,6 +25,7 @@ namespace DeityOnceLost.Story
          * The same above format works with [Name: c] as well, for their name.
          * 
          * Edit: now implemented [HP: 20%] for 20% of the champion's HP. Percentages must be whole numbers.
+         * [s: c] is also now implemented, and for grammar purposes, it will place an s in its place unless the champion's pronouns are they/them
          */
 
         public const String INTRO_LINE_1 = "[f: 14 bb]Emptiness";
@@ -87,15 +88,15 @@ namespace DeityOnceLost.Story
         public const String INTRO_ROOM3_LINE_11 = "";
         public const String INTRO_ROOM3_LINE_12 = "This is |[f: 12 bb]much| better.";
 
-        public const String INTRO_F2_RANDOM_ROOM_LINE_1 = "The prisoners that you freed have been following you. They keep their distance, letting your champion deal with the |[c: Dark Red][f: 12 bb]dangers| ahead. You can";
-        public const String INTRO_F2_RANDOM_ROOM_LINE_2 = "see |[c: Powder Blue][f: 12 bb]hope| kindling in their spirits as they slowly shed their feelings of hopelessness and numbness to despair.";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_1 = "The prisoners that you freed have been following you. They keep their distance, letting your champion deal with the |[c: Dark Red][f: 12 bb]dangers| ahead. You can see";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_2 = "[c: Powder Blue][f: 12 bb]hope| kindling in their spirits as they slowly shed their feelings of hopelessness and numbness to despair.";
         public const String INTRO_F2_RANDOM_ROOM_LINE_3 = "";
         public const String INTRO_F2_RANDOM_ROOM_LINE_4 = "Emotions build in your champion as you watch through [their: c] eyes. You feel [their: c] resolve |[f: 12 bb][c: Lawn Green]strengthen|. [Their: c] desire to save these people is |[f: 12 bb]strong|.";
         public const String INTRO_F2_RANDOM_ROOM_LINE_5 = "";
         public const String INTRO_F2_RANDOM_ROOM_LINE_6 = "It is a desire you will see |[c: Powder Blue][f: 12 bb]fulfilled|.";
         public const String INTRO_F2_RANDOM_ROOM_LINE_7 = "";
-        public const String INTRO_F2_RANDOM_ROOM_LINE_8 = "One of the freed prisoners approaches you, |[f: 12 bb]trembling| yet |[s: Purple][c: Powder Blue][f: 12 bb]brave|. Cautious optimism fills her expression as she looks to you, hoping,";
-        public const String INTRO_F2_RANDOM_ROOM_LINE_9 = "waiting for something.";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_8 = "One of the freed prisoners approaches you, |[f: 12 bb]trembling| yet |[s: Purple][c: Powder Blue][f: 12 bb]brave|. Cautious optimism fills her expression as she looks to you, hoping, waiting";
+        public const String INTRO_F2_RANDOM_ROOM_LINE_9 = "for something.";
         public const String INTRO_F2_RANDOM_ROOM_CHOICE_1 = "[f: 12 bb]Pass on a self-defense technique |[c: Gold][f: 12 bb](Remove a card from your deck)";
         public const String INTRO_F2_RANDOM_ROOM_CHOICE_2 = "[f: 12 bb]Inspire her with a new move |[c: Gold][f: 12 bb](Add a card to your deck)";
 
@@ -108,5 +109,21 @@ namespace DeityOnceLost.Story
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_2 = "display a new expression on their faces: one of |[c: Powder Blue][f: 12 bb]faith|.";
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_3 = "";
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_4 = "Feeling |[c: Powder Blue][f: 12 bb]invigorated|, you continue on.";
+
+        public const String INTRO_F2_PARTY_ROOM_LINE_1 = "Figures huddle together in the shadows, |[c: Purple][f: 12 bb]cowering| as you enter the room. Frail and half-starved, they wear the tattered rags of prisoners, much like";
+        public const String INTRO_F2_PARTY_ROOM_LINE_2 = "those your of your new followers. They appear to have escaped on their own, somehow. Perhaps there are some among them with the ability to";
+        public const String INTRO_F2_PARTY_ROOM_LINE_3 = "defend themselves|.";
+        public const String INTRO_F2_PARTY_ROOM_LINE_4 = "";
+        public const String INTRO_F2_PARTY_ROOM_LINE_5 = "As you approach, two haggard prisoners step forward protectively, one of them wielding a |[c: Dark Red][f: 12 bb]weapon| and ready to |[c: Red][f: 12 bb]fight| if needed. Both seem to";
+        public const String INTRO_F2_PARTY_ROOM_LINE_6 = "recognize your champion, however, and their eyes widen.";
+        public const String INTRO_F2_PARTY_ROOM_LINE_7 = "";
+        public const String INTRO_F2_PARTY_ROOM_LINE_8 = "The one with the weapon lowers it and gestures incredulously. |[c: Lawn Green]\"[Name: c]? You're alive! But how...?\"";
+        public const String INTRO_F2_PARTY_ROOM_LINE_9 = "";
+        public const String INTRO_F2_PARTY_ROOM_LINE_10 = "You relinquish some of your control over your champion, allowing [them: c] to tell [their: c] story thus far. [They: c] tell[s: c] of the |[c: Powder Blue][f: 12 bb]plea for help|, of the |[c: Gold][s: Dark Goldenrod][f: 12 bb]power| you";
+        public const String INTRO_F2_PARTY_ROOM_LINE_11 = "have given [them: c]. [They: c] tell[s: c] of the escape, and the defeat of the |[c: Red][f: 12 bb]guards| and |[c: Red][f: 12 bb]monsters| on your way here. The pair listens intently, |[c: Powder Blue][f: 12 bb]wonder| on their";
+        public const String INTRO_F2_PARTY_ROOM_LINE_12 = "faces, and afterwards expresses their intent to |[c: Lawn Green][f: 12 bb]escape| this dungeon.";
+        public const String INTRO_F2_PARTY_ROOM_LINE_13 = "";
+        public const String INTRO_F2_PARTY_ROOM_LINE_14 = "They want to join you. They want to help. They could be |[s: Purple][c: Powder Blue][f: 12 bb]useful|.";
+        public const String INTRO_F2_PARTY_ROOM_CHOICE = "[f: 12 bb]Accept their offer |[c: Lawn Green][f: 12 bb](Gain party members)";
     }
 }

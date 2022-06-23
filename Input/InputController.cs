@@ -70,8 +70,6 @@ namespace DeityOnceLost.Input
                         clicked.onClick();
                         gameChanged = true;
                     }
-
-                    //FIXIT implement more
                 }
             }
 
@@ -86,8 +84,6 @@ namespace DeityOnceLost.Input
                     Game1.getCombatHandler().getCombatUI().setActiveCard(null);
                     gameChanged = true;
                 }
-
-                //FIXIT implement more
             }
 
 

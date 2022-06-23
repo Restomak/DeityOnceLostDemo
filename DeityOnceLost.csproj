@@ -45,9 +45,12 @@
     <Compile Include="Characters\Hero.cs" />
     <Compile Include="Characters\HeroConstants.cs" />
     <Compile Include="Characters\Names.cs" />
+    <Compile Include="Characters\PartyBuffs\Fighter.cs" />
+    <Compile Include="Characters\PartyBuffs\Healer.cs" />
     <Compile Include="Combat\AIPattern.cs" />
     <Compile Include="Combat\AIPatterns\AttackAndEnfeeble.cs" />
     <Compile Include="Combat\AIPatterns\SimpleSlowRoller.cs" />
+    <Compile Include="Combat\Buff.cs" />
     <Compile Include="Combat\CombatHandler.cs" />
     <Compile Include="Combat\Encounter.cs" />
     <Compile Include="Combat\Encounters\SingleFanblade.cs" />
@@ -61,10 +64,12 @@
     <Compile Include="Combat\Enemy.cs" />
     <Compile Include="Combat\PartyMember.cs" />
     <Compile Include="Combat\Unit.cs" />
+    <Compile Include="DeckBuilder\Cards\AttackAndDebuffCard.cs" />
     <Compile Include="DeckBuilder\Cards\AttackAndDefenseCard.cs" />
     <Compile Include="DeckBuilder\Cards\AttackAndDrawCard.cs" />
     <Compile Include="DeckBuilder\Cards\BasicAoECard.cs" />
     <Compile Include="DeckBuilder\Cards\BasicAttackCard.cs" />
+    <Compile Include="DeckBuilder\Cards\BasicDebuffCard.cs" />
     <Compile Include="DeckBuilder\Cards\BasicMultiAttackCard.cs" />
     <Compile Include="DeckBuilder\Cards\BasicReplayableSelfBuffCard.cs" />
     <Compile Include="DeckBuilder\Card.cs" />
@@ -73,9 +78,12 @@
     <Compile Include="DeckBuilder\Cards\BasicDefenseCard.cs" />
     <Compile Include="DeckBuilder\Cards\CommonCards\Cleave.cs" />
     <Compile Include="DeckBuilder\Cards\CommonCards\DodgeAndRoll.cs" />
+    <Compile Include="DeckBuilder\Cards\CommonCards\ExploitWeakness.cs" />
     <Compile Include="DeckBuilder\Cards\CommonCards\GatherStrength.cs" />
     <Compile Include="DeckBuilder\Cards\CommonCards\HeroicBlow.cs" />
     <Compile Include="DeckBuilder\Cards\CommonCards\RollingKick.cs" />
+    <Compile Include="DeckBuilder\Cards\CommonCards\ViciousSlam.cs" />
+    <Compile Include="DeckBuilder\Cards\DoubleDebuffCard.cs" />
     <Compile Include="DeckBuilder\Cards\DefaultCards\CautiousStrike.cs" />
     <Compile Include="DeckBuilder\Cards\DefaultCards\Dodge.cs" />
     <Compile Include="DeckBuilder\Cards\DefaultCards\Parry.cs" />
@@ -85,8 +93,9 @@
     <Compile Include="DeckBuilder\Cards\DefaultCards\Punch.cs" />
     <Compile Include="DeckBuilder\Cards\DefenseAndDrawCard.cs" />
     <Compile Include="DeckBuilder\Cards\GodlyCards\FistOfTheStars.cs" />
+    <Compile Include="DeckBuilder\IDebuffCard.cs" />
     <Compile Include="DeckBuilder\IMultiAttack.cs" />
-    <Compile Include="DeckBuilder\IBuffCard.cs" />
+    <Compile Include="DeckBuilder\IStatBuffCard.cs" />
     <Compile Include="DeckBuilder\Deck.cs" />
     <Compile Include="DeckBuilder\IDamagingCard.cs" />
     <Compile Include="DeckBuilder\IDefendingCard.cs" />
@@ -113,6 +122,7 @@
     <Compile Include="Dungeon\Rooms\MultiContentRoom.cs" />
     <Compile Include="Dungeon\Rooms\StartRoom.cs" />
     <Compile Include="Dungeon\Rooms\StoryRoom.cs" />
+    <Compile Include="Equipment\Inventory.cs" />
     <Compile Include="Events\Choice.cs" />
     <Compile Include="Events\EventHandler.cs" />
     <Compile Include="Events\Happening.cs" />
@@ -135,6 +145,7 @@
     <Compile Include="Treasury\Treasures\Blessing.cs" />
     <Compile Include="Treasury\Treasures\Curse.cs" />
     <Compile Include="Treasury\Treasures\Gold.cs" />
+    <Compile Include="Treasury\Treasures\PartyBuff.cs" />
     <Compile Include="Treasury\Treasures\Relic.cs" />
     <Compile Include="Treasury\Treasures\RemoveCardFromDeck.cs" />
     <Compile Include="UserInterface\Clickable.cs" />
@@ -144,6 +155,7 @@
     <Compile Include="UserInterface\Clickables\CardChoice.cs" />
     <Compile Include="UserInterface\Clickables\Decision.cs" />
     <Compile Include="UserInterface\Clickables\DeckOfCards.cs" />
+    <Compile Include="UserInterface\Clickables\GroupMember.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\DynamicText.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\EnemyIntent.cs" />
     <Compile Include="UserInterface\Clickables\Hovers\HPBar.cs" />
@@ -155,6 +167,7 @@
     <Compile Include="UserInterface\Clickables\Opponent.cs" />
     <Compile Include="UserInterface\Clickables\HandCard.cs" />
     <Compile Include="UserInterface\Clickables\HoverInfo.cs" />
+    <Compile Include="UserInterface\Clickables\Hovers\StatusEffect.cs" />
     <Compile Include="UserInterface\Clickables\Target.cs" />
     <Compile Include="UserInterface\CombatUI.cs" />
     <Compile Include="UserInterface\EventUI.cs" />

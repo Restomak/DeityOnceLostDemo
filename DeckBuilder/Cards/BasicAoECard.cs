@@ -31,14 +31,14 @@ namespace DeityOnceLost.DeckBuilder.Cards
 
             for (int i = 0; i < enemies.Count; i++)
             {
-                enemies[i].takeDamage(_damage);
+                enemies[i].takeDamage(Game1.getChamp().getDamageAffectedByBuffs(_damage, enemies[i]));
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
-            int damage = champ.getStrength() + _damage;
+            int damage = champ.getDamageAffectedByBuffs(_damage, null);
 
             desc.Add("Deal " + damage + " damage to all");
             desc.Add("enemies.");

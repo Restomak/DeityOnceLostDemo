@@ -32,10 +32,10 @@ namespace DeityOnceLost.DeckBuilder.Cards
             Game1.getChamp().gainDefense(_defense);
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
-            int defense = champ.getDexterity() + _defense;
+            int defense = champ.getDefenseAffectedByBuffs(_defense);
 
             desc.Add("Gain " + _buffAmount + " " + _buffType.ToString() + ".");
             desc.Add("Gain " + defense + " defense.");

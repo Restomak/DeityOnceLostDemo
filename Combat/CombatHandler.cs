@@ -8,29 +8,6 @@ namespace DeityOnceLost.Combat
 {
     public class CombatHandler
     {
-        public const int MAX_PARTY_MEMBERS = 3; //will get moved into party stuff when I eventually make that, since this is just combat
-        public void addToParty(PartyMember newMember)
-        {
-            if (_partyMembers == null)
-            {
-                _partyMembers = new List<PartyMember>();
-            }
-
-            if (_partyMembers.Count < 3)
-            {
-                _partyMembers.Add(newMember);
-            }
-            else
-            {
-                String log = "Tried to add a fourth party member " + newMember.getName() + " when three already exist: ";
-                foreach (PartyMember member in _partyMembers)
-                {
-                    log += member.getName() + " ";
-                }
-                Game1.errorLog.Add(log);
-            }
-        }  //will get moved into party stuff when I eventually make that, since this is just combat
-
         public enum combatTurn
         {
             ROUND_START,
@@ -49,6 +26,7 @@ namespace DeityOnceLost.Combat
         combatTurn _turn;
         Dungeon.Room _currentRoom;
         bool lootHandled;
+        Enemy _lastAttackedEnemy;
 
         public CombatHandler()
         {
@@ -56,19 +34,16 @@ namespace DeityOnceLost.Combat
 
             _turn = combatTurn.ROUND_START;
             _champ = Game1.getChamp();
-            //FIXIT implement party stuff
-            /*if (party == null || party.Count <= 3)
+
+            _partyMembers = new List<PartyMember>();
+            List<Characters.Hero> heroes = Game1.getPartyMembers();
+            if (heroes != null)
             {
-                _partyMembers = party;
+                for (int i = 0; i < heroes.Count; i++)
+                {
+                    _partyMembers.Add(new PartyMember(heroes[i]));
+                }
             }
-            else
-            {
-                Game1.errorLog.Add("Tried to create a party of more than three heroes (size: " + party.Count + "). Adding only the first three");
-                _partyMembers = new List<PartyMember>();
-                _partyMembers.Add(party[0]);
-                _partyMembers.Add(party[1]);
-                _partyMembers.Add(party[2]);
-            }*/
         }
 
         //Setters
@@ -76,19 +51,15 @@ namespace DeityOnceLost.Combat
         {
             _champ = champ;
         }
-        public void setNewPartyMembers(List<PartyMember> party)
+        public void setNewPartyMembers(List<Characters.Hero> heroes)
         {
-            if (party == null || party.Count <= 3)
+            _partyMembers.Clear();
+            if (heroes != null)
             {
-                _partyMembers = party;
-            }
-            else
-            {
-                Game1.errorLog.Add("Tried to create a party of more than three heroes (size: " + party.Count + "). Adding only the first three");
-                _partyMembers = new List<PartyMember>();
-                _partyMembers.Add(party[0]);
-                _partyMembers.Add(party[1]);
-                _partyMembers.Add(party[2]);
+                for (int i = 0; i < heroes.Count; i++)
+                {
+                    _partyMembers.Add(new PartyMember(heroes[i]));
+                }
             }
         }
         public void setNewEncounter(Encounter newEncounter)
@@ -125,6 +96,35 @@ namespace DeityOnceLost.Combat
         {
             return _combatUI;
         }
+        public Enemy getLastAttackedEnemy()
+        {
+            return _lastAttackedEnemy;
+        }
+        public Enemy getRandomEnemy()
+        {
+            List<Enemy> targets = new List<Enemy>();
+
+            for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
+            {
+                if (!_currentEncounter.getEnemies()[i].getDowned())
+                {
+                    targets.Add(_currentEncounter.getEnemies()[i]);
+                }
+            }
+
+            if (targets.Count == 0)
+            {
+                return null; //should not happen
+            }
+
+            return targets[Game1.randint(0, targets.Count - 1)];
+        }
+
+        //Setters
+        public void setLastAttackedEnemy(Enemy target)
+        {
+            _lastAttackedEnemy = target;
+        }
 
 
 
@@ -136,26 +136,37 @@ namespace DeityOnceLost.Combat
             Game1.debugLog.Add("Beginning combat");
 
             _combatUI.setAsActiveUI(activeUI);
-
-            _champ = Game1.getChamp();
+            _lastAttackedEnemy = null;
 
             _turn = combatTurn.ROUND_START;
+
+            _champ = Game1.getChamp();
             _champ.resetDivinity();
             _champ.resetDefense();
-            _champ.resetStrength();
-            _champ.resetDexterity();
-            _champ.resetResilience();
-            if (_partyMembers != null)
-            {
-                foreach (Unit party in _partyMembers)
-                {
-                    party.resetDefense();
-                }
-            }
-
+            _champ.resetBuffs();
             _champ.getDeck().start();
 
+            foreach (PartyMember party in _partyMembers)
+            {
+                party.resetDefense();
+                party.resetStrength();
+                party.resetDexterity();
+                party.resetResilience();
+                party.resetBuffs();
+            }
+
             lootHandled = false;
+
+            
+            //Relics that affect the start of combat, including party member buffs
+            for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+            {
+                Game1.getDungeonHandler().getRelics()[i].onCombatStart();
+            }
+            for (int i = 0; i < _partyMembers.Count; i++)
+            {
+                _partyMembers[i].getPartyMemberBuff().onCombatStart();
+            }
         }
 
         /// <summary>
@@ -202,8 +213,6 @@ namespace DeityOnceLost.Combat
                     nextTurn();
                     break;
             }
-
-            //FIXIT handle whether or not combat has ended
         }
 
         /// <summary>
@@ -217,6 +226,33 @@ namespace DeityOnceLost.Combat
             {
                 case combatTurn.ROUND_START:
                     _turn = combatTurn.CHAMPION;
+
+                    //Relics that affect the start of your turn, including party member buffs
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onTurnStart();
+                    }
+                    for (int i = 0; i < _partyMembers.Count; i++)
+                    {
+                        _partyMembers[i].getPartyMemberBuff().onTurnStart();
+                    }
+
+
+                    _champ.newTurnLowerBuffs();
+                    for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
+                    {
+                        if (!_currentEncounter.getEnemies()[i].getDowned())
+                        {
+                            _currentEncounter.getEnemies()[i].newTurnLowerBuffs();
+                        }
+                    }
+                    if (_partyMembers != null)
+                    {
+                        foreach (Unit party in _partyMembers)
+                        {
+                            party.newTurnLowerBuffs();
+                        }
+                    }
                     _champ.resetDivinity();
                     _champ.resetDefense();
                     _currentEncounter.determineIntents(_champ, _partyMembers);
@@ -224,6 +260,18 @@ namespace DeityOnceLost.Combat
                     break;
                 case combatTurn.CHAMPION:
                     _turn = combatTurn.PARTY;
+
+                    //Relics that affect the end of your turn, including party member buffs
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onTurnEnd();
+                    }
+                    for (int i = 0; i < _partyMembers.Count; i++)
+                    {
+                        _partyMembers[i].getPartyMemberBuff().onTurnEnd();
+                    }
+
+
                     if (_partyMembers != null)
                     {
                         foreach (Unit party in _partyMembers)
@@ -268,6 +316,7 @@ namespace DeityOnceLost.Combat
 
         public void endCombat(bool enemiesDefeated = true)
         {
+            _champ.resetBuffs();
             if (enemiesDefeated)
             {
                 if (!lootHandled)
@@ -304,6 +353,11 @@ namespace DeityOnceLost.Combat
         public void updateCombatUI()
         {
             _combatUI.updateCombatUI(this);
+        }
+
+        public void updateEnemyIntents()
+        {
+            _combatUI.updateEnemyIntents(this);
         }
     }
 }

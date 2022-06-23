@@ -45,5 +45,14 @@ namespace DeityOnceLost.Treasury.Treasures
         {
             return _active;
         }
+
+
+
+        //By default, each of these does nothing. The children will override these based on their effects
+        public virtual void onCombatStart() { }
+        public virtual void onTurnStart() { }
+        public virtual void onChampionAttack() { }
+        public virtual void onChampionUsedSkill() { }
+        public virtual void onTurnEnd() { }
     }
 }

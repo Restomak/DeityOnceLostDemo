@@ -31,7 +31,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
             {
                 for (int i = 0; i < _numHits; i++)
                 {
-                    _target.takeDamage(_damage);
+                    _target.takeDamage(Game1.getChamp().getDamageAffectedByBuffs(_damage, _target));
                 }
             }
             else
@@ -40,10 +40,15 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
-            int damage = champ.getStrength() + _damage;
+            Combat.Unit descTarget = null;
+            if (activeCard)
+            {
+                descTarget = Card.getTargetForDescription(_targetType);
+            }
+            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
 
             desc.Add("Deal " + damage + " damage " + numHits);
             desc.Add("times.");

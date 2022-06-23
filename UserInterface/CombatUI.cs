@@ -17,6 +17,8 @@ namespace DeityOnceLost.UserInterface
         UserInterface _combatUIButtons;
         UserInterface _enemies;
         UserInterface _enemyHovers;
+        UserInterface _partyMembers;
+        UserInterface _partyMemberHovers;
         Clickables.Avatar _championUI;
         UserInterface _championHovers;
         Clickables.HandCard _activeCard;
@@ -32,6 +34,8 @@ namespace DeityOnceLost.UserInterface
             _combatUIButtons = new UserInterface();
             _enemies = new UserInterface();
             _enemyHovers = new UserInterface();
+            _partyMembers = new UserInterface();
+            _partyMemberHovers = new UserInterface();
             _championUI = new Clickables.Avatar();
             _championHovers = new UserInterface();
             _targets = new UserInterface();
@@ -42,6 +46,8 @@ namespace DeityOnceLost.UserInterface
             _wholeUI.Add(_handCards);
             _wholeUI.Add(_enemyHovers);
             _wholeUI.Add(_enemies);
+            _wholeUI.Add(_partyMemberHovers);
+            _wholeUI.Add(_partyMembers);
             _wholeUI.Add(_championHovers);
             _championHovers.addClickableToFront(_championUI);
             _wholeUI.Add(_cardPiles);
@@ -135,6 +141,11 @@ namespace DeityOnceLost.UserInterface
 
             Clickables.Opponent.setupEnemyUI(_enemies, combatHandler.getCurrentEncounter(), _enemyHovers);
 
+            if (combatHandler.getParty().Count > 0)
+            {
+                Clickables.GroupMember.setupPartyUI(_partyMembers, combatHandler.getParty(), _partyMemberHovers);
+            }
+
             Clickables.Avatar.setupChampionUI(_championUI, Game1.getChamp(), _championHovers);
 
             _resources.resetClickables();
@@ -142,6 +153,16 @@ namespace DeityOnceLost.UserInterface
                 (int)Game1.roboto_bold_16.MeasureString(Clickables.Hovers.Resource.DIVINITY_SAMPLE_STRING).X, Drawing.DrawConstants.TEXT_16_HEIGHT, DeckBuilder.CardEnums.CostType.DIVINITY));
 
             Game1.updateTopBar();
+        }
+
+        public void updateCardDescriptions()
+        {
+            Clickables.HandCard.setupHandUI(_handCards, Game1.getChamp().getDeck().getHand());
+        }
+
+        public void updateEnemyIntents(Combat.CombatHandler combatHandler)
+        {
+            Clickables.Opponent.setupEnemyUI(_enemies, combatHandler.getCurrentEncounter(), _enemyHovers);
         }
     }
 }

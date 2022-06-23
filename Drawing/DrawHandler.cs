@@ -238,6 +238,14 @@ namespace DeityOnceLost.Drawing
             {
                 drawMultiTarget(sprites, (UserInterface.Clickables.MultiTarget)current);
             }
+            else if (current.GetType() == typeof(UserInterface.Clickables.GroupMember))
+            {
+                drawPartyMember(sprites, (UserInterface.Clickables.GroupMember)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.StatusEffect))
+            {
+                drawStatusEffect(sprites, (UserInterface.Clickables.Hovers.StatusEffect)current);
+            }
             else
             {
                 Game1.errorLog.Add("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
@@ -247,7 +255,12 @@ namespace DeityOnceLost.Drawing
         public static void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
         {
             String name = card.getCard().getName();
+
             List<String> description = card.getCard().getDescription(champ);
+            if (Game1.getCombatHandler().getCombatUI().getActiveCard() == card)
+            {
+                description = card.getCard().getDescription(champ, true);
+            }
 
             Texture2D cardFromRarity = Game1.pic_card_front_default;
             switch (card.getCard().getCardRarity())
@@ -297,16 +310,22 @@ namespace DeityOnceLost.Drawing
             if (card == Game1.getCombatHandler().getCombatUI().getActiveCard() || card == Game1.getHoveredClickable())
             {
                 //Name
+                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH / 2,
+                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 12,
+                    DrawConstants.TEXT_20_HEIGHT), DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH, DrawConstants.TEXT_20_HEIGHT),
+                    DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.COMBAT_HANDCARDS_NAME_RARITY_FADE);
                 sprites.DrawString(Game1.roboto_bold_20, name,
                     new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - Game1.roboto_medium_20.MeasureString(name).X / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 12, DrawConstants.TEXT_20_HEIGHT)), Color.Black);
+                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 12,
+                    DrawConstants.TEXT_20_HEIGHT)), Color.Black);
 
                 //Description
                 for (int i_d = 0; i_d < description.Count; i_d++)
                 {
                     sprites.DrawString(Game1.roboto_medium_16, description[i_d],
                         new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - Game1.roboto_medium_16.MeasureString(description[i_d]).X / 2,
-                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 6 - DrawConstants.TEXT_16_HEIGHT * i_d * 3 / 2,
+                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 -
+                        DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 6 - DrawConstants.TEXT_16_HEIGHT * i_d,
                         DrawConstants.TEXT_16_HEIGHT)), Color.Black);
                 }
 
@@ -337,16 +356,22 @@ namespace DeityOnceLost.Drawing
             else
             {
                 //Name
+                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH / 2,
+                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 12,
+                    DrawConstants.TEXT_10_HEIGHT), DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH, DrawConstants.TEXT_10_HEIGHT),
+                    DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.COMBAT_HANDCARDS_NAME_RARITY_FADE);
                 sprites.DrawString(Game1.roboto_bold_10, name,
                     new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Game1.roboto_medium_10.MeasureString(name).X / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 12, DrawConstants.TEXT_10_HEIGHT)), Color.Black);
+                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 12,
+                    DrawConstants.TEXT_10_HEIGHT)), Color.Black);
 
                 //Description
                 for (int i_d = 0; i_d < description.Count; i_d++)
                 {
                     sprites.DrawString(Game1.roboto_medium_8, description[i_d],
                         new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Game1.roboto_medium_8.MeasureString(description[i_d]).X / 2,
-                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 6 - DrawConstants.TEXT_8_HEIGHT * i_d * 3 / 2,
+                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 -
+                        DrawConstants.COMBAT_HANDCARD_HEIGHT / 6 - DrawConstants.TEXT_8_HEIGHT * i_d,
                         DrawConstants.TEXT_8_HEIGHT)), Color.Black);
                 }
 
@@ -569,8 +594,9 @@ namespace DeityOnceLost.Drawing
                 }
 
                 sprites.Draw(Game1.pic_functionality_bar,
-                    new Rectangle(hpBar._x - 2, yFromBottom(hpBar._y - 2, hpBar._height + 4),
-                    hpBar._width + 4, hpBar._height + 4), Color.White);
+                    new Rectangle(hpBar._x - DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER, yFromBottom(hpBar._y - DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER,
+                    hpBar._height + DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER * 2),
+                    hpBar._width + DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER * 2, hpBar._height + DrawConstants.COMBAT_ENEMY_DEFENSE_BUFFER * 2), Color.White);
             }
 
             //Draw max HP behind - adjust the height slightly for a neat effect
@@ -764,6 +790,15 @@ namespace DeityOnceLost.Drawing
             else if (room.getRoom().isPartialRevealed())
             {
                 sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.LightGray);
+
+                if (Game1.getHoveredClickable() == room)
+                {
+                    if (room.getHighlighted())
+                    {
+                        sprites.Draw(Game1.pic_functionality_mapRoom, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue);
+                        sprites.Draw(Game1.pic_functionality_bar, new Rectangle(room._x, yFromBottom(room._y, room._height), room._width, room._height), Color.DeepSkyBlue * DrawConstants.MAP_GRIDSPACE_HIGHLIGHT_FADE);
+                    }
+                }
 
                 sprites.DrawString(Game1.roboto_black_24, "?",
                     new Vector2(room._x + room._width / 2 - Game1.roboto_black_24.MeasureString("?").X / 2,
@@ -1002,16 +1037,22 @@ namespace DeityOnceLost.Drawing
 
 
             //Draw card name
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH / 2,
+                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
+                DrawConstants.TEXT_15_HEIGHT), DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH, DrawConstants.TEXT_15_HEIGHT),
+                DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.CARDSELECTIONMENU_CARDS_NAME_RARITY_FADE);
             sprites.DrawString(Game1.roboto_bold_15, name,
                 new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_15.MeasureString(name).X / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12, DrawConstants.TEXT_15_HEIGHT)), Color.Black);
+                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
+                DrawConstants.TEXT_15_HEIGHT)), Color.Black);
 
             //Draw card description
             for (int i_d = 0; i_d < description.Count; i_d++)
             {
                 sprites.DrawString(Game1.roboto_medium_12, description[i_d],
                     new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_12.MeasureString(description[i_d]).X / 2,
-                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d * 3 / 2,
+                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 -
+                    DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d,
                     DrawConstants.TEXT_12_HEIGHT)), Color.Black);
             }
 
@@ -1095,16 +1136,22 @@ namespace DeityOnceLost.Drawing
 
 
             //Draw card name
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH / 2,
+                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
+                DrawConstants.TEXT_15_HEIGHT), DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH, DrawConstants.TEXT_15_HEIGHT),
+                DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.CARDSELECTIONMENU_CARDS_NAME_RARITY_FADE);
             sprites.DrawString(Game1.roboto_bold_15, name,
                 new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_15.MeasureString(name).X / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12, DrawConstants.TEXT_15_HEIGHT)), Color.Black);
+                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
+                DrawConstants.TEXT_15_HEIGHT)), Color.Black);
 
             //Draw card description
             for (int i_d = 0; i_d < description.Count; i_d++)
             {
                 sprites.DrawString(Game1.roboto_medium_12, description[i_d],
                     new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_12.MeasureString(description[i_d]).X / 2,
-                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d * 3 / 2,
+                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 -
+                    DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d,
                     DrawConstants.TEXT_12_HEIGHT)), Color.Black);
             }
 
@@ -1155,6 +1202,39 @@ namespace DeityOnceLost.Drawing
             sprites.Draw(Game1.pic_functionality_targeting_faded_TR, target.getTopRightTargetPiece(), Color.White * fadeFade);
             sprites.Draw(Game1.pic_functionality_targeting_faded_BR, target.getBottomRightTargetPiece(), Color.White * fadeFade);
             sprites.Draw(Game1.pic_functionality_targeting_faded_BL, target.getBottomLeftTargetPiece(), Color.White * fadeFade);
+        }
+
+        public static void drawPartyMember(SpriteBatch sprites, UserInterface.Clickables.GroupMember partyMember)
+        {
+            sprites.Draw(Game1.pic_functionality_championSilhouette, new Rectangle(partyMember._x, yFromBottom(partyMember._y, partyMember._height),
+                partyMember._width, partyMember._height), Color.White);
+
+            //Draw name
+            if (partyMember == Game1.getHoveredClickable())
+            {
+                drawShadowedText(sprites, Game1.roboto_medium_12, partyMember.getPartyMember().getName(),
+                    partyMember._x + partyMember._width / 2, partyMember._y + partyMember._height + DrawConstants.COMBAT_PARTY_NAME_BUFFER, DrawConstants.TEXT_12_HEIGHT, Color.White, Color.Black);
+            }
+        }
+
+        public static void drawStatusEffect(SpriteBatch sprites, UserInterface.Clickables.Hovers.StatusEffect statusEffect)
+        {
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(statusEffect._x, yFromBottom(statusEffect._y, statusEffect._height),
+                statusEffect._width, statusEffect._height), statusEffect.getBorderColor());
+
+            sprites.Draw(statusEffect.getIcon(), new Rectangle(statusEffect._x + DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER,
+                yFromBottom(statusEffect._y + DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER, statusEffect._height - DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2),
+                statusEffect._width - DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2, statusEffect._height - DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER * 2), Color.White);
+
+            String importantBuffNumber = "" + statusEffect.getImportantBuffNumber();
+            drawShadowedText(sprites, Game1.roboto_medium_11, importantBuffNumber,
+                statusEffect._x + statusEffect._width / 2, statusEffect._y + DrawConstants.COMBAT_DEBUFF_BORDER_BUFFER, DrawConstants.TEXT_11_HEIGHT, statusEffect.getBorderColor(), Color.Black);
+
+            //Draw info if hovered
+            if (statusEffect == Game1.getHoveredClickable())
+            {
+                drawInfoBox(sprites, statusEffect.getDescription(), new Rectangle(statusEffect._x, statusEffect._y, statusEffect._width, statusEffect._height));
+            }
         }
 
 

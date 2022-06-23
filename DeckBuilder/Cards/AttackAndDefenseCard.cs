@@ -31,11 +31,16 @@ namespace DeityOnceLost.DeckBuilder.Cards
             Game1.getChamp().gainDefense(_defense);
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
-            int defense = champ.getDexterity() + _defense;
-            int damage = champ.getStrength() + _damage;
+            int defense = champ.getDefenseAffectedByBuffs(_defense);
+            Combat.Unit descTarget = null;
+            if (activeCard)
+            {
+                descTarget = Card.getTargetForDescription(_targetType);
+            }
+            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
 
             desc.Add("Deal " + damage + " damage.");
             desc.Add("Gain " + defense + " defense.");

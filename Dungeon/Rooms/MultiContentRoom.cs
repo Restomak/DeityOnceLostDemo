@@ -10,12 +10,13 @@ namespace DeityOnceLost.Dungeon.Rooms
     {
         List<Events.Happening> _roomEvents;
         List<Combat.Encounter> _roomEncounters;
-        //FIXIT add list for treasure stuff
+        List<Treasury.Loot> _roomTreasures;
 
         public MultiContentRoom()
         {
             _roomEvents = new List<Events.Happening>();
             _roomEncounters = new List<Combat.Encounter>();
+            _roomTreasures = new List<Treasury.Loot>();
         }
 
         //Getters
@@ -33,6 +34,15 @@ namespace DeityOnceLost.Dungeon.Rooms
             if (_roomEvents.Count > 0)
             {
                 return _roomEvents[0];
+            }
+
+            return null;
+        }
+        public override Treasury.Loot getRoomTreasure()
+        {
+            if (_roomTreasures.Count > 0)
+            {
+                return _roomTreasures[0];
             }
 
             return null;
@@ -65,6 +75,12 @@ namespace DeityOnceLost.Dungeon.Rooms
                 _roomContents.Add(roomContents.combat);
             }
         }
+        public void addRoomTreasure(Treasury.Loot roomTreasure)
+        {
+            _roomTreasures.Add(roomTreasure);
+
+            _roomContents.Add(roomContents.treasure);
+        }
 
         /// <summary>
         /// Overrides the base function because it needs to also remove from the lists of encounters or events
@@ -83,7 +99,7 @@ namespace DeityOnceLost.Dungeon.Rooms
                         _roomEvents.RemoveAt(0);
                         break;
                     case roomContents.treasure:
-                        //FIXIT implement
+                        _roomTreasures.RemoveAt(0);
                         break;
                     default:
                         Game1.errorLog.Add("Attempted to remove the top of _roomContents but the top of the list doesn't match what's possible in a MultiContentRoom: " + _roomContents[0].ToString());

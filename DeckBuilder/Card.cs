@@ -109,7 +109,7 @@ namespace DeityOnceLost.DeckBuilder
         {
             return _retainAlways;
         }
-        public abstract List<String> getDescription(Characters.Champion champ); //always override
+        public abstract List<String> getDescription(Characters.Champion champ, bool activeCard = false); //always override
 
         //Setters
         public void setDescription(List<String> description)
@@ -119,6 +119,21 @@ namespace DeityOnceLost.DeckBuilder
         public void setRetainAlways(bool retain)
         {
             _retainAlways = retain;
+        }
+
+
+
+        public static Combat.Unit getTargetForDescription(CardEnums.TargetingType targetType)
+        {
+            Combat.Unit target = null;
+
+            if (targetType == CardEnums.TargetingType.enemies && Game1.getHoveredClickable() != null &&
+                Game1.getHoveredClickable().GetType() == typeof(UserInterface.Clickables.Target))
+            {
+                target = ((UserInterface.Clickables.Opponent)((UserInterface.Clickables.Target)Game1.getHoveredClickable()).getUnitClickable()).getEnemy();
+            }
+
+            return target;
         }
     }
 }

@@ -33,6 +33,8 @@ namespace DeityOnceLost.DeckBuilder
             _allCards.Add(new Cards.CommonCards.RollingKick());
             _allCards.Add(new Cards.CommonCards.DodgeAndRoll());
             _allCards.Add(new Cards.CommonCards.Cleave());
+            _allCards.Add(new Cards.CommonCards.ViciousSlam());
+            _allCards.Add(new Cards.CommonCards.ExploitWeakness());
 
             //Rare Cards
 

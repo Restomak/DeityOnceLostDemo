@@ -20,19 +20,33 @@ namespace DeityOnceLost.Combat
         {
             return _hero;
         }
+        public Treasury.Treasures.PartyBuff getPartyMemberBuff()
+        {
+            return _hero.getPartyMemberBuff();
+        }
         
         //Unit Overrides
         public override void resetStrength()
         {
-            _strength = _hero.getDefaultStrength();
+            _strength = 0;
         }
         public override void resetDexterity()
         {
-            _dexterity = _hero.getDefaultDexterity();
+            _dexterity = 0;
         }
         public override void resetResilience()
         {
-            _resilience = _hero.getDefaultResilience();
+            _resilience = 0;
+        }
+        public override void resetBuffs()
+        {
+            _buffs.Clear();
+        }
+        public override void gainBuff(Buff buff)
+        {
+            //Not sure party members will ever gain buffs. we'll see
+
+            //base.gainBuff(buff);
         }
     }
 }

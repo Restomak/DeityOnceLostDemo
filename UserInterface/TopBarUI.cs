@@ -42,6 +42,8 @@ namespace DeityOnceLost.UserInterface
 
         public void setupUI()
         {
+            _topBar.resetClickables();
+
             String championString = "Champion: " + Game1.getChamp().getName() + " (" + Game1.getChamp().getHero().getPronoun_they() + "/" + Game1.getChamp().getHero().getPronoun_them() + ")";
             List<String> championDescription = new List<String>();
             championDescription.Add("Your current champion.");
@@ -101,9 +103,74 @@ namespace DeityOnceLost.UserInterface
             Clickables.DeckOfCards topBarDeckIcon = new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DECK, Game1.getChamp());
             _topBar.addClickableToBack(topBarDeckIcon);
 
+            //Party member 1
+            if (Game1.getCombatHandler().getParty().Count > 0)
+            {
+                String partyText = "Party: ";
+                Clickables.Hovers.DynamicText partyTextHover = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_PARTY_X,
+                    Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
+                    Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, partyText, new List<String>(), Color.LawnGreen);
+                _topBar.addClickableToBack(partyTextHover);
+
+                Combat.PartyMember partyMember1 = Game1.getCombatHandler().getParty()[0];
+                String party1String = partyMember1.getName() + " (" + partyMember1.getHero().getPronoun_they() + "/" + partyMember1.getHero().getPronoun_them() + ")";
+                List<String> partyMember1_Description = new List<String>();
+                partyMember1_Description.Add("Hitpoints: " + partyMember1.getCurrentHP() + "/" + partyMember1.getMaxHP());
+                partyMember1_Description.Add("");
+                partyMember1_Description.AddRange(partyMember1.getPartyMemberBuff().getDescription());
+                Clickables.Hovers.DynamicText party1Hover = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_PARTY_1_X,
+                    Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
+                    Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, party1String, partyMember1_Description, Color.LawnGreen);
+                party1Hover.setOnUpdate(() =>
+                {
+                    partyMember1_Description[0] = "Hitpoints: " + partyMember1.getCurrentHP() + "/" + partyMember1.getMaxHP();
+                });
+                _topBar.addClickableToBack(party1Hover);
+
+                //Party member 2
+                if (Game1.getCombatHandler().getParty().Count > 1)
+                {
+                    Combat.PartyMember partyMember2 = Game1.getCombatHandler().getParty()[1];
+                    String party2String = partyMember2.getName() + " (" + partyMember2.getHero().getPronoun_they() + "/" + partyMember2.getHero().getPronoun_them() + ")";
+                    List<String> partyMember2_Description = new List<String>();
+                    partyMember2_Description.Add("Hitpoints: " + partyMember2.getCurrentHP() + "/" + partyMember2.getMaxHP());
+                    partyMember2_Description.Add("");
+                    partyMember2_Description.AddRange(partyMember2.getPartyMemberBuff().getDescription());
+                    Clickables.Hovers.DynamicText party2Hover = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_PARTY_2_X,
+                        Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
+                        Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, party2String, partyMember2_Description, Color.LawnGreen);
+                    party2Hover.setOnUpdate(() =>
+                    {
+                        partyMember2_Description[0] = "Hitpoints: " + partyMember2.getCurrentHP() + "/" + partyMember2.getMaxHP();
+                    });
+                    _topBar.addClickableToBack(party2Hover);
+
+                    //Party member 3
+                    if (Game1.getCombatHandler().getParty().Count > 2)
+                    {
+                        Combat.PartyMember partyMember3 = Game1.getCombatHandler().getParty()[2];
+                        String party3String = partyMember3.getName() + " (" + partyMember3.getHero().getPronoun_they() + "/" + partyMember3.getHero().getPronoun_them() + ")";
+                        List<String> partyMember3_Description = new List<String>();
+                        partyMember3_Description.Add("Hitpoints: " + partyMember3.getCurrentHP() + "/" + partyMember3.getMaxHP());
+                        partyMember3_Description.Add("");
+                        partyMember3_Description.AddRange(partyMember3.getPartyMemberBuff().getDescription());
+                        Clickables.Hovers.DynamicText party3Hover = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_PARTY_3_X,
+                            Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
+                            Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, party3String, partyMember3_Description, Color.LawnGreen);
+                        party3Hover.setOnUpdate(() =>
+                        {
+                            partyMember3_Description[0] = "Hitpoints: " + partyMember3.getCurrentHP() + "/" + partyMember3.getMaxHP();
+                        });
+                        _topBar.addClickableToBack(party3Hover);
+                    }
+                }
+            }
+
+
+            //Top bar background - always do this last!
             Clickables.AestheticOnly topBarBackground = new Clickables.AestheticOnly(Game1.pic_functionality_bar,
                 new Point(0, Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT), Game1.VIRTUAL_WINDOW_WIDTH, Drawing.DrawConstants.TOPBAR_HEIGHT, Color.DarkSlateBlue);
-            _topBar.addClickableToBack(topBarBackground);
+            _topBar.addClickableToBack(topBarBackground); //the order DOES matter here
         }
     }
 }

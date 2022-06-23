@@ -24,6 +24,11 @@ namespace DeityOnceLost.UserInterface.Clickables
             _height = _clickableUnit._height;
         }
 
+        public Clickable getUnitClickable()
+        {
+            return _clickableUnit;
+        }
+
         public Rectangle getTopLeftTargetPiece()
         {
             return new Rectangle(_x, Drawing.DrawHandler.yFromBottom(_y + _height - Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT, Drawing.DrawConstants.COMBAT_TARGET_CORNER_HEIGHT),
@@ -86,7 +91,7 @@ namespace DeityOnceLost.UserInterface.Clickables
                 }
                 /*else if (_clickableUnit.GetType() == typeof(Party))
                 {
-                    card.setTarget(((Party)_clickableUnit).getPartyMember());
+                    card.setTarget(((Party)_clickableUnit).getPartyMember()); //FIXIT implement when party is implemented
                 }*/
                 else if (_clickableUnit.GetType() == typeof(Avatar))
                 {
@@ -102,10 +107,43 @@ namespace DeityOnceLost.UserInterface.Clickables
                 card.onPlay();
 
                 //Discard the card
-                Game1.getChamp().getDeck().discardBecausePlayed(card);
+                Game1.getChamp().getDeck().discardBecausePlayed(card, activeCard.getPositionInHand());
+                
+                if (card.getCardType() == DeckBuilder.CardEnums.CardType.ATTACK || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
+                {
+                    //Set most recently attacked enemy
+                    if (_clickableUnit.GetType() == typeof(Opponent))
+                    {
+                        Game1.getCombatHandler().setLastAttackedEnemy(((Opponent)_clickableUnit).getEnemy());
+                    }
+
+                    //Relics on champion attack, including party member buffs
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onChampionAttack();
+                    }
+                    for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
+                    {
+                        Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionAttack();
+                    }
+                }
+                else if (card.getCardType() == DeckBuilder.CardEnums.CardType.SKILL || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
+                {
+                    //Relics on champion skill, including party member buffs
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onChampionUsedSkill();
+                    }
+                    for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
+                    {
+                        Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionUsedSkill();
+                    }
+                }
+
 
                 //Update UI
                 Game1.getCombatHandler().updateCombatUI();
+                Game1.getCombatHandler().updateEnemyIntents();
 
                 //Set active card as null & remove targeting from current hover when finished
                 Game1.getCombatHandler().getCombatUI().setActiveCard(null);

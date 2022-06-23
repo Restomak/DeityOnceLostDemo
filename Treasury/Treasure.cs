@@ -17,6 +17,7 @@ namespace DeityOnceLost.Treasury
             money,
             blessing,
             curse,
+            partyBuff,
             addInventoryItem
         }
 

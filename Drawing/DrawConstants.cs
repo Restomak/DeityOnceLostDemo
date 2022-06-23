@@ -30,10 +30,14 @@ namespace DeityOnceLost.Drawing
 
         public const int TOPBAR_CHAMPION_X = 32;
         public const int TOPBAR_HP_X = 300;
-        public const int TOPBAR_GOLD_X = 450;
-        public const int TOPBAR_DECK_TEXT_X = 600;
+        public const int TOPBAR_GOLD_X = 420;
+        public const int TOPBAR_DECK_TEXT_X = 490;
+        public const int TOPBAR_PARTY_X = 580;
+        public const int TOPBAR_PARTY_1_X = 630;
+        public const int TOPBAR_PARTY_2_X = 820;
+        public const int TOPBAR_PARTY_3_X = 1010;
 
-        public const int TOPBAR_DECK_ICON_X = 648;
+        public const int TOPBAR_DECK_ICON_X = 535;
         public const int TOPBAR_DECK_ICON_Y_BUFFER = 4;
         public const int TOPBAR_DECK_ICON_WIDTH = 29;
         public const int TOPBAR_DECK_ICON_HEIGHT = 24;
@@ -68,27 +72,32 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_HANDCARDS_Y = -12;
         public const int COMBAT_HANDCARD_WIDTH = 141;
         public const int COMBAT_HANDCARD_HEIGHT = 195;
+        public const int COMBAT_HANDCARD_NAME_Y_BUFFER = -4;
+        public const int COMBAT_HANDCARD_NAME_AREA_WIDTH = COMBAT_HANDCARD_WIDTH * 5 / 7;
         public const int COMBAT_HANDCARDS_DIVINITY_ADJUST_X = -8;
         public const int COMBAT_HANDCARDS_BLOOD_ADJUST_X = COMBAT_HANDCARDS_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_COST_ICON_SIZE + 2; //space of 2 between divinity and blood
         public const int COMBAT_HANDCARDS_COST_ICON_SIZE = 32;
         public const int COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP = -24;
         public const int COMBAT_HANDCARD_GROW_WIDTH = 282;
         public const int COMBAT_HANDCARD_GROW_HEIGHT = 390;
+        public const int COMBAT_HANDCARD_GROW_NAME_Y_BUFFER = -8;
+        public const int COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH = COMBAT_HANDCARD_GROW_WIDTH * 5 / 7;
         public const int COMBAT_HANDCARDS_GROW_Y = 0;
         public const int COMBAT_HANDCARDS_SPACE_BETWEEN_WHEN_LOW = 32;
         public const int COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X = -16;
         public const int COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X = COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_GROW_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
         public const int COMBAT_HANDCARDS_GROW_COST_ICON_SIZE = 64;
         public const int COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP = -48;
+        public const float COMBAT_HANDCARDS_NAME_RARITY_FADE = 0.5f;
 
         public const int COMBAT_ENEMY_Y = 350;
-        public const int COMBAT_FLYING_ENEMY_Y = 500;
         public const int COMBAT_ENEMY_SPACE_X_FROMRIGHT = 50;
         public const int COMBAT_ENEMY_SPACE_WIDTH = 800;
         public const int COMBAT_ENEMY_NAME_BUFFER = 10;
         public const int COMBAT_ENEMY_HP_BUFFER_TO_TOP = 10;
         public const int COMBAT_ENEMY_HP_HEIGHT = 16;
         public const int COMBAT_ENEMY_HP_WIDTHBUFFER = 16;
+        public const int COMBAT_ENEMY_DEFENSE_BUFFER = 2;
 
         public const int COMBAT_INTENTS_BUFFER = 30;
         public const int COMBAT_INTENTS_WIDTH = 56;
@@ -117,6 +126,22 @@ namespace DeityOnceLost.Drawing
         public const float COMBAT_TARGET_BACK_FADE = 0.5f;
         public const float COMBAT_TARGET_FADE_FADE_HOVERED = 0.5f;
         public const float COMBAT_TARGET_BACK_FADE_HOVERED = 0.75f;
+
+        public const int COMBAT_PARTY_X_1 = 300;
+        public const int COMBAT_PARTY_X_2 = 175;
+        public const int COMBAT_PARTY_X_3 = 50;
+        public const int COMBAT_PARTY_Y = 350;
+        public const int COMBAT_PARTY_WIDTH = 100;
+        public const int COMBAT_PARTY_HEIGHT = 120;
+
+        public const int COMBAT_PARTY_NAME_BUFFER = 10;
+        public const int COMBAT_PARTY_HP_BUFFER_TO_TOP = 10;
+        public const int COMBAT_PARTY_HP_HEIGHT = 12;
+        public const int COMBAT_PARTY_HP_WIDTHBUFFER = 8;
+
+        public const int COMBAT_DEBUFF_WIDTH = 24;
+        public const int COMBAT_DEBUFF_HEIGHT = 24;
+        public const int COMBAT_DEBUFF_BORDER_BUFFER = 1;
 
 
 
@@ -216,6 +241,8 @@ namespace DeityOnceLost.Drawing
         public const int CARDSELECTIONMENU_Y_BUFFER = 32;
         public const int CARDSELECTIONMENU_CARD_WIDTH = 212;//282;
         public const int CARDSELECTIONMENU_CARD_HEIGHT = 293;//390;
+        public const int CARDSELECTIONMENU_CARD_NAME_Y_BUFFER = -8;
+        public const int CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH = CARDSELECTIONMENU_CARD_WIDTH * 5 / 7;
         public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN = 32;
         public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN_UNDER4 = 64;
         public const int CARDSELECTIONMENU_SKIP_BUTTON_WIDTH = 120;
@@ -230,6 +257,7 @@ namespace DeityOnceLost.Drawing
         public const int CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X = COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_GROW_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
         public const int CARDSELECTIONMENU_CARDS_COST_ICON_SIZE = 64;
         public const int CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP = -48;
+        public const float CARDSELECTIONMENU_CARDS_NAME_RARITY_FADE = 0.5f;
 
 
 

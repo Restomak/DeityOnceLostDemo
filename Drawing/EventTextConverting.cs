@@ -36,6 +36,7 @@ namespace DeityOnceLost.Drawing
 
         public static void drawLineOfText(SpriteBatch sprites, Point drawStartLoc, String text)
         {
+            text = insertNames(text);
             text = insertPronouns(text);
             text = insertChampionHitpoints(text);
 
@@ -76,6 +77,24 @@ namespace DeityOnceLost.Drawing
             }
         }
 
+        private static String insertNames(String text)
+        {
+            if (Game1.getChamp() != null)
+            {
+                text = text.Replace("[Name: c]", Game1.getChamp().getName());
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (Game1.getPartyMembers().Count > i)
+                {
+                    text = text.Replace("[Name: " + i + 1 + "]", Game1.getPartyMembers()[i].getName());
+                }
+            }
+
+            return text;
+        }
+
         private static String insertPronouns(String text)
         {
             if (Game1.getChamp() != null)
@@ -100,9 +119,52 @@ namespace DeityOnceLost.Drawing
                 text = text.Replace("[THEIRS: c]", Game1.getChamp().getHero().getPronoun_theirs().ToUpper());
                 text = text.Replace("[THEY'RE: c]", Game1.getChamp().getHero().getPronoun_theyre().ToUpper());
                 text = text.Replace("[THEY'VE: c]", Game1.getChamp().getHero().getPronoun_theyve().ToUpper());
+
+                if (Game1.getChamp().getHero().getPronoun_they() == Characters.HeroConstants.THEY_THEYTHEM)
+                {
+                    text = text.Replace("[s: c]", "");
+                }
+                else
+                {
+                    text = text.Replace("[s: c]", "s");
+                }
             }
 
-            //FIXIT implement non-champion pronouns when party is implemented
+            for (int i = 0; i < 3; i++)
+            {
+                if (Game1.getPartyMembers().Count > i)
+                {
+                    text = text.Replace("[They: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they());
+                    text = text.Replace("[Them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them());
+                    text = text.Replace("[Their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their());
+                    text = text.Replace("[Theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs());
+                    text = text.Replace("[They're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre());
+                    text = text.Replace("[They've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve());
+
+                    text = text.Replace("[they: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToLower());
+                    text = text.Replace("[them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToLower());
+                    text = text.Replace("[their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToLower());
+                    text = text.Replace("[theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToLower());
+                    text = text.Replace("[they're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToLower());
+                    text = text.Replace("[they've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToLower());
+
+                    text = text.Replace("[THEY: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToUpper());
+                    text = text.Replace("[THEM: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToUpper());
+                    text = text.Replace("[THEIR: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToUpper());
+                    text = text.Replace("[THEIRS: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToUpper());
+                    text = text.Replace("[THEY'RE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToUpper());
+                    text = text.Replace("[THEY'VE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToUpper());
+
+                    if (Game1.getPartyMembers()[i].getPronoun_they() == Characters.HeroConstants.THEY_THEYTHEM)
+                    {
+                        text = text.Replace("[s: " + i + 1 + "]", "");
+                    }
+                    else
+                    {
+                        text = text.Replace("[s: " + i + 1 + "]", "s");
+                    }
+                }
+            }
 
             return text;
         }

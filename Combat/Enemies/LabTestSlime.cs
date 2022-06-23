@@ -50,10 +50,14 @@ namespace DeityOnceLost.Combat.Enemies
         {
             _strength = DEFAULT_RES;
         }
+        public override void resetBuffs()
+        {
+            _buffs.Clear();
+        }
 
         public override int getBasicDamage_noStrength()
         {
-            return DEFAULT_DAMAGE;
+            return getDamageAffectedByBuffs(DEFAULT_DAMAGE);
         }
         public override int getBasicDefense()
         {
@@ -61,11 +65,11 @@ namespace DeityOnceLost.Combat.Enemies
         }
         public override int getLightDamage()
         {
-            return DEFAULT_LIGHT_DAMAGE + _strength;
+            return getDamageAffectedByBuffs(DEFAULT_LIGHT_DAMAGE);
         }
         public override int getHeavyDamage()
         {
-            return DEFAULT_HEAVY_DAMAGE + _strength;
+            return getDamageAffectedByBuffs(DEFAULT_HEAVY_DAMAGE);
         }
     }
 }

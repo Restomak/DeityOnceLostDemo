@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.DeckBuilder
 {
@@ -101,6 +103,28 @@ namespace DeityOnceLost.DeckBuilder
                 default:
                     Game1.errorLog.Add("Card CardRarity error: " + ct.ToString());
                     return "ERROR";
+            }
+        }
+
+        public static Color cardRarityToColor(CardRarity ct)
+        {
+            switch (ct)
+            {
+                case CardRarity.DEFAULT:
+                    return Color.Gray;
+                case CardRarity.COMMON:
+                    return Color.Green;
+                case CardRarity.RARE:
+                    return Color.Blue;
+                case CardRarity.EPIC:
+                    return Color.Purple;
+                case CardRarity.GODLY:
+                    return Color.Gold;
+                case CardRarity.VOID:
+                    return new Color(Drawing.DrawConstants.DARK_PURPLE_RED, Drawing.DrawConstants.DARK_PURPLE_GREEN, Drawing.DrawConstants.DARK_PURPLE_BLUE);
+                default:
+                    Game1.errorLog.Add("Card CardRarity error: " + ct.ToString());
+                    return Color.Red;
             }
         }
     }

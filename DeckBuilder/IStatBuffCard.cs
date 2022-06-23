@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
-    interface IBuffCard
+    interface IStatBuffCard
     {
         int amount
         {

@@ -31,10 +31,16 @@ namespace DeityOnceLost.DeckBuilder.Cards
             Game1.getChamp().getDeck().drawNumCards(_drawAmount);
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
-            int damage = champ.getStrength() + _damage;
+            Combat.Unit descTarget = null;
+            if (activeCard)
+            {
+                descTarget = Card.getTargetForDescription(_targetType);
+            }
+            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
+
             String drawCardString = "Draw " + _drawAmount + " card";
             if (_drawAmount > 1)
             {

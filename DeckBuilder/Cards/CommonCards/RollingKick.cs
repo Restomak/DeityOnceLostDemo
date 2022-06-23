@@ -9,7 +9,7 @@ namespace DeityOnceLost.DeckBuilder.Cards.CommonCards
     class RollingKick : AttackAndDrawCard
     {
         public const String NAME = "Rolling Kick";
-        public const CardEnums.CardType CARDTYPE = CardEnums.CardType.ATTACK;
+        public const CardEnums.CardType CARDTYPE = CardEnums.CardType.HYBRID;
         public const CardEnums.CardRarity RARITY = CardEnums.CardRarity.COMMON;
         public const int PLAYCOST_DIV = 1;
         public const int ATTACK_DAMAGE = 8;

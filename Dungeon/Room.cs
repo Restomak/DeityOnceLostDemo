@@ -129,12 +129,11 @@ namespace DeityOnceLost.Dungeon
         {
             return null;
         }
-
-        //FIXIT implement
-        /*public virtual Treasures.Loot getRoomTreasure()
+        
+        public virtual Treasury.Loot getRoomTreasure()
         {
             return null;
-        }*/
+        }
 
         public Connector getConnector(Connector.direction dir)
         {

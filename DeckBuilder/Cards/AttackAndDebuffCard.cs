@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    abstract class BasicAttackCard : Card, IDamagingCard
+    class AttackAndDebuffCard : BasicDebuffCard, IDamagingCard
     {
         protected int _damage;
 
-        public BasicAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage) : base(name, cardType, rarity, CardEnums.TargetingType.enemies)
+        public AttackAndDebuffCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage,
+            Combat.Buff.buffType buffType, int duration, int amount, bool hasDuration, bool hasAmount, bool decreasesEachTurn = true) :
+            base(name, cardType, rarity, buffType, duration, amount, hasDuration, hasAmount)
         {
             _damage = damage;
         }
@@ -23,6 +25,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
         public override void onPlay()
         {
             dealDamage();
+            applyDebuff();
         }
 
         public virtual void dealDamage()
@@ -39,7 +42,8 @@ namespace DeityOnceLost.DeckBuilder.Cards
 
         public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
-            List<String> desc = new List<string>();
+            List<String> desc = base.getDescription(champ);
+
             Combat.Unit descTarget = null;
             if (activeCard)
             {
@@ -47,7 +51,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
             int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
 
-            desc.Add("Deal " + damage + " damage.");
+            desc.Insert(0, "Deal " + damage + " damage."); //put it in front
 
             return desc;
         }

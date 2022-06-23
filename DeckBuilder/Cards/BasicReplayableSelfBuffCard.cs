@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    abstract class BasicReplayableSelfBuffCard : Card, IBuffCard
+    abstract class BasicReplayableSelfBuffCard : Card, IStatBuffCard
     {
         protected int _buffAmount;
         protected Combat.Unit.statType _buffType;
@@ -36,13 +36,13 @@ namespace DeityOnceLost.DeckBuilder.Cards
             switch (_buffType)
             {
                 case Combat.Unit.statType.strength:
-                    Game1.getChamp().affectStrength(_buffAmount);
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.strength, 1, _buffAmount, false, true, false));
                     break;
                 case Combat.Unit.statType.dexterity:
-                    Game1.getChamp().affectDexterity(_buffAmount);
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.dexterity, 1, _buffAmount, false, true, false));
                     break;
                 case Combat.Unit.statType.resilience:
-                    Game1.getChamp().affectResilience(_buffAmount);
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.resilience, 1, _buffAmount, false, true, false));
                     break;
                 default:
                     Game1.errorLog.Add("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.applyBuff: " + _buffType.ToString());
@@ -50,7 +50,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ)
+        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
         {
             List<String> desc = new List<string>();
 

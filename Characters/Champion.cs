@@ -11,10 +11,10 @@ namespace DeityOnceLost.Characters
         public const int DEFAULT_DIVINITY = 4;
         public const int CHAMPION_HERO_HP_MODIFIER = 3;
 
-        static int _divinity, _nextTurnDivinity, _runDivinity;
-        static Hero _hero;
-        static DeckBuilder.Deck _deck;
-        static int _cardDraw, _nextTurnCardDraw;
+        int _divinity, _nextTurnDivinity, _runDivinity;
+        Hero _hero;
+        DeckBuilder.Deck _deck;
+        int _cardDraw, _nextTurnCardDraw;
 
         public Champion(Hero hero) : base (hero.getName(), hero.getMaxHP() * CHAMPION_HERO_HP_MODIFIER)
         {
@@ -99,6 +99,8 @@ namespace DeityOnceLost.Characters
             return cardDraw;
         }
 
+
+
         //Combat stat reset functions
         public override void resetStrength()
         {
@@ -111,6 +113,61 @@ namespace DeityOnceLost.Characters
         public override void resetResilience()
         {
             _resilience = 0; //FIXIT add check for things that alter it when they exist
+        }
+
+
+
+        public override void resetBuffs()
+        {
+            resetStrength();
+            resetDexterity();
+            resetResilience();
+            _feeble = false;
+            _sluggish = false;
+            _vulnerable = false;
+
+            _buffs.Clear();
+        }
+
+        public override void gainBuff(Combat.Buff buff)
+        {
+            //When blessings etc are implemented, affected buff code goes here
+
+            base.gainBuff(buff);
+        }
+
+        public int getDefenseAffectedByBuffs(int defense)
+        {
+            double newDefense = defense + _dexterity;
+
+            if (_sluggish)
+            {
+                newDefense = newDefense * Combat.Buff.SLUGGISH_MODIFIER;
+            }
+
+            return (int)(Math.Round(newDefense));
+        }
+
+        public int getDamageAffectedByBuffs(int damage, Combat.Unit target)
+        {
+            if (!_feeble && (target == null || !target.vulnerable()))
+            {
+                return damage + _strength;
+            }
+
+            double newDamage = damage + _strength;
+
+            if (_feeble)
+            {
+                newDamage = newDamage * Combat.Buff.FEEBLE_MODIFIER;
+            }
+
+            if (target != null && target.vulnerable())
+            {
+                newDamage = newDamage * Combat.Buff.VULNERABLE_MODIFIER;
+            }
+
+            return (int)(Math.Round(newDamage)); ;
         }
 
 
@@ -174,8 +231,6 @@ namespace DeityOnceLost.Characters
                 {
                     _currentHP = 0;
                     _hero.kill();
-
-                    //FIXIT insert logic for swapping champion to a party member & the resulting card loss
                 }
             }
         }

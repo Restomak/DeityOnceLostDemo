@@ -45,8 +45,8 @@ namespace DeityOnceLost
         private static Combat.CombatHandler _combatHandler;
         private static Dungeon.DungeonHandler _dungeonHandler;
         private static Events.EventHandler _eventHandler;
-        private static Characters.Hero _hero; //Will probably be initialized elsewhere later post demo
-        private static Characters.Champion _champ; //Will probably be initialized elsewhere later post demo
+        private static Characters.Champion _champ;
+        private static List<Characters.Hero> _party;
 
         //Logs
         public static List<String> errorLog;
@@ -127,6 +127,11 @@ namespace DeityOnceLost
         public static Characters.Champion getChamp()
         {
             return _champ;
+        }
+
+        public static List<Characters.Hero> getPartyMembers()
+        {
+            return _party;
         }
 
         public static Point getPlayerLocationOnMap()
@@ -232,8 +237,18 @@ namespace DeityOnceLost
 
         public static void setupRandomFirstChampion()
         {
-            _hero = new Characters.Hero();
-            _champ = new Characters.Champion(_hero);
+            _champ = new Characters.Champion(new Characters.Hero(new Characters.PartyBuffs.Fighter()));
+            _topBar.setupUI();
+        }
+
+        public static void setupRandomFirstPartyMembers()
+        {
+            _party = new List<Characters.Hero>();
+
+            _party.Add(new Characters.Hero(new Characters.PartyBuffs.Fighter()));
+            _party.Add(new Characters.Hero(new Characters.PartyBuffs.Healer()));
+
+            _combatHandler.setNewPartyMembers(_party);
             _topBar.setupUI();
         }
 
@@ -694,7 +709,7 @@ namespace DeityOnceLost
                 //Redraw top bar in case a large (scrollable) menu was over the top bar, which is technically on top of the rest of the UI where input is concerned
                 _drawHandler.drawUI(_spriteBatch, _topBar.getUIForLateDraw(), _champ);
 
-                //Draw menu current hover last //FIXIT more clickables here will need logic for glowing (currently only Button is covered)
+                //Draw menu current hover last
                 if (_currentHover != null)
                 {
                     if (_currentHover.GetType() == typeof(UserInterface.Clickables.Button))

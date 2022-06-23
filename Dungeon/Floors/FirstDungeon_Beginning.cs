@@ -161,7 +161,8 @@ namespace DeityOnceLost.Dungeon.Floors
             Events.Choice fight = new Events.Choice("[c: Red][f: 12 bb]Fight!");
 
             //Set up the combat
-            Combat.Encounter secondRoomCombat = new Combat.Encounters.SingleLabTestSlime(); //FIXIT SingleFanblade(); //FIXIT make sure loot can only be a new card
+            //Combat.Encounter secondRoomCombat = new Combat.Encounters.SingleFanblade();
+            Combat.Encounter secondRoomCombat = new Combat.Encounters.SingleLabTestSlime();
 
             //Set up the combat loot
             Treasury.Loot secondRoomLoot = new Treasury.Loot(UserInterface.Menus.LootMenu.COMBAT_LOOT);

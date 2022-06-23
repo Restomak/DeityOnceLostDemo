@@ -19,21 +19,29 @@ namespace DeityOnceLost.Combat
         protected int _currentHP, _maxHP;
         protected bool _isEnemy, _downed;
         protected int _defense;
+        protected List<Buff> _buffs;
         
         //stats
         protected int _strength, _dexterity, _resilience;
+        protected bool _feeble, _sluggish, _vulnerable;
 
         public Unit(String name, int hitPoints, bool enemy = false)
         {
+            _buffs = new List<Buff>();
+
             _name = name;
             _currentHP = hitPoints;
             _maxHP = hitPoints;
             _isEnemy = enemy;
             _downed = false;
+            _feeble = false;
+            _sluggish = false;
+            _vulnerable = false;
 
             resetStrength();
             resetDexterity();
             resetResilience();
+            resetBuffs();
         }
 
         //Getters
@@ -61,22 +69,57 @@ namespace DeityOnceLost.Combat
         {
             return _isEnemy;
         }
-        
+        public bool feeble()
+        {
+            return _feeble;
+        }
+        public bool sluggish()
+        {
+            return _sluggish;
+        }
+        public bool vulnerable()
+        {
+            return _vulnerable;
+        }
+        public List<Buff> getBuffs()
+        {
+            return _buffs;
+        }
+
         //Handled differently depending on children
         public abstract void resetStrength();
         public abstract void resetDexterity();
         public abstract void resetResilience();
+        public abstract void resetBuffs();
         public virtual void onDamageTaken() { }
 
 
-
-
+        
         /// <summary>
-        /// Unit gains defense equal to amount + dexterity unless useDexterity is made false
+        /// Unit gains defense equal to amount + dexterity unless useDexterity is made false.
+        /// Buffs are applied here.
         /// </summary>
         public void gainDefense(int amount, bool useDexterity = true)
         {
-            _defense += amount + _dexterity;
+            if (!_sluggish)
+            {
+                _defense += amount;
+                if (useDexterity)
+                {
+                    _defense += _dexterity;
+                }
+            }
+            else
+            {
+                if (useDexterity)
+                {
+                    _defense += (int)(Math.Round((double)(amount + _dexterity) * Buff.SLUGGISH_MODIFIER));
+                }
+                else
+                {
+                    _defense += (int)(Math.Round((double)(amount) * Buff.SLUGGISH_MODIFIER));
+                }
+            }
         }
 
         /// <summary>
@@ -165,6 +208,105 @@ namespace DeityOnceLost.Combat
         public void affectResilience(int amount)
         {
             _resilience += amount;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void newTurnLowerBuffs()
+        {
+            List<Buff> remove = new List<Buff>();
+
+            for (int i = 0; i < _buffs.Count; i++)
+            {
+                if (_buffs[i].hasDuration())
+                {
+                    if (_buffs[i].waitATurnBeforeDecrease())
+                    {
+                        _buffs[i].waitedATurn();
+                    }
+                    else
+                    {
+                        _buffs[i].affectDuration(-1);
+                    }
+                }
+
+                if (_buffs[i].hasDuration() && _buffs[i].getDuration() <= 0 || _buffs[i].hasAmount() && _buffs[i].getAmount() == 0)
+                {
+                    remove.Add(_buffs[i]);
+                }
+            }
+
+            //Remove buffs
+            for (int ri = 0; ri < remove.Count; ri++)
+            {
+                _buffs.Remove(remove[ri]);
+
+                //Check to clear status effects
+                if (remove[ri].getType() == Buff.buffType.feeble)
+                {
+                    _feeble = false;
+                    for (int bi = 0; bi < _buffs.Count; bi++)
+                    {
+                        if (_buffs[bi].getType() == Buff.buffType.feeble)
+                        {
+                            _feeble = true; //there's another feeble in there
+                        }
+                    }
+                }
+                else if (remove[ri].getType() == Buff.buffType.sluggish)
+                {
+                    _sluggish = false;
+                    for (int bi = 0; bi < _buffs.Count; bi++)
+                    {
+                        if (_buffs[bi].getType() == Buff.buffType.sluggish)
+                        {
+                            _sluggish = true; //there's another sluggish in there
+                        }
+                    }
+                }
+                else if (remove[ri].getType() == Buff.buffType.vulnerable)
+                {
+                    _vulnerable = false;
+                    for (int bi = 0; bi < _buffs.Count; bi++)
+                    {
+                        if (_buffs[bi].getType() == Buff.buffType.vulnerable)
+                        {
+                            _vulnerable = true; //there's another vulnerable in there
+                        }
+                    }
+                }
+            }
+        }
+        
+        public virtual void gainBuff(Buff buff)
+        {
+            if (buff.getType() == Buff.buffType.strength)
+            {
+                _strength += buff.getAmount();
+            }
+            else if (buff.getType() == Buff.buffType.dexterity)
+            {
+                _dexterity += buff.getAmount();
+            }
+            else if (buff.getType() == Buff.buffType.resilience)
+            {
+                _resilience += buff.getAmount();
+            }
+            else if (buff.getType() == Buff.buffType.feeble)
+            {
+                _feeble = true;
+            }
+            else if (buff.getType() == Buff.buffType.sluggish)
+            {
+                _sluggish = true;
+            }
+            else if (buff.getType() == Buff.buffType.vulnerable)
+            {
+                _vulnerable = true;
+            }
+
+            _buffs = Buff.addBuff(_buffs, buff);
         }
     }
 }
