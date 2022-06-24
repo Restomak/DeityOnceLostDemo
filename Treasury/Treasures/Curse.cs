@@ -42,7 +42,7 @@ namespace DeityOnceLost.Treasury.Treasures
          * 
          * Possible effects
          *    - (party-based curses)
-         *    - (karma-or-void-based curses)
+         *    - (karma-or-soul-based curses)
          *    - (map-based curses)
          *    - (something from Happening - negatives)
          *    - Decrease max HP (persists & not)

@@ -54,7 +54,7 @@ namespace DeityOnceLost.UserInterface.Clickables.Hovers
                 case DeckBuilder.CardEnums.CostType.DIVINITY:
                     return Game1.getChamp().getDivinity();
                 default:
-                    Game1.errorLog.Add("Other card costs not yet implemented in Resource.cs"); //FIXIT implement
+                    Game1.addToErrorLog("Other card costs not yet implemented in Resource.cs"); //FIXIT implement
                     return 0;
             }
         }
@@ -67,7 +67,7 @@ namespace DeityOnceLost.UserInterface.Clickables.Hovers
                 case DeckBuilder.CardEnums.CostType.DIVINITY:
                     return Game1.getChamp().getRunDivinity();
                 default:
-                    Game1.errorLog.Add("Other card costs not yet implemented in Resource.cs"); //FIXIT implement
+                    Game1.addToErrorLog("Other card costs not yet implemented in Resource.cs"); //FIXIT implement
                     return 0;
             }
         }

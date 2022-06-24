@@ -8,10 +8,18 @@ namespace DeityOnceLost.Dungeon.Connectors
 {
     class LockedDoor : Door
     {
-        public LockedDoor()
+        Treasury.Equipment.Key.keyColor _lockColor;
+
+        public LockedDoor(Treasury.Equipment.Key.keyColor color)
         {
             _passageGained = false;
             _connectorType = connectorType.locked;
+            _lockColor = color;
+        }
+
+        public Treasury.Equipment.Key.keyColor getLockColor()
+        {
+            return _lockColor;
         }
 
         public void unlock()

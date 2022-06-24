@@ -151,7 +151,7 @@ namespace DeityOnceLost.Combat
                 case buffType.divGain:
                     return "Resilience";
                 default:
-                    Game1.errorLog.Add("buffString not yet implemented for new buffType: " + type.ToString());
+                    Game1.addToErrorLog("buffString not yet implemented for new buffType: " + type.ToString());
                     return type.ToString();
             }
         }
@@ -215,7 +215,7 @@ namespace DeityOnceLost.Combat
                 case buffType.divGain:
                     break;*/
                 default:
-                    Game1.errorLog.Add("buffDescription not yet implemented for new buffType: " + buff.getType().ToString());
+                    Game1.addToErrorLog("buffDescription not yet implemented for new buffType: " + buff.getType().ToString());
                     description.Add("???");
                     break;
             }
@@ -259,7 +259,7 @@ namespace DeityOnceLost.Combat
                 case buffType.divGain:
                     return;*/
                 default:
-                    Game1.errorLog.Add("buffIcon not yet implemented for new buffType: " + type.ToString());
+                    Game1.addToErrorLog("buffIcon not yet implemented for new buffType: " + type.ToString());
                     return Game1.pic_functionality_bar;
             }
         }
@@ -286,7 +286,7 @@ namespace DeityOnceLost.Combat
                 case buffType.vulnerable:
                     return Color.Red;
                 default:
-                    Game1.errorLog.Add("buffOutlineColor not yet implemented for new buffType: " + buff.getType().ToString());
+                    Game1.addToErrorLog("buffOutlineColor not yet implemented for new buffType: " + buff.getType().ToString());
                     return Color.MonoGameOrange;
             }
         }

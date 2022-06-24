@@ -205,5 +205,46 @@ namespace DeityOnceLost.Dungeon
                 distance += 1;
             }
         }
+
+
+
+        public void unlockAllDoorsOfColor(Treasury.Equipment.Key.keyColor color)
+        {
+            Connector currentConnector = null;
+
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    currentConnector = _rooms[x][y].getConnector(Connector.direction.north);
+                    if (currentConnector != null && currentConnector.getConnectorType() == Connector.connectorType.locked &&
+                        ((Connectors.LockedDoor)currentConnector).getLockColor() == color)
+                    {
+                        ((Connectors.LockedDoor)currentConnector).unlock();
+                    }
+
+                    currentConnector = _rooms[x][y].getConnector(Connector.direction.east);
+                    if (currentConnector != null && currentConnector.getConnectorType() == Connector.connectorType.locked &&
+                        ((Connectors.LockedDoor)currentConnector).getLockColor() == color)
+                    {
+                        ((Connectors.LockedDoor)currentConnector).unlock();
+                    }
+
+                    currentConnector = _rooms[x][y].getConnector(Connector.direction.south);
+                    if (currentConnector != null && currentConnector.getConnectorType() == Connector.connectorType.locked &&
+                        ((Connectors.LockedDoor)currentConnector).getLockColor() == color)
+                    {
+                        ((Connectors.LockedDoor)currentConnector).unlock();
+                    }
+
+                    currentConnector = _rooms[x][y].getConnector(Connector.direction.west);
+                    if (currentConnector != null && currentConnector.getConnectorType() == Connector.connectorType.locked &&
+                        ((Connectors.LockedDoor)currentConnector).getLockColor() == color)
+                    {
+                        ((Connectors.LockedDoor)currentConnector).unlock();
+                    }
+                }
+            }
+        }
     }
 }

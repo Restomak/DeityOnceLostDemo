@@ -18,6 +18,7 @@ namespace DeityOnceLost.Dungeon
         List<Room.roomContents> _currentContentHandled;
         int _gold;
         List<Treasury.Treasures.Relic> _relics;
+        List<Treasury.Equipment.Key> _floorKeys;
 
         public DungeonHandler()
         {
@@ -26,6 +27,7 @@ namespace DeityOnceLost.Dungeon
             _gold = 0;
             _isRandomEncounter = false;
             _relics = new List<Treasury.Treasures.Relic>();
+            _floorKeys = new List<Treasury.Equipment.Key>();
         }
 
         //Getters
@@ -48,6 +50,10 @@ namespace DeityOnceLost.Dungeon
         public List<Treasury.Treasures.Relic> getRelics()
         {
             return _relics;
+        }
+        public List<Treasury.Equipment.Key> getKeys()
+        {
+            return _floorKeys;
         }
 
         //Setters
@@ -78,6 +84,11 @@ namespace DeityOnceLost.Dungeon
         {
             _relics.Add(relic);
         }
+        public void addKey(Treasury.Equipment.Key newKey)
+        {
+            _floorKeys.Add(newKey);
+            _currentFloor.unlockAllDoorsOfColor(newKey.getKeyColor());
+        }
 
 
 
@@ -95,6 +106,7 @@ namespace DeityOnceLost.Dungeon
             _playerLocation = _currentFloor.getStart();
             _currentRoomHandled = false;
             _currentContentHandled.Clear();
+            _floorKeys.Clear();
 
             _currentFloor.scout(_playerLocation);
 
@@ -109,12 +121,13 @@ namespace DeityOnceLost.Dungeon
 
             if (_currentFloor == null)
             {
-                Game1.errorLog.Add("Next floor or end of dungeon run not yet implemented!"); //FIXIT implement
+                Game1.addToErrorLog("Next floor or end of dungeon run not yet implemented!"); //FIXIT implement
             }
             
             _playerLocation = _currentFloor.getStart();
             _currentRoomHandled = false;
             _currentContentHandled.Clear();
+            _floorKeys.Clear();
 
             _currentFloor.scout(_playerLocation);
         }
@@ -166,15 +179,20 @@ namespace DeityOnceLost.Dungeon
                             else
                             {
                                 currentRoom.finishTopContent();
-                                Game1.errorLog.Add("Skipping currentRoom.getRoomEvent because it's null");
+                                Game1.addToErrorLog("Skipping currentRoom.getRoomEvent because it's null");
                             }
+                            break;
+                        case Room.roomContents.treasure:
+                        case Room.roomContents.key:
+                            Game1.addToMenus(new UserInterface.Menus.LootMenu(currentRoom.getRoomTreasure(), UserInterface.Menus.LootMenu.CHEST_LOOT));
+                            currentRoom.finishTopContent();
                             break;
                         case Room.roomContents.exit:
                             proceedToNextFloor();
                             Game1.returnToDungeon();
                             break;
                         default:
-                            Game1.errorLog.Add("handleDungeonLogic attempting to handle roomContents that haven't been implemented: " + _currentContentHandled[0].ToString());
+                            Game1.addToErrorLog("handleDungeonLogic attempting to handle roomContents that haven't been implemented: " + _currentContentHandled[0].ToString());
                             currentRoom.finishTopContent();
                             break;
                     }

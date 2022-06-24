@@ -60,6 +60,8 @@ namespace DeityOnceLost.UserInterface
 
         public void initializeCombatButtons(Combat.CombatHandler combatHandler)
         {
+            _combatUIButtons.resetClickables();
+
             //End Turn button
             Clickables.Button endTurnButton = new Clickables.Button(Game1.pic_functionality_endTurnButton,
                 new Point(Game1.VIRTUAL_WINDOW_WIDTH - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_X_FROMRIGHT - Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_Y),
@@ -74,6 +76,19 @@ namespace DeityOnceLost.UserInterface
                 }, new List<String>() { "Ends your turn." });
 
             _combatUIButtons.addClickableToFront(endTurnButton);
+
+            //Inventory button
+            if (Game1.getInventory() != null)
+            {
+                Clickables.Button inventoryButton = new Clickables.Button(Game1.pic_functionality_combatInventoryIcon,
+                    new Point(Drawing.DrawConstants.COMBAT_INVENTORY_BUTTON_X, Drawing.DrawConstants.COMBAT_INVENTORY_BUTTON_Y),
+                    Drawing.DrawConstants.COMBAT_INVENTORY_BUTTON_WIDTH, Drawing.DrawConstants.COMBAT_INVENTORY_BUTTON_HEIGHT, () =>
+                    {
+                        Game1.addToMenus(new Menus.InventoryMenu(Game1.getInventory()));
+                    }, new List<String>() { "Inventory" });
+
+                _combatUIButtons.addClickableToFront(inventoryButton);
+            }
         }
 
 
@@ -98,7 +113,7 @@ namespace DeityOnceLost.UserInterface
             //If selecting (and not unselecting), setup targets for that card
             if (_activeCard != null)
             {
-                Clickables.Target.setupTargets(_targets, _enemies/*, _party*/, _championUI, card.getCard().getTargetType());
+                Clickables.Target.setupTargets(_targets, _enemies, _partyMembers, _championUI, card.getCard().getTargetType());
             }
         }
         public void setEnemiesAsUI(UserInterface enemies)
@@ -138,6 +153,8 @@ namespace DeityOnceLost.UserInterface
             _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.REMOVEDPILE, Game1.getChamp()));
             _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DISCARDPILE, Game1.getChamp()));
             _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DRAWPILE, Game1.getChamp()));
+
+            initializeCombatButtons(combatHandler);
 
             Clickables.Opponent.setupEnemyUI(_enemies, combatHandler.getCurrentEncounter(), _enemyHovers);
 

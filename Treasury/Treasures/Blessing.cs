@@ -42,7 +42,7 @@ namespace DeityOnceLost.Treasury.Treasures
          * 
          * Possible effects
          *    - (party-based blessings)
-         *    - (karma-or-void-based blessings)
+         *    - (karma-or-soul-based blessings)
          *    - (map-based blessings)
          *    - (something from Happening - positives)
          *    - Increase max HP (persists & not)

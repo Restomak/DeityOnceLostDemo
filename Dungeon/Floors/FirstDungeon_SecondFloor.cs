@@ -23,6 +23,7 @@ namespace DeityOnceLost.Dungeon.Floors
          *    - Enemy debuffs
          *    - Having party members in combat
          * • Events with multiple choices
+         * • Key rooms, that grant a key and sometimes extra treasure (in this case, it will have gold)
          * 
          * This floor will hint at a few more mechanics:
          * • Treasure room (if they don't avoid it)
@@ -30,7 +31,7 @@ namespace DeityOnceLost.Dungeon.Floors
          * • A few randomized rooms (not noticeable unless it's not their first time through)
          * 
          * Floor layout:
-         * • 4x4, but with a few unused rooms so it doesn't have a square shape
+         * • 4x4, but with a couple unused rooms so it doesn't have a square shape
          * 
          */
 
@@ -39,6 +40,9 @@ namespace DeityOnceLost.Dungeon.Floors
 
         public const int DEFAULT_GOLD_FROM_COMBAT_MIN = 12;
         public const int DEFAULT_GOLD_FROM_COMBAT_MAX = 22;
+
+        public const int DEFAULT_GOLD_FROM_CHEST_MIN = 22;
+        public const int DEFAULT_GOLD_FROM_CHEST_MAX = 32;
 
         public const int RANDOM_ENCOUNTER_WEIGHT_TWO_CRAWLERS = 3;
         public const int RANDOM_ENCOUNTER_WEIGHT_THREE_CRAWLERS = 2;
@@ -79,6 +83,9 @@ namespace DeityOnceLost.Dungeon.Floors
             //Party member story room
             setupPartyStoryRoom();
 
+            //Key room
+            setupKeyRoom();
+
             //Add window connectors
             Room.connectRooms(_rooms[start.X][start.Y], Connector.direction.south, _rooms[end.X][end.Y], new Connectors.SeeNotTraverse());
             Room.connectRooms(_rooms[start.X][start.Y], Connector.direction.east, _rooms[1][2], new Connectors.SeeNotTraverse());
@@ -86,16 +93,16 @@ namespace DeityOnceLost.Dungeon.Floors
 
             //Add door connectors
             Room.connectRooms(_rooms[2][0], Connector.direction.east, _rooms[3][0], new Connectors.Door());
-            Room.connectRooms(_rooms[0][0], Connector.direction.east, _rooms[1][0], new Connectors.LockedDoor());
+            Room.connectRooms(_rooms[0][0], Connector.direction.east, _rooms[1][0], new Connectors.LockedDoor(Treasury.Equipment.Key.keyColor.red));
             Room.connectRooms(_rooms[end.X][end.Y], Connector.direction.south, _rooms[0][0], new Connectors.Door());
 
             //Remove connectors to make walls
             Room.removeConnector(_rooms[0][1], Connector.direction.east, _rooms[1][1]);
             Room.removeConnector(_rooms[1][0], Connector.direction.north, _rooms[1][1]);
+            Room.removeConnector(_rooms[3][1], Connector.direction.west, _rooms[2][1]);
 
             //Remove connectors so rooms aren't accessible & therefore don't exist on the map
-            Room.removeConnector(_rooms[3][1], Connector.direction.south, _rooms[3][0]);
-            Room.removeConnector(_rooms[3][1], Connector.direction.west, _rooms[2][1]);
+            Room.removeConnector(_rooms[3][2], Connector.direction.south, _rooms[3][1]);
             Room.removeConnector(_rooms[3][2], Connector.direction.west, _rooms[2][2]);
             Room.removeConnector(_rooms[3][3], Connector.direction.west, _rooms[2][3]);
         }
@@ -235,6 +242,18 @@ namespace DeityOnceLost.Dungeon.Floors
             Rooms.StoryRoom partyStoryRoom = new Rooms.StoryRoom();
             partyStoryRoom.setRoomEvent(partyStoryEvent);
             replaceRoom(partyStoryRoom, new Point(3, 0));
+        }
+
+        private void setupKeyRoom()
+        {
+            //Treasures
+            Treasury.Treasures.Gold roomGold = new Treasury.Treasures.Gold(Game1.randint(DEFAULT_GOLD_FROM_CHEST_MIN, DEFAULT_GOLD_FROM_CHEST_MAX));
+
+            //Room
+            Rooms.KeyRoom keyRoom = new Rooms.KeyRoom(new Treasury.Equipment.Key(Treasury.Equipment.Key.keyColor.red));
+            keyRoom.addRoomTreasure(roomGold);
+
+            replaceRoom(keyRoom, new Point(3, 1));
         }
 
         private List<String> getEventStory()

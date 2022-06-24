@@ -17,6 +17,7 @@ namespace DeityOnceLost.Dungeon
             miniboss,
             boss,
             treasure,
+            key,
             exit
         }
 
@@ -129,8 +130,13 @@ namespace DeityOnceLost.Dungeon
         {
             return null;
         }
-        
+
         public virtual Treasury.Loot getRoomTreasure()
+        {
+            return null;
+        }
+
+        public virtual Treasury.Equipment.Key getRoomKey()
         {
             return null;
         }
@@ -183,7 +189,7 @@ namespace DeityOnceLost.Dungeon
             }
             else
             {
-                Game1.errorLog.Add("Attempted to remove the top of _roomContents but there was nothing in the list");
+                Game1.addToErrorLog("Attempted to remove the top of _roomContents but there was nothing in the list");
             }
         }
         public bool onVisit_hasRandomEncounter()

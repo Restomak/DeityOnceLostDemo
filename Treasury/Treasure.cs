@@ -18,7 +18,8 @@ namespace DeityOnceLost.Treasury
             blessing,
             curse,
             partyBuff,
-            addInventoryItem
+            addInventoryItem,
+            key
         }
 
         private treasureType _treasureType;
@@ -64,10 +65,17 @@ namespace DeityOnceLost.Treasury
                     break;
                 case treasureType.addInventoryItem:
                     break;
+                case treasureType.key:
+                    return Game1.pic_item_key;
             }
 
-            Game1.errorLog.Add("Treasure treasureType." + _treasureType.ToString() + " does not yet have an icon paired with it");
+            Game1.addToErrorLog("Treasure treasureType." + _treasureType.ToString() + " does not yet have an icon paired with it");
             return Game1.pic_functionality_bar;
+        }
+
+        public virtual Color getIconColor()
+        {
+            return Color.White;
         }
 
 

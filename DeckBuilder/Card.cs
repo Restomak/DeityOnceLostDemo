@@ -13,11 +13,12 @@ namespace DeityOnceLost.DeckBuilder
         private CardEnums.CardType _cardType;
         private CardEnums.CardRarity _rarity;
         public List<String> _description;
-        private bool _retainAlways; //if kept in hand at the end of the turn
+        protected bool _retainAlways; //if kept in hand at the end of the turn
+        protected bool _dissipates; //if it's removed from the deck for the combat once played
         protected CardEnums.TargetingType _targetType;
         protected Combat.Unit _target;
 
-        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, CardEnums.TargetingType targetType, bool retainAlways = false)
+        public Card(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, CardEnums.TargetingType targetType, bool dissipates = false, bool retainAlways = false)
         {
             _name = name;
             _cardType = cardType;
@@ -27,6 +28,7 @@ namespace DeityOnceLost.DeckBuilder
             _description = new List<string>();
             _description.Add("???"); //default description if none is set
             _retainAlways = retainAlways;
+            _dissipates = dissipates;
             _targetType = targetType;
 
             //iterate through every cost type and make the costs for each default 0
@@ -51,15 +53,21 @@ namespace DeityOnceLost.DeckBuilder
         {
             _playCost[costType] = costAmount;
         }
-
         public void addSpecialCost(CardEnums.CostType costType, int costAmount)
         {
             _specialCost[costType] = costAmount;
         }
-
         public void setTarget(Combat.Unit target)
         {
             _target = target;
+        }
+        public void setRetainAlways(bool retainAlways)
+        {
+            _retainAlways = retainAlways;
+        }
+        public void setDissipates(bool dissipates)
+        {
+            _dissipates = dissipates;
         }
 
 
@@ -109,17 +117,11 @@ namespace DeityOnceLost.DeckBuilder
         {
             return _retainAlways;
         }
+        public bool getDissipates()
+        {
+            return _dissipates;
+        }
         public abstract List<String> getDescription(Characters.Champion champ, bool activeCard = false); //always override
-
-        //Setters
-        public void setDescription(List<String> description)
-        {
-            _description = description;
-        }
-        public void setRetainAlways(bool retain)
-        {
-            _retainAlways = retain;
-        }
 
 
 

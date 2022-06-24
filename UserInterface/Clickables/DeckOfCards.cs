@@ -96,7 +96,7 @@ namespace DeityOnceLost.UserInterface.Clickables
                     //FIXIT implement
                     break;
                 default:
-                    Game1.errorLog.Add("DeckOfCards typeOfDeck error: " + _typeOfDeck.ToString());
+                    Game1.addToErrorLog("DeckOfCards typeOfDeck error: " + _typeOfDeck.ToString());
                     _x = -1;
                     _y = -1;
                     _width = 0;

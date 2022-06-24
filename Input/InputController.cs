@@ -40,7 +40,7 @@ namespace DeityOnceLost.Input
                 //If there was already something being hovered and that's no longer the case, tell the game to end its hover
                 if (currentHover != null && newHover != currentHover)
                 {
-                    Game1.debugLog.Add("No longer hovering over " + currentHover.ToString());
+                    //Game1.debugLog.Add("No longer hovering over " + currentHover.ToString());
 
                     currentHover.onHoverEnd();
                 }
@@ -48,7 +48,7 @@ namespace DeityOnceLost.Input
                 //Check if there's a new hover
                 if (newHover != null && newHover != currentHover)
                 {
-                    Game1.debugLog.Add("Now hovering over " + newHover.ToString());
+                    //Game1.debugLog.Add("Now hovering over " + newHover.ToString());
 
                     newHover.onHover();
                 }

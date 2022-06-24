@@ -72,7 +72,8 @@ namespace DeityOnceLost.Events
                 {
                     if (loot.getTreasures()[0].GetType() == typeof(Treasury.Treasures.AddCardToDeck))
                     {
-                        Game1.addToMenus(new UserInterface.Menus.NewCardChoiceMenu(((Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0]).getChoices(), (Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0]));
+                        Game1.addToMenus(new UserInterface.Menus.NewCardChoiceMenu(((Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0]).getChoices(),
+                            (Treasury.Treasures.AddCardToDeck)loot.getTreasures()[0], () => { }));
                         if (nextEvent == null && nextCombat == null)
                         {
                             eventFinished = true;

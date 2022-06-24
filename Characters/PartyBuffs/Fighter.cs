@@ -50,5 +50,10 @@ namespace DeityOnceLost.Characters.PartyBuffs
                 _target.takeDamage(_target.getDamageAffectedByBuffs(FIGHTER_DAMAGE));
             }
         }
+
+        public override void onCardProc()
+        {
+            onTurnEnd();
+        }
     }
 }

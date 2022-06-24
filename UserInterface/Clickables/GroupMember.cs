@@ -30,7 +30,7 @@ namespace DeityOnceLost.UserInterface.Clickables
                     _x = Drawing.DrawConstants.COMBAT_PARTY_X_3;
                     break;
                 default:
-                    Game1.errorLog.Add("spotInParty in GroupMember constructor out of range (max: 2): " + spotInParty);
+                    Game1.addToErrorLog("spotInParty in GroupMember constructor out of range (max: 2): " + spotInParty);
                     _x = 0;
                     break;
             }

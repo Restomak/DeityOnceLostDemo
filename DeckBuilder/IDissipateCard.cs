@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeityOnceLost.Equipment
+namespace DeityOnceLost.DeckBuilder
 {
-    class Inventory
+    interface IDissipateCard
     {
+        void dissipate();
     }
 }

@@ -175,7 +175,7 @@ namespace DeityOnceLost.Drawing
                 else
                 {
                     //FIXIT implement
-                    Game1.errorLog.Add("drawUI attempting to draw DeckOfCards but typeOfDeck is not yet implemented: " + ((UserInterface.Clickables.DeckOfCards)current).getDeckType().ToString());
+                    Game1.addToErrorLog("drawUI attempting to draw DeckOfCards but typeOfDeck is not yet implemented: " + ((UserInterface.Clickables.DeckOfCards)current).getDeckType().ToString());
                 }
             }
             else if (current.GetType() == typeof(UserInterface.Clickables.Button))
@@ -246,24 +246,34 @@ namespace DeityOnceLost.Drawing
             {
                 drawStatusEffect(sprites, (UserInterface.Clickables.Hovers.StatusEffect)current);
             }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.InventoryGrid))
+            {
+                drawInventoryGrid(sprites, (UserInterface.Clickables.Hovers.InventoryGrid)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.CollectedKey))
+            {
+                drawCollectedKey(sprites, (UserInterface.Clickables.Hovers.CollectedKey)current);
+            }
             else
             {
-                Game1.errorLog.Add("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
+                Game1.addToErrorLog("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
             }
         }
 
-        public static void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
+        public static void drawCard(SpriteBatch sprites, DeckBuilder.Card card, Rectangle cardRect, SpriteFont nameFont, int nameFontHeight,
+            SpriteFont descFont, int descFontHeight, SpriteFont costFont, int costFontHeight, int nameAreaWidth, int nameYBuffer, int divinityAdjustX,
+            int costAdjustYFromTop, int costIconSize, int bloodAdjustX, Characters.Champion champ, bool isHovered, bool isActive, bool glowCard)
         {
-            String name = card.getCard().getName();
+            String name = card.getName();
 
-            List<String> description = card.getCard().getDescription(champ);
-            if (Game1.getCombatHandler().getCombatUI().getActiveCard() == card)
+            List<String> description = card.getDescription(champ);
+            if (isActive)
             {
-                description = card.getCard().getDescription(champ, true);
+                description = card.getDescription(champ, true);
             }
 
             Texture2D cardFromRarity = Game1.pic_card_front_default;
-            switch (card.getCard().getCardRarity())
+            switch (card.getCardRarity())
             {
                 case DeckBuilder.CardEnums.CardRarity.COMMON:
                     cardFromRarity = Game1.pic_card_front_common;
@@ -285,119 +295,92 @@ namespace DeityOnceLost.Drawing
             //Draw card glow
             if (glowCard)
             {
-                for (int i = 0; i < DrawConstants.HANDCARD_GLOW_NUM_STEPS; i++)
+                for (int i = 0; i < DrawConstants.CARD_GLOW_NUM_STEPS; i++)
                 {
                     sprites.Draw(cardFromRarity,
-                        new Rectangle(card._x - DrawConstants.HANDCARD_GLOW_FURTHEST + DrawConstants.HANDCARD_GLOW_STEP * i,
-                        yFromBottom(card._y - DrawConstants.HANDCARD_GLOW_FURTHEST + DrawConstants.HANDCARD_GLOW_STEP * i,
-                        card._height + DrawConstants.HANDCARD_GLOW_FURTHEST * 2 - DrawConstants.HANDCARD_GLOW_STEP * i * 2),
-                        card._width + DrawConstants.HANDCARD_GLOW_FURTHEST * 2 - DrawConstants.HANDCARD_GLOW_STEP * i * 2,
-                        card._height + DrawConstants.HANDCARD_GLOW_FURTHEST * 2 - DrawConstants.HANDCARD_GLOW_STEP * i * 2),
-                        Color.PowderBlue * DrawConstants.HANDCARD_GLOW_OPACITY);
+                        new Rectangle(cardRect.X - DrawConstants.CARD_GLOW_FURTHEST + DrawConstants.CARD_GLOW_STEP * i,
+                        yFromBottom(cardRect.Y - DrawConstants.CARD_GLOW_FURTHEST + DrawConstants.CARD_GLOW_STEP * i,
+                        cardRect.Height + DrawConstants.CARD_GLOW_FURTHEST * 2 - DrawConstants.CARD_GLOW_STEP * i * 2),
+                        cardRect.Width + DrawConstants.CARD_GLOW_FURTHEST * 2 - DrawConstants.CARD_GLOW_STEP * i * 2,
+                        cardRect.Height + DrawConstants.CARD_GLOW_FURTHEST * 2 - DrawConstants.CARD_GLOW_STEP * i * 2),
+                        Color.PowderBlue * DrawConstants.CARD_GLOW_OPACITY);
                 }
             }
 
             //Draw card background
-            sprites.Draw(cardFromRarity, new Rectangle(card._x, yFromBottom(card._y, card._height), card._width, card._height), Color.White);
+            sprites.Draw(cardFromRarity, new Rectangle(cardRect.X, yFromBottom(cardRect.Y, cardRect.Height), cardRect.Width, cardRect.Height), Color.White);
 
             //Draw card art
 
 
             
-            //Draw card text
-            int divinityCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
-            int bloodCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
+            int divinityCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
+            int bloodCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
+
+            //Draw card name
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(cardRect.X + cardRect.Width / 2 - nameAreaWidth / 2,
+                yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 - cardRect.Height / 12,
+                nameFontHeight), nameAreaWidth, nameFontHeight),
+                DeckBuilder.CardEnums.cardRarityToColor(card.getCardRarity()) * DrawConstants.CARD_NAME_RARITY_FADE);
+            sprites.DrawString(nameFont, name,
+                new Vector2(cardRect.X + cardRect.Width / 2 - nameFont.MeasureString(name).X / 2,
+                yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 - cardRect.Height / 12,
+                nameFontHeight)), Color.Black);
+
+            //Draw card description
+            for (int i_d = 0; i_d < description.Count; i_d++)
+            {
+                sprites.DrawString(descFont, description[i_d],
+                    new Vector2(cardRect.X + cardRect.Width / 2 - descFont.MeasureString(description[i_d]).X / 2,
+                    yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 -
+                    cardRect.Height / 6 - descFontHeight * i_d,
+                    descFontHeight)), Color.Black);
+            }
+
+            //Draw card cost
+            if (divinityCost > 0 || bloodCost == 0 && card.getPlayCost(DeckBuilder.CardEnums.CostType.KARMA) == 0 && card.getPlayCost(DeckBuilder.CardEnums.CostType.SOUL) == 0)
+            {
+                sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(cardRect.X + divinityAdjustX,
+                    yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop, costIconSize),
+                    costIconSize, costIconSize), Color.White);
+
+                sprites.DrawString(costFont, divinityCost.ToString(),
+                    new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2,
+                    yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2,
+                    costFontHeight)), Color.Black);
+            }
+            if (bloodCost > 0)
+            {
+                sprites.Draw(Game1.pic_functionality_cardBloodIcon, new Rectangle(cardRect.X + bloodAdjustX,
+                    yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop, costIconSize),
+                    costIconSize, costIconSize), Color.White);
+
+                sprites.DrawString(costFont, bloodCost.ToString(),
+                    new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2,
+                    yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2,
+                    costFontHeight)), Color.Black);
+            }
+        }
+
+        public static void drawCombat_HandCard(SpriteBatch sprites, UserInterface.Clickables.HandCard card, Characters.Champion champ, bool glowCard = false)
+        {
             if (card == Game1.getCombatHandler().getCombatUI().getActiveCard() || card == Game1.getHoveredClickable())
             {
-                //Name
-                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 12,
-                    DrawConstants.TEXT_20_HEIGHT), DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH, DrawConstants.TEXT_20_HEIGHT),
-                    DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.COMBAT_HANDCARDS_NAME_RARITY_FADE);
-                sprites.DrawString(Game1.roboto_bold_20, name,
-                    new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - Game1.roboto_medium_20.MeasureString(name).X / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 12,
-                    DrawConstants.TEXT_20_HEIGHT)), Color.Black);
-
-                //Description
-                for (int i_d = 0; i_d < description.Count; i_d++)
-                {
-                    sprites.DrawString(Game1.roboto_medium_16, description[i_d],
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_GROW_WIDTH / 2 - Game1.roboto_medium_16.MeasureString(description[i_d]).X / 2,
-                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 2 -
-                        DrawConstants.COMBAT_HANDCARD_GROW_HEIGHT / 6 - DrawConstants.TEXT_16_HEIGHT * i_d,
-                        DrawConstants.TEXT_16_HEIGHT)), Color.Black);
-                }
-
-                //Cost
-                if (divinityCost > 0)
-                {
-                    sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE),
-                        DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE), Color.White);
-
-                    sprites.DrawString(Game1.roboto_black_24, divinityCost.ToString(),
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE / 2 - Game1.roboto_black_24.MeasureString(divinityCost.ToString()).X / 2,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE / 2 - DrawConstants.TEXT_24_HEIGHT / 2,
-                        DrawConstants.TEXT_24_HEIGHT)), Color.Black);
-                }
-                if (bloodCost > 0)
-                {
-                    sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE),
-                        DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE), Color.White);
-
-                    sprites.DrawString(Game1.roboto_black_24, bloodCost.ToString(),
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE / 2 - Game1.roboto_black_24.MeasureString(bloodCost.ToString()).X / 2,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP + DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE / 2 - DrawConstants.TEXT_24_HEIGHT / 2,
-                        DrawConstants.TEXT_24_HEIGHT)), Color.Black);
-                }
+                //Grow sizes
+                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_20, DrawConstants.TEXT_20_HEIGHT,
+                    Game1.roboto_medium_16, DrawConstants.TEXT_16_HEIGHT, Game1.roboto_black_24, DrawConstants.TEXT_24_HEIGHT, DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH,
+                    DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER, DrawConstants.COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP,
+                    DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(),
+                    card == Game1.getCombatHandler().getCombatUI().getActiveCard(), glowCard);
             }
             else
             {
-                //Name
-                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 12,
-                    DrawConstants.TEXT_10_HEIGHT), DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH, DrawConstants.TEXT_10_HEIGHT),
-                    DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.COMBAT_HANDCARDS_NAME_RARITY_FADE);
-                sprites.DrawString(Game1.roboto_bold_10, name,
-                    new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Game1.roboto_medium_10.MeasureString(name).X / 2,
-                    yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 - DrawConstants.COMBAT_HANDCARD_HEIGHT / 12,
-                    DrawConstants.TEXT_10_HEIGHT)), Color.Black);
-
-                //Description
-                for (int i_d = 0; i_d < description.Count; i_d++)
-                {
-                    sprites.DrawString(Game1.roboto_medium_8, description[i_d],
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARD_WIDTH / 2 - Game1.roboto_medium_8.MeasureString(description[i_d]).X / 2,
-                        yFromBottom(card._y + DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER + DrawConstants.COMBAT_HANDCARD_HEIGHT / 2 -
-                        DrawConstants.COMBAT_HANDCARD_HEIGHT / 6 - DrawConstants.TEXT_8_HEIGHT * i_d,
-                        DrawConstants.TEXT_8_HEIGHT)), Color.Black);
-                }
-
-                //Cost
-                if (divinityCost > 0)
-                {
-                    sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARDS_DIVINITY_ADJUST_X,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE),
-                        DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE), Color.White);
-
-                    sprites.DrawString(Game1.roboto_black_12, divinityCost.ToString(),
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARDS_DIVINITY_ADJUST_X + DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_12.MeasureString(divinityCost.ToString()).X / 2,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_12_HEIGHT / 2,
-                        DrawConstants.TEXT_12_HEIGHT)), Color.Black);
-                }
-                if (bloodCost > 0)
-                {
-                    sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.COMBAT_HANDCARDS_BLOOD_ADJUST_X,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE),
-                        DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE), Color.White);
-
-                    sprites.DrawString(Game1.roboto_black_12, bloodCost.ToString(),
-                        new Vector2(card._x + DrawConstants.COMBAT_HANDCARDS_BLOOD_ADJUST_X + DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_12.MeasureString(bloodCost.ToString()).X / 2,
-                        yFromBottom(card._y + card._height + DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_12_HEIGHT / 2,
-                        DrawConstants.TEXT_12_HEIGHT)), Color.Black);
-                }
+                //Smaller sizes
+                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_10, DrawConstants.TEXT_10_HEIGHT,
+                    Game1.roboto_medium_8, DrawConstants.TEXT_8_HEIGHT, Game1.roboto_black_12, DrawConstants.TEXT_12_HEIGHT, DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH,
+                    DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER, DrawConstants.COMBAT_HANDCARDS_DIVINITY_ADJUST_X, DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP,
+                    DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(),
+                    card == Game1.getCombatHandler().getCombatUI().getActiveCard(), glowCard);
             }
         }
 
@@ -420,7 +403,7 @@ namespace DeityOnceLost.Drawing
                     sprites.Draw(Game1.pic_functionality_topBarDeckIcon, new Rectangle(deck._x, yFromBottom(deck._y, deck._height), deck._width, deck._height), Color.White);
                     return; //don't perform the rest of the drawing; that's for the other types
                 default:
-                    Game1.errorLog.Add("drawCombat_CardPile deck typeOfDeck is not one that should be accessible in combat: " + deck.getDeckType().ToString());
+                    Game1.addToErrorLog("drawCombat_CardPile deck typeOfDeck is not one that should be accessible in combat: " + deck.getDeckType().ToString());
                     break;
             }
 
@@ -466,7 +449,7 @@ namespace DeityOnceLost.Drawing
                     }
                     return; //don't perform the rest of the drawing; that's for the other types
                 default:
-                    Game1.errorLog.Add("drawUI_GlowCardPile deck typeOfDeck is not one that should be accessible in this function: " + deck.getDeckType().ToString());
+                    Game1.addToErrorLog("drawUI_GlowCardPile deck typeOfDeck is not one that should be accessible in this function: " + deck.getDeckType().ToString());
                     break;
             }
 
@@ -739,6 +722,19 @@ namespace DeityOnceLost.Drawing
                                     yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
                                     DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
                                 break;
+                            case Dungeon.Room.roomContents.treasure:
+                                sprites.Draw(Game1.pic_functionality_mapTreasureIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
+                                break;
+                            case Dungeon.Room.roomContents.key:
+                                sprites.Draw(Game1.pic_functionality_mapKeyIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT),
+                                    Treasury.Equipment.Key.getKeyColor(room.getRoom().getRoomKey().getKeyColor()));
+                                break;
                             case Dungeon.Room.roomContents.exit:
                                 sprites.Draw(Game1.pic_functionality_mapExitIcon,
                                     new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
@@ -883,8 +879,17 @@ namespace DeityOnceLost.Drawing
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
                     break;
                 case Dungeon.Connector.connectorType.locked:
-                    sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Red);
+                    if (connector.canTraverse())
+                    {
+                        sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Black);
+                    }
+                    else
+                    {
+                        sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height),
+                            Treasury.Equipment.Key.getKeyColor(((Dungeon.Connectors.LockedDoor)connector).getLockColor()));
+                    }
 
+                    Texture2D connectorKey = Game1.pic_functionality_mapConnectorKeyH;
                     if (horizontal)
                     {
                         connectorTexture = Game1.pic_functionality_mapConnectorDoorH;
@@ -892,15 +897,22 @@ namespace DeityOnceLost.Drawing
                     else
                     {
                         connectorTexture = Game1.pic_functionality_mapConnectorDoorV;
+                        connectorKey = Game1.pic_functionality_mapConnectorKeyV;
                     }
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.DarkGray);
+
+                    if (!connector.canTraverse())
+                    {
+                        sprites.Draw(connectorKey, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height),
+                            Treasury.Equipment.Key.getKeyColor(((Dungeon.Connectors.LockedDoor)connector).getLockColor()));
+                    }
                     break;
                 case Dungeon.Connector.connectorType.none:
                     //Draw nothing
                     break;
                 default:
                     sprites.Draw(connectorTexture, new Rectangle(room._x + xOffset, yFromBottom(room._y + yOffset, height), width, height), Color.Red);
-                    Game1.errorLog.Add("drawConnector connectorType is not yet implemented for drawing: " + connector.getConnectorType().ToString());
+                    Game1.addToErrorLog("drawConnector connectorType is not yet implemented for drawing: " + connector.getConnectorType().ToString());
                     break;
             }
         }
@@ -968,7 +980,7 @@ namespace DeityOnceLost.Drawing
             //Draw icon
             sprites.Draw(treasure.getTreasure().getIcon(), new Rectangle(treasure._x + DrawConstants.LOOTMENU_TREASURE_ICON_BUFFER,
                 yFromBottom(treasure._y + DrawConstants.LOOTMENU_TREASURE_ICON_BUFFER, DrawConstants.LOOTMENU_TREASURE_ICON_HEIGHT),
-                DrawConstants.LOOTMENU_TREASURE_ICON_WIDTH, DrawConstants.LOOTMENU_TREASURE_ICON_HEIGHT), Color.White);
+                DrawConstants.LOOTMENU_TREASURE_ICON_WIDTH, DrawConstants.LOOTMENU_TREASURE_ICON_HEIGHT), treasure.getTreasure().getIconColor());
 
             //Draw text
             sprites.DrawString(Game1.roboto_regular_20, treasure.getTreasure().getTreasureText(),
@@ -991,96 +1003,10 @@ namespace DeityOnceLost.Drawing
 
         public static void drawCardChoice(SpriteBatch sprites, UserInterface.Clickables.CardChoice card, Characters.Champion champ, bool glowCard = false)
         {
-            String name = card.getCard().getName();
-            List<String> description = card.getCard().getDescription(champ);
-
-            Texture2D cardFromRarity = Game1.pic_card_front_default;
-            switch (card.getCard().getCardRarity())
-            {
-                case DeckBuilder.CardEnums.CardRarity.COMMON:
-                    cardFromRarity = Game1.pic_card_front_common;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.RARE:
-                    cardFromRarity = Game1.pic_card_front_rare;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.EPIC:
-                    cardFromRarity = Game1.pic_card_front_epic;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.GODLY:
-                    cardFromRarity = Game1.pic_card_front_godly;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.VOID:
-                    cardFromRarity = Game1.pic_card_front_void;
-                    break;
-            }
-
-            //Draw card glow
-            if (glowCard)
-            {
-                for (int i = 0; i < DrawConstants.HANDCARD_GLOW_NUM_STEPS; i++)
-                {
-                    sprites.Draw(cardFromRarity,
-                        new Rectangle(card._x - DrawConstants.CARDCHOICE_GLOW_FURTHEST + DrawConstants.CARDCHOICE_GLOW_STEP * i,
-                        yFromBottom(card._y - DrawConstants.CARDCHOICE_GLOW_FURTHEST + DrawConstants.CARDCHOICE_GLOW_STEP * i,
-                        card._height + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2),
-                        card._width + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2,
-                        card._height + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2),
-                        Color.PowderBlue * DrawConstants.CARDCHOICE_GLOW_OPACITY);
-                }
-            }
-
-            //Draw card background
-            sprites.Draw(cardFromRarity, new Rectangle(card._x, yFromBottom(card._y, card._height), card._width, card._height), Color.White);
-
-            //Draw card art
-
-
-
-            //Draw card name
-            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
-                DrawConstants.TEXT_15_HEIGHT), DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH, DrawConstants.TEXT_15_HEIGHT),
-                DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.CARDSELECTIONMENU_CARDS_NAME_RARITY_FADE);
-            sprites.DrawString(Game1.roboto_bold_15, name,
-                new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_15.MeasureString(name).X / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
-                DrawConstants.TEXT_15_HEIGHT)), Color.Black);
-
-            //Draw card description
-            for (int i_d = 0; i_d < description.Count; i_d++)
-            {
-                sprites.DrawString(Game1.roboto_medium_12, description[i_d],
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_12.MeasureString(description[i_d]).X / 2,
-                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 -
-                    DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d,
-                    DrawConstants.TEXT_12_HEIGHT)), Color.Black);
-            }
-
-            //Draw card costs
-            int divinityCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
-            int bloodCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
-            if (divinityCost > 0)
-            {
-                sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE),
-                    DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE), Color.White);
-
-                sprites.DrawString(Game1.roboto_black_18, divinityCost.ToString(),
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_18.MeasureString(divinityCost.ToString()).X / 2,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_18_HEIGHT / 2,
-                    DrawConstants.TEXT_18_HEIGHT)), Color.Black);
-            }
-            if (bloodCost > 0)
-            {
-                sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE),
-                    DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE), Color.White);
-
-                sprites.DrawString(Game1.roboto_black_18, bloodCost.ToString(),
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_18.MeasureString(bloodCost.ToString()).X / 2,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_18_HEIGHT / 2,
-                    DrawConstants.TEXT_18_HEIGHT)), Color.Black);
-            }
+            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, DrawConstants.TEXT_15_HEIGHT,
+                Game1.roboto_medium_12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_18, DrawConstants.TEXT_18_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
+                DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER, DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP,
+                DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(), false, glowCard);
         }
 
         public static void drawAestheticOnly(SpriteBatch sprites, UserInterface.Clickables.AestheticOnly aesthetic)
@@ -1090,96 +1016,10 @@ namespace DeityOnceLost.Drawing
 
         public static void drawMenuCard(SpriteBatch sprites, UserInterface.Clickables.MenuCard card, Characters.Champion champ, bool glowCard = false)
         {
-            String name = card.getCard().getName();
-            List<String> description = card.getCard().getDescription(champ);
-
-            Texture2D cardFromRarity = Game1.pic_card_front_default;
-            switch (card.getCard().getCardRarity())
-            {
-                case DeckBuilder.CardEnums.CardRarity.COMMON:
-                    cardFromRarity = Game1.pic_card_front_common;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.RARE:
-                    cardFromRarity = Game1.pic_card_front_rare;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.EPIC:
-                    cardFromRarity = Game1.pic_card_front_epic;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.GODLY:
-                    cardFromRarity = Game1.pic_card_front_godly;
-                    break;
-                case DeckBuilder.CardEnums.CardRarity.VOID:
-                    cardFromRarity = Game1.pic_card_front_void;
-                    break;
-            }
-
-            //Draw card glow
-            if (glowCard)
-            {
-                for (int i = 0; i < DrawConstants.HANDCARD_GLOW_NUM_STEPS; i++)
-                {
-                    sprites.Draw(cardFromRarity,
-                        new Rectangle(card._x - DrawConstants.CARDCHOICE_GLOW_FURTHEST + DrawConstants.CARDCHOICE_GLOW_STEP * i,
-                        yFromBottom(card._y - DrawConstants.CARDCHOICE_GLOW_FURTHEST + DrawConstants.CARDCHOICE_GLOW_STEP * i,
-                        card._height + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2),
-                        card._width + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2,
-                        card._height + DrawConstants.CARDCHOICE_GLOW_FURTHEST * 2 - DrawConstants.CARDCHOICE_GLOW_STEP * i * 2),
-                        Color.PowderBlue * DrawConstants.CARDCHOICE_GLOW_OPACITY);
-                }
-            }
-
-            //Draw card background
-            sprites.Draw(cardFromRarity, new Rectangle(card._x, yFromBottom(card._y, card._height), card._width, card._height), Color.White);
-
-            //Draw card art
-
-
-
-            //Draw card name
-            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
-                DrawConstants.TEXT_15_HEIGHT), DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH, DrawConstants.TEXT_15_HEIGHT),
-                DeckBuilder.CardEnums.cardRarityToColor(card.getCard().getCardRarity()) * DrawConstants.CARDSELECTIONMENU_CARDS_NAME_RARITY_FADE);
-            sprites.DrawString(Game1.roboto_bold_15, name,
-                new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_15.MeasureString(name).X / 2,
-                yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 - DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 12,
-                DrawConstants.TEXT_15_HEIGHT)), Color.Black);
-
-            //Draw card description
-            for (int i_d = 0; i_d < description.Count; i_d++)
-            {
-                sprites.DrawString(Game1.roboto_medium_12, description[i_d],
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARD_WIDTH / 2 - Game1.roboto_medium_12.MeasureString(description[i_d]).X / 2,
-                    yFromBottom(card._y + DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER + DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 2 -
-                    DrawConstants.CARDSELECTIONMENU_CARD_HEIGHT / 6 - DrawConstants.TEXT_12_HEIGHT * i_d,
-                    DrawConstants.TEXT_12_HEIGHT)), Color.Black);
-            }
-
-            //Draw card costs
-            int divinityCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
-            int bloodCost = card.getCard().getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
-            if (divinityCost > 0)
-            {
-                sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE),
-                    DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE), Color.White);
-
-                sprites.DrawString(Game1.roboto_black_18, divinityCost.ToString(),
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_18.MeasureString(divinityCost.ToString()).X / 2,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_18_HEIGHT / 2,
-                    DrawConstants.TEXT_18_HEIGHT)), Color.Black);
-            }
-            if (bloodCost > 0)
-            {
-                sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE),
-                    DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE), Color.White);
-
-                sprites.DrawString(Game1.roboto_black_18, bloodCost.ToString(),
-                    new Vector2(card._x + DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - Game1.roboto_black_18.MeasureString(bloodCost.ToString()).X / 2,
-                    yFromBottom(card._y + card._height + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP + DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE / 2 - DrawConstants.TEXT_18_HEIGHT / 2,
-                    DrawConstants.TEXT_18_HEIGHT)), Color.Black);
-            }
+            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, DrawConstants.TEXT_15_HEIGHT,
+                Game1.roboto_medium_12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_18, DrawConstants.TEXT_18_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
+                DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER, DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP,
+                DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(), false, glowCard);
         }
 
         public static void drawMultiTarget(SpriteBatch sprites, UserInterface.Clickables.MultiTarget target)
@@ -1234,6 +1074,26 @@ namespace DeityOnceLost.Drawing
             if (statusEffect == Game1.getHoveredClickable())
             {
                 drawInfoBox(sprites, statusEffect.getDescription(), new Rectangle(statusEffect._x, statusEffect._y, statusEffect._width, statusEffect._height));
+            }
+        }
+
+        public static void drawInventoryGrid(SpriteBatch sprites, UserInterface.Clickables.Hovers.InventoryGrid grid)
+        {
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(grid._x - Drawing.DrawConstants.INVENTORYMENU_GRIDSPACE_BUFFER,
+                yFromBottom(grid._y - Drawing.DrawConstants.INVENTORYMENU_GRIDSPACE_BUFFER, grid._height + Drawing.DrawConstants.INVENTORYMENU_GRIDSPACE_BUFFER * 2),
+                grid._width + Drawing.DrawConstants.INVENTORYMENU_GRIDSPACE_BUFFER * 2, grid._height + Drawing.DrawConstants.INVENTORYMENU_GRIDSPACE_BUFFER * 2), Color.White);
+
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(grid._x, yFromBottom(grid._y, grid._height), grid._width, grid._height), grid.getGridColor());
+        }
+
+        public static void drawCollectedKey(SpriteBatch sprites, UserInterface.Clickables.Hovers.CollectedKey key)
+        {
+            sprites.Draw(Game1.pic_item_key, new Rectangle(key._x, yFromBottom(key._y, key._height),
+                key._width, key._height), Treasury.Equipment.Key.getKeyColor(key.getKey().getKeyColor()));
+            
+            if (key == Game1.getHoveredClickable() && key.getDescription() != null && key.getDescription().Count > 0)
+            {
+                drawInfoBox(sprites, key.getDescription(), new Rectangle(key._x, key._y, key._width, key._height));
             }
         }
 

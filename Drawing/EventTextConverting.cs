@@ -84,11 +84,14 @@ namespace DeityOnceLost.Drawing
                 text = text.Replace("[Name: c]", Game1.getChamp().getName());
             }
 
-            for (int i = 0; i < 3; i++)
+            if (Game1.getPartyMembers() != null)
             {
-                if (Game1.getPartyMembers().Count > i)
+                for (int i = 0; i < 3; i++)
                 {
-                    text = text.Replace("[Name: " + i + 1 + "]", Game1.getPartyMembers()[i].getName());
+                    if (Game1.getPartyMembers().Count > i)
+                    {
+                        text = text.Replace("[Name: " + i + 1 + "]", Game1.getPartyMembers()[i].getName());
+                    }
                 }
             }
 
@@ -130,38 +133,41 @@ namespace DeityOnceLost.Drawing
                 }
             }
 
-            for (int i = 0; i < 3; i++)
+            if (Game1.getPartyMembers() != null)
             {
-                if (Game1.getPartyMembers().Count > i)
+                for (int i = 0; i < 3; i++)
                 {
-                    text = text.Replace("[They: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they());
-                    text = text.Replace("[Them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them());
-                    text = text.Replace("[Their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their());
-                    text = text.Replace("[Theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs());
-                    text = text.Replace("[They're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre());
-                    text = text.Replace("[They've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve());
-
-                    text = text.Replace("[they: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToLower());
-                    text = text.Replace("[them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToLower());
-                    text = text.Replace("[their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToLower());
-                    text = text.Replace("[theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToLower());
-                    text = text.Replace("[they're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToLower());
-                    text = text.Replace("[they've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToLower());
-
-                    text = text.Replace("[THEY: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToUpper());
-                    text = text.Replace("[THEM: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToUpper());
-                    text = text.Replace("[THEIR: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToUpper());
-                    text = text.Replace("[THEIRS: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToUpper());
-                    text = text.Replace("[THEY'RE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToUpper());
-                    text = text.Replace("[THEY'VE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToUpper());
-
-                    if (Game1.getPartyMembers()[i].getPronoun_they() == Characters.HeroConstants.THEY_THEYTHEM)
+                    if (Game1.getPartyMembers().Count > i)
                     {
-                        text = text.Replace("[s: " + i + 1 + "]", "");
-                    }
-                    else
-                    {
-                        text = text.Replace("[s: " + i + 1 + "]", "s");
+                        text = text.Replace("[They: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they());
+                        text = text.Replace("[Them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them());
+                        text = text.Replace("[Their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their());
+                        text = text.Replace("[Theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs());
+                        text = text.Replace("[They're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre());
+                        text = text.Replace("[They've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve());
+
+                        text = text.Replace("[they: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToLower());
+                        text = text.Replace("[them: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToLower());
+                        text = text.Replace("[their: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToLower());
+                        text = text.Replace("[theirs: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToLower());
+                        text = text.Replace("[they're: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToLower());
+                        text = text.Replace("[they've: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToLower());
+
+                        text = text.Replace("[THEY: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_they().ToUpper());
+                        text = text.Replace("[THEM: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_them().ToUpper());
+                        text = text.Replace("[THEIR: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_their().ToUpper());
+                        text = text.Replace("[THEIRS: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theirs().ToUpper());
+                        text = text.Replace("[THEY'RE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyre().ToUpper());
+                        text = text.Replace("[THEY'VE: " + i + 1 + "]", Game1.getPartyMembers()[i].getPronoun_theyve().ToUpper());
+
+                        if (Game1.getPartyMembers()[i].getPronoun_they() == Characters.HeroConstants.THEY_THEYTHEM)
+                        {
+                            text = text.Replace("[s: " + i + 1 + "]", "");
+                        }
+                        else
+                        {
+                            text = text.Replace("[s: " + i + 1 + "]", "s");
+                        }
                     }
                 }
             }
@@ -285,7 +291,7 @@ namespace DeityOnceLost.Drawing
                     case 24:
                         return Game1.roboto_black_24;
                     default:
-                        Game1.errorLog.Add("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
+                        Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
                 }
             }
@@ -310,7 +316,7 @@ namespace DeityOnceLost.Drawing
                     case 24:
                         return Game1.roboto_bold_24;
                     default:
-                        Game1.errorLog.Add("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
+                        Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
                 }
             }
@@ -335,7 +341,7 @@ namespace DeityOnceLost.Drawing
                     case 24:
                         return Game1.roboto_medium_24;
                     default:
-                        Game1.errorLog.Add("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
+                        Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
                 }
             }
@@ -360,13 +366,13 @@ namespace DeityOnceLost.Drawing
                     case 24:
                         return Game1.roboto_regular_24;
                     default:
-                        Game1.errorLog.Add("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
+                        Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
                 }
             }
             else
             {
-                Game1.errorLog.Add("Attempting to getFontFromText but the tag for the font code isn't implemented: " + pieces[1]);
+                Game1.addToErrorLog("Attempting to getFontFromText but the tag for the font code isn't implemented: " + pieces[1]);
             }
 
             return font;
@@ -456,7 +462,7 @@ namespace DeityOnceLost.Drawing
                 return new Color(DrawConstants.DARK_PURPLE_RED, DrawConstants.DARK_PURPLE_GREEN, DrawConstants.DARK_PURPLE_BLUE);
             }
 
-            Game1.errorLog.Add("Attempting to get Color from getColorFromText but " + piece + " not implemented");
+            Game1.addToErrorLog("Attempting to get Color from getColorFromText but " + piece + " not implemented");
             return color;
         }
     }

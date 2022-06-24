@@ -21,7 +21,7 @@ namespace DeityOnceLost.Treasury.Treasures
 
         public override void onTaken()
         {
-            Game1.addToMenus(new UserInterface.Menus.NewCardChoiceMenu(_choices, this));
+            Game1.addToMenus(new UserInterface.Menus.NewCardChoiceMenu(_choices, this, () => { }));
         }
 
         public void setTaken()
@@ -82,7 +82,7 @@ namespace DeityOnceLost.Treasury.Treasures
                     }
                     else
                     {
-                        Game1.errorLog.Add("getRandomCards generated random integer too large for total weights. Defaulting to allCommonCards");
+                        Game1.addToErrorLog("getRandomCards generated random integer too large for total weights. Defaulting to allCommonCards");
                         allCardsOfRarity = allCommonCards;
                     }
 
@@ -117,7 +117,7 @@ namespace DeityOnceLost.Treasury.Treasures
 
             if (emergencyExitCounter >= EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT)
             {
-                Game1.errorLog.Add("getRandomCards emergencyExitCounter reached loop break count; exiting");
+                Game1.addToErrorLog("getRandomCards emergencyExitCounter reached loop break count; exiting");
             }
 
             return randomCards;

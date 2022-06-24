@@ -106,8 +106,15 @@ namespace DeityOnceLost.UserInterface.Clickables
                 //Play the card
                 card.onPlay();
 
-                //Discard the card
-                Game1.getChamp().getDeck().discardBecausePlayed(card, activeCard.getPositionInHand());
+                //Discard the card or send to removed if the card dissipates
+                if (!card.getDissipates())
+                {
+                    Game1.getChamp().getDeck().discardBecausePlayed(card, activeCard.getPositionInHand());
+                }
+                else
+                {
+                    Game1.getChamp().getDeck().removeFromHand(card, activeCard.getPositionInHand());
+                }
                 
                 if (card.getCardType() == DeckBuilder.CardEnums.CardType.ATTACK || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
                 {
@@ -157,7 +164,7 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// Sets up the targets (already made and given as a List) of the currently selected card
         /// and puts them into the given UserInterface. Called when a new card gets selected.
         /// </summary>
-        public static void setupTargets(UserInterface ui, UserInterface enemies/*, UserInterface party*/, Avatar champion, DeckBuilder.CardEnums.TargetingType targetType)
+        public static void setupTargets(UserInterface ui, UserInterface enemies, UserInterface party, Avatar champion, DeckBuilder.CardEnums.TargetingType targetType)
         {
             switch (targetType)
             {
@@ -172,26 +179,32 @@ namespace DeityOnceLost.UserInterface.Clickables
                     {
                         ui.addClickableToBack(new Target(enemies.getClickables()[i], DeckBuilder.CardEnums.TargetingType.enemies));
                     }
-                    //FIXIT do when _party is implemented
-                    /*for (int i = 0; i < _party.getClickables().Count; i++)
+                    if (party != null)
                     {
-                        ui.addClickableToBack(new Target(_party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
-                    }*/
+                        for (int i = 0; i < party.getClickables().Count; i++)
+                        {
+                            ui.addClickableToBack(new Target(party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
+                        }
+                    }
                     ui.addClickableToBack(new Target(champion, DeckBuilder.CardEnums.TargetingType.champion));
                     break;
                 case DeckBuilder.CardEnums.TargetingType.party:
-                    //FIXIT do when _party is implemented
-                    /*for (int i = 0; i < _party.getClickables().Count; i++)
+                    if (party != null)
                     {
-                        ui.addClickableToBack(new Target(_party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
-                    }*/
+                        for (int i = 0; i < party.getClickables().Count; i++)
+                        {
+                            ui.addClickableToBack(new Target(party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
+                        }
+                    }
                     break;
                 case DeckBuilder.CardEnums.TargetingType.friendlies:
-                    //FIXIT do when _party is implemented
-                    /*for (int i = 0; i < _party.getClickables().Count; i++)
+                    if (party != null)
                     {
-                        ui.addClickableToBack(new Target(_party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
-                    }*/
+                        for (int i = 0; i < party.getClickables().Count; i++)
+                        {
+                            ui.addClickableToBack(new Target(party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
+                        }
+                    }
                     ui.addClickableToBack(new Target(champion, DeckBuilder.CardEnums.TargetingType.champion));
                     break;
                 case DeckBuilder.CardEnums.TargetingType.champion:
@@ -210,10 +223,34 @@ namespace DeityOnceLost.UserInterface.Clickables
                     }
                     break;
                 case DeckBuilder.CardEnums.TargetingType.aoeParty:
-                    //FIXIT
+                    List<MultiTarget> multitargets_party = new List<MultiTarget>();
+                    for (int i = 0; i < party.getClickables().Count; i++)
+                    {
+                        multitargets_party.Add(new MultiTarget(party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
+                    }
+                    for (int i = 0; i < multitargets_party.Count; i++)
+                    {
+                        multitargets_party[i].linkMultiTargets(multitargets_party);
+                        ui.addClickableToBack(multitargets_party[i]);
+                    }
+                    break;
+                case DeckBuilder.CardEnums.TargetingType.aoeFriendlies:
+                    List<MultiTarget> multitargets_friendlies = new List<MultiTarget>();
+                    for (int i = 0; i < party.getClickables().Count; i++)
+                    {
+                        multitargets_friendlies.Add(new MultiTarget(party.getClickables()[i], DeckBuilder.CardEnums.TargetingType.party));
+                    }
+                    multitargets_friendlies.Add(new MultiTarget(champion, DeckBuilder.CardEnums.TargetingType.champion));
+                    for (int i = 0; i < party.getClickables().Count; i++)
+                    {
+                        multitargets_friendlies[i].linkMultiTargets(multitargets_friendlies);
+                        ui.addClickableToBack(multitargets_friendlies[i]);
+                    }
+                    multitargets_friendlies[party.getClickables().Count].linkMultiTargets(multitargets_friendlies); //Champion
+                    ui.addClickableToBack(multitargets_friendlies[party.getClickables().Count]);
                     break;
                 default:
-                    Game1.errorLog.Add("Game1.getTargetsOfCard trying to get a target from a targetingType that wasn't previously defined: " + targetType.ToString());
+                    Game1.addToErrorLog("Game1.getTargetsOfCard trying to get a target from a targetingType that wasn't previously defined: " + targetType.ToString());
                     break;
             }
         }

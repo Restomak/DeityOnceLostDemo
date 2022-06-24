@@ -75,6 +75,14 @@ namespace DeityOnceLost.UserInterface
 
 
 
+        //Setters
+        public void setTitleString(String title)
+        {
+            _titleString = title;
+        }
+
+
+
         /// <summary>
         /// Will return whether or not the top bar should be present when this menu is active (in most cases it should be)
         /// </summary>

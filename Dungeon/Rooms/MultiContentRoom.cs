@@ -102,7 +102,7 @@ namespace DeityOnceLost.Dungeon.Rooms
                         _roomTreasures.RemoveAt(0);
                         break;
                     default:
-                        Game1.errorLog.Add("Attempted to remove the top of _roomContents but the top of the list doesn't match what's possible in a MultiContentRoom: " + _roomContents[0].ToString());
+                        Game1.addToErrorLog("Attempted to remove the top of _roomContents but the top of the list doesn't match what's possible in a MultiContentRoom: " + _roomContents[0].ToString());
                         break;
                 }
 
@@ -110,7 +110,7 @@ namespace DeityOnceLost.Dungeon.Rooms
             }
             else
             {
-                Game1.errorLog.Add("Attempted to remove the top of _roomContents but there was nothing in the list");
+                Game1.addToErrorLog("Attempted to remove the top of _roomContents but there was nothing in the list");
             }
         }
     }

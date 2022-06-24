@@ -35,12 +35,15 @@ namespace DeityOnceLost.DeckBuilder
             _allCards.Add(new Cards.CommonCards.Cleave());
             _allCards.Add(new Cards.CommonCards.ViciousSlam());
             _allCards.Add(new Cards.CommonCards.ExploitWeakness());
+            _allCards.Add(new Cards.CommonCards.CheapShot());
 
             //Rare Cards
-
+            _allCards.Add(new Cards.RareCards.HuntersMark());
+            _allCards.Add(new Cards.RareCards.Sacrifice());
+            _allCards.Add(new Cards.RareCards.QuakeStomp());
 
             //Epic Cards
-
+            _allCards.Add(new Cards.EpicCards.DrawForth());
 
             //Godly Cards
             _allCards.Add(new Cards.GodlyCards.FistOfTheStars());
@@ -53,6 +56,15 @@ namespace DeityOnceLost.DeckBuilder
         public List<Card> getCardMasterList()
         {
             return _allCards;
+        }
+
+        /// <summary>
+        /// Called when the player first gains party members, so that these cards don't exist in the loot tables until then.
+        /// </summary>
+        public void addCardsAfterParty()
+        {
+            //Epic Cards
+            _allCards.Add(new Cards.EpicCards.TimeShift());
         }
 
         /// <summary>

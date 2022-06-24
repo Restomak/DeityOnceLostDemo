@@ -14,18 +14,18 @@ namespace DeityOnceLost.Characters
         bool _dead;
         Treasury.Treasures.PartyBuff _partyMemberBuff;
 
-        public Hero(Treasury.Treasures.PartyBuff partyMemberBuff = null)
+        public Hero(Treasury.Treasures.PartyBuff partyMemberBuff = null, bool firstChampion = false)
         {
             _dead = false;
 
             _defaultCards = new List<DeckBuilder.Card>();
 
-            generateRandomPronouns();
-            generateRandomName();
+            generateRandomPronouns(firstChampion);
+            generateRandomName(firstChampion);
             //generateRandomApperance();
             generateRandomTraits(); //for now just defaults stats to 0
-            generateRandomDefaultDeck();
-            generateRandomHP();
+            generateRandomDefaultDeck(firstChampion);
+            generateRandomHP(firstChampion);
 
             if (partyMemberBuff == null)
             {
@@ -123,58 +123,9 @@ namespace DeityOnceLost.Characters
             _dead = false;
         }
 
+        
 
-
-        private void generateRandomName()
-        {
-            List<String> names = new List<String>();
-
-            if (Game1.randChance(Names.CHANCE_OF_WHATEVER))
-            {
-                names.AddRange(Names.heroNames_masc);
-                names.AddRange(Names.heroNames_femme);
-                names.AddRange(Names.heroNames_nonbinary);
-                names.AddRange(Names.heroNames_androgynous);
-            }
-            else
-            {
-                if (_they == HeroConstants.THEY_HEHIM)
-                {
-                    names.AddRange(Names.heroNames_masc);
-                    names.AddRange(Names.heroNames_androgynous);
-
-                    if (Game1.randChance(Names.CHANCE_OF_STEP))
-                    {
-                        names.AddRange(Names.heroNames_nonbinary);
-                    }
-                }
-                else if (_they == HeroConstants.THEY_SHEHER)
-                {
-                    names.AddRange(Names.heroNames_femme);
-                    names.AddRange(Names.heroNames_androgynous);
-
-                    if (Game1.randChance(Names.CHANCE_OF_STEP))
-                    {
-                        names.AddRange(Names.heroNames_nonbinary);
-                    }
-                }
-                else
-                {
-                    names.AddRange(Names.heroNames_nonbinary);
-                    names.AddRange(Names.heroNames_androgynous);
-
-                    if (Game1.randChance(Names.CHANCE_OF_STEP))
-                    {
-                        names.AddRange(Names.heroNames_masc);
-                        names.AddRange(Names.heroNames_femme);
-                    }
-                }
-            }
-
-            _name = names[Game1.randint(0, names.Count - 1)];
-        }
-
-        private void generateRandomPronouns()
+        private void generateRandomPronouns(bool firstChampion)
         {
             int randomPronoun = Game1.randint(1, HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE + HeroConstants.PRONOUN_WEIGHT_THEY + HeroConstants.PRONOUN_WEIGHT_XE + HeroConstants.PRONOUN_WEIGHT_VE);
             if (randomPronoun <= HeroConstants.PRONOUN_WEIGHT_HE)
@@ -224,7 +175,7 @@ namespace DeityOnceLost.Characters
             }
             else
             {
-                Game1.errorLog.Add("New Hero created & pronoun roll out of bounds: defaulting to they/them");
+                Game1.addToErrorLog("New Hero created & pronoun roll out of bounds: defaulting to they/them");
                 _they = HeroConstants.THEY_THEYTHEM;
                 _them = HeroConstants.THEM_THEYTHEM;
                 _their = HeroConstants.THEIR_THEYTHEM;
@@ -232,6 +183,73 @@ namespace DeityOnceLost.Characters
                 _theyre = HeroConstants.THEYRE_THEYTHEM;
                 _theyve = HeroConstants.THEYVE_THEYTHEM;
             }
+
+            
+            if (firstChampion)
+            {
+                _they = HeroConstants.THEY_SHEHER;
+                _them = HeroConstants.THEM_SHEHER;
+                _their = HeroConstants.THEIR_SHEHER;
+                _theirs = HeroConstants.THEIRS_SHEHER;
+                _theyre = HeroConstants.THEYRE_SHEHER;
+                _theyve = HeroConstants.THEYVE_SHEHER;
+            }
+        }
+
+        private void generateRandomName(bool firstChampion)
+        {
+            List<String> names = new List<String>();
+
+            if (Game1.randChance(Names.CHANCE_OF_WHATEVER))
+            {
+                names.AddRange(Names.heroNames_masc);
+                names.AddRange(Names.heroNames_femme);
+                names.AddRange(Names.heroNames_nonbinary);
+                names.AddRange(Names.heroNames_androgynous);
+            }
+            else
+            {
+                if (_they == HeroConstants.THEY_HEHIM)
+                {
+                    names.AddRange(Names.heroNames_masc);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_nonbinary);
+                    }
+                }
+                else if (_they == HeroConstants.THEY_SHEHER)
+                {
+                    names.AddRange(Names.heroNames_femme);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_nonbinary);
+                    }
+                }
+                else
+                {
+                    names.AddRange(Names.heroNames_nonbinary);
+                    names.AddRange(Names.heroNames_androgynous);
+
+                    if (Game1.randChance(Names.CHANCE_OF_STEP))
+                    {
+                        names.AddRange(Names.heroNames_masc);
+                        names.AddRange(Names.heroNames_femme);
+                    }
+                }
+            }
+
+
+            if (firstChampion)
+            {
+                names = Names.heroNames_femme;
+            }
+
+
+            _name = names[Game1.randint(0, names.Count - 1)];
         }
 
         private void generateRandomTraits()
@@ -239,7 +257,7 @@ namespace DeityOnceLost.Characters
             //FIXIT make this function when traits are added
         }
 
-        private void generateRandomDefaultDeck()
+        private void generateRandomDefaultDeck(bool firstChampion)
         {
             List<DeckBuilder.Card> allDefaultCards = Game1.getAllCards().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.DEFAULT);
             List<DeckBuilder.Card> allDefaultAttackCards = Game1.getAllCards().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.DEFAULT, DeckBuilder.CardEnums.CardType.ATTACK);
@@ -259,12 +277,12 @@ namespace DeityOnceLost.Characters
 
             if (numDefaultCards == 0)
             {
-                Game1.errorLog.Add("No default cards exist when generating default deck");
+                Game1.addToErrorLog("No default cards exist when generating default deck");
             }
 
             if (HeroConstants.NUM_ATTACK_CARDS_IN_DEFAULT_DECK > 0)
             {
-                bool specializedDeck = (Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
+                bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                 DeckBuilder.Card specializedCard = allDefaultAttackCards[Game1.randint(0, numDefaultAttackCards - 1)];
                 _defaultCards.Add(specializedCard);
                 for (int i = 1; i < HeroConstants.NUM_ATTACK_CARDS_IN_DEFAULT_DECK; i++)
@@ -282,7 +300,7 @@ namespace DeityOnceLost.Characters
 
             if (HeroConstants.NUM_SKILL_CARDS_IN_DEFAULT_DECK > 0)
             {
-                bool specializedDeck = (Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
+                bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                 DeckBuilder.Card specializedCard = allDefaultSkillCards[Game1.randint(0, numDefaultSkillCards - 1)];
                 _defaultCards.Add(specializedCard);
                 for (int i = 1; i < HeroConstants.NUM_SKILL_CARDS_IN_DEFAULT_DECK; i++)
@@ -313,7 +331,7 @@ namespace DeityOnceLost.Characters
                 //if yes, standard procedure
                 if (rolledOtherCards > 0)
                 {
-                    bool specializedDeck = (Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
+                    bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                     DeckBuilder.Card specializedCard = allDefaultOtherCards[Game1.randint(0, numDefaultOtherCards - 1)];
                     _defaultCards.Add(specializedCard);
                     for (int i = 1; i < rolledOtherCards; i++)
@@ -346,13 +364,25 @@ namespace DeityOnceLost.Characters
             Game1.debugLog.Add(log);
         }
 
-        private void generateRandomHP()
+        private void generateRandomHP(bool firstChampion)
         {
             int maxHP_1 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_2 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_3 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             int maxHP_4 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
             _maxHP = (maxHP_1 + maxHP_2 + maxHP_3 + maxHP_4) / 4; //tends towards the average rather than the extremes
+
+            if (firstChampion)
+            {
+                if (_maxHP < (HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MAX) / 3)
+                {
+                    _maxHP = (HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MAX) / 3;
+                }
+                else if (_maxHP > (HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MAX + HeroConstants.HERO_MAX_HP_MAX) / 3)
+                {
+                    _maxHP = (HeroConstants.HERO_MAX_HP_MIN + HeroConstants.HERO_MAX_HP_MAX + HeroConstants.HERO_MAX_HP_MAX) / 3;
+                }
+            }
         }
 
         private void generateRandomPartyMemberBuff()

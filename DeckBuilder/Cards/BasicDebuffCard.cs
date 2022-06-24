@@ -57,7 +57,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
             else
             {
-                Game1.errorLog.Add("Attempted to use debuff card without a target!");
+                Game1.addToErrorLog("Attempted to use debuff card without a target!");
             }
         }
 

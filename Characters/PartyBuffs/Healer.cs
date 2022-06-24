@@ -36,5 +36,10 @@ namespace DeityOnceLost.Characters.PartyBuffs
                 }
             }
         }
+
+        public override void onCardProc()
+        {
+            onCombatStart();
+        }
     }
 }

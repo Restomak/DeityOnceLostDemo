@@ -35,6 +35,10 @@ namespace DeityOnceLost.UserInterface.Clickables
             {
                 ((Menus.RemoveCardChoiceMenu)_cardChoiceMenu).chooseCard(this);
             }
+            else if (_cardChoiceMenu.GetType() == typeof(Menus.CombatCardChoiceMenu))
+            {
+                ((Menus.CombatCardChoiceMenu)_cardChoiceMenu).chooseCard(this);
+            }
 
             onHoverEnd();
         }

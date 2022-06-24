@@ -236,7 +236,8 @@ namespace DeityOnceLost.Characters
         }
 
         /// <summary>
-        /// Spends the champion's divinity (likely from a card)
+        /// Spends the champion's divinity (likely from a card). Can be used with a
+        /// negative value to gain divinity.
         /// </summary>
         public void spendDivinity(int amount)
         {

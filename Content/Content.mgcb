@@ -473,6 +473,30 @@
 /processorParam:TextureFormat=Color
 /build:functionality art/Card Divinity Icon.png
 
+#begin functionality art/Combat Inventory Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Combat Inventory Icon.png
+
+#begin functionality art/Confirm Button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Confirm Button.png
+
 #begin functionality art/Defense.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -653,6 +677,42 @@
 /processorParam:TextureFormat=Color
 /build:functionality art/Map Exit Icon.png
 
+#begin functionality art/Map Key Connector H.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Map Key Connector H.png
+
+#begin functionality art/Map Key Connector V.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Map Key Connector V.png
+
+#begin functionality art/Map Key Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Map Key Icon.png
+
 #begin functionality art/Map Open Connector H.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -700,6 +760,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/Map Story Icon.png
+
+#begin functionality art/Map Treasure Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Map Treasure Icon.png
 
 #begin functionality art/Map Window Connector H.png
 /importer:TextureImporter
@@ -857,6 +929,18 @@
 /processorParam:TextureFormat=Color
 /build:functionality art/Top Bar Deck Icon.png
 
+#begin functionality art/Top Bar Inventory Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:functionality art/Top Bar Inventory Icon.png
+
 #begin functionality art/UI Sketch.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -868,6 +952,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:functionality art/UI Sketch.png
+
+#begin Items/Key.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Key.png
 
 #begin Shaders/Card Glow.fx
 /importer:EffectImporter

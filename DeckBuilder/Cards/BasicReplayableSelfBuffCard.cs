@@ -45,7 +45,7 @@ namespace DeityOnceLost.DeckBuilder.Cards
                     Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.resilience, 1, _buffAmount, false, true, false));
                     break;
                 default:
-                    Game1.errorLog.Add("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.applyBuff: " + _buffType.ToString());
+                    Game1.addToErrorLog("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.applyBuff: " + _buffType.ToString());
                     break;
             }
         }

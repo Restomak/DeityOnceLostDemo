@@ -76,7 +76,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to remove a card that wasn't in the deck: " + card.getName());
+                Game1.addToErrorLog("Tried to remove a card that wasn't in the deck: " + card.getName());
             }
         }
 
@@ -176,7 +176,7 @@ namespace DeityOnceLost.DeckBuilder
                 }
                 else //should not happen
                 {
-                    Game1.errorLog.Add("Tried to end-of-turn discard more cards than exist: iterator at " + i);
+                    Game1.addToErrorLog("Tried to end-of-turn discard more cards than exist: iterator at " + i);
                 }
             }
         }
@@ -193,7 +193,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from hand to discard pile that wasn't in hand to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from hand to discard pile that wasn't in hand to begin with: " + card.getName());
             }
         }
 
@@ -207,13 +207,13 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from hand to discard pile that wasn't in hand to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from hand to discard pile that wasn't in hand to begin with: " + card.getName());
             }
         }
 
-        public void removeFromHand(Card card)
+        public void removeFromHand(Card card, int positionInHand)
         {
-            if (_hand.Contains(card))
+            if (_hand.Contains(card) && _hand[positionInHand] == card)
             {
                 card.onRemove(); //in case there's any mechanics for it being removed
                 _removedCards.Add(card);
@@ -221,20 +221,20 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from hand to removed cards that wasn't in hand to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from hand to removed cards that wasn't in hand to begin with: " + card.getName());
             }
         }
 
-        public void moveFromHandToDraw(Card card)
+        public void moveFromHandToDraw(Card card, int positionInHand)
         {
-            if (_hand.Contains(card))
+            if (_hand.Contains(card) && _hand[positionInHand] == card)
             {
                 _drawPile.Add(card);
                 _hand.Remove(card);
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from hand to draw pile that wasn't in hand to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from hand to draw pile that wasn't in hand to begin with: " + card.getName());
             }
         }
 
@@ -247,7 +247,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from discard pile to hand that wasn't in discard pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from discard pile to hand that wasn't in discard pile to begin with: " + card.getName());
             }
         }
 
@@ -260,7 +260,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from discard pile to draw pile that wasn't in discard pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from discard pile to draw pile that wasn't in discard pile to begin with: " + card.getName());
             }
         }
 
@@ -273,7 +273,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from discard pile to removed cards that wasn't in discard pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from discard pile to removed cards that wasn't in discard pile to begin with: " + card.getName());
             }
         }
 
@@ -286,7 +286,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from draw pile to hand that wasn't in draw pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from draw pile to hand that wasn't in draw pile to begin with: " + card.getName());
             }
         }
 
@@ -300,7 +300,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from draw pile to discard pile that wasn't in draw pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from draw pile to discard pile that wasn't in draw pile to begin with: " + card.getName());
             }
         }
 
@@ -314,7 +314,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from draw pile to removed cards that wasn't in draw pile to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from draw pile to removed cards that wasn't in draw pile to begin with: " + card.getName());
             }
         }
 
@@ -341,7 +341,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from removed cards to discard pile that wasn't in removed cards to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from removed cards to discard pile that wasn't in removed cards to begin with: " + card.getName());
             }
         }
 
@@ -354,7 +354,7 @@ namespace DeityOnceLost.DeckBuilder
             }
             else
             {
-                Game1.errorLog.Add("Tried to move a card from removed cards to hand that wasn't in removed cards to begin with: " + card.getName());
+                Game1.addToErrorLog("Tried to move a card from removed cards to hand that wasn't in removed cards to begin with: " + card.getName());
             }
         }
 

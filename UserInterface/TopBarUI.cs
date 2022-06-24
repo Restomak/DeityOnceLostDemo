@@ -44,6 +44,7 @@ namespace DeityOnceLost.UserInterface
         {
             _topBar.resetClickables();
 
+            //Champion
             String championString = "Champion: " + Game1.getChamp().getName() + " (" + Game1.getChamp().getHero().getPronoun_they() + "/" + Game1.getChamp().getHero().getPronoun_them() + ")";
             List<String> championDescription = new List<String>();
             championDescription.Add("Your current champion.");
@@ -71,6 +72,8 @@ namespace DeityOnceLost.UserInterface
             });
             _topBar.addClickableToBack(hpText);
 
+
+            //Gold
             int gold = Game1.getDungeonHandler().getGold();
             String goldString = "Gold: " + gold;
             List<String> goldDescription = new List<String>();
@@ -94,6 +97,7 @@ namespace DeityOnceLost.UserInterface
             _topBar.addClickableToBack(goldText);
 
             
+            //Deck icon
             String deckString = "Deck: ";
             Clickables.Hovers.DynamicText deckText = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_DECK_TEXT_X,
                 Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
@@ -102,6 +106,26 @@ namespace DeityOnceLost.UserInterface
 
             Clickables.DeckOfCards topBarDeckIcon = new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DECK, Game1.getChamp());
             _topBar.addClickableToBack(topBarDeckIcon);
+
+
+            //Inventory icon
+            if (Game1.getInventory() != null)
+            {
+                String inventoryString = "Inventory: ";
+                Clickables.Hovers.DynamicText inventoryText = new Clickables.Hovers.DynamicText(new Point(Drawing.DrawConstants.TOPBAR_INVENTORY_TEXT_X,
+                    Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT / 2 - Drawing.DrawConstants.TEXT_12_HEIGHT / 2),
+                    Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, inventoryString, new List<String>(), Color.GreenYellow);
+                _topBar.addClickableToBack(inventoryText);
+
+                Clickables.Button topBarInventoryIcon = new Clickables.Button(Game1.pic_functionality_topBarInventoryIcon,
+                    new Point(Drawing.DrawConstants.TOPBAR_INVENTORY_ICON_X, Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT + Drawing.DrawConstants.TOPBAR_INVENTORY_ICON_Y_BUFFER),
+                    Drawing.DrawConstants.TOPBAR_INVENTORY_ICON_WIDTH, Drawing.DrawConstants.TOPBAR_INVENTORY_ICON_HEIGHT, () =>
+                    {
+                        Game1.addToMenus(new Menus.InventoryMenu(Game1.getInventory()));
+                    }, new List<String>());
+                _topBar.addClickableToBack(topBarInventoryIcon);
+            }
+
 
             //Party member 1
             if (Game1.getCombatHandler().getParty().Count > 0)

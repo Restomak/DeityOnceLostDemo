@@ -43,7 +43,8 @@ namespace DeityOnceLost.DeckBuilder
             friendlies, //champion & party
             all, //anyone
             aoeEnemies, //all enemies at once
-            aoeParty //all party members at once
+            aoeParty, //all party members at once
+            aoeFriendlies //all party members and champion at once
         }
 
         public static String costTypeToString(CostType ct)
@@ -59,7 +60,7 @@ namespace DeityOnceLost.DeckBuilder
                 case CostType.SOUL:
                     return "Soul";
                 default:
-                    Game1.errorLog.Add("Card CostType error: " + ct.ToString());
+                    Game1.addToErrorLog("Card CostType error: " + ct.ToString());
                     return "ERROR";
             }
         }
@@ -79,7 +80,7 @@ namespace DeityOnceLost.DeckBuilder
                 case CardType.CURSE:
                     return "Curse";
                 default:
-                    Game1.errorLog.Add("Card CardType error: " + ct.ToString());
+                    Game1.addToErrorLog("Card CardType error: " + ct.ToString());
                     return "ERROR";
             }
         }
@@ -101,7 +102,7 @@ namespace DeityOnceLost.DeckBuilder
                 case CardRarity.VOID:
                     return "Void";
                 default:
-                    Game1.errorLog.Add("Card CardRarity error: " + ct.ToString());
+                    Game1.addToErrorLog("Card CardRarity error: " + ct.ToString());
                     return "ERROR";
             }
         }
@@ -111,19 +112,19 @@ namespace DeityOnceLost.DeckBuilder
             switch (ct)
             {
                 case CardRarity.DEFAULT:
-                    return Color.Gray;
+                    return Color.DarkGray;
                 case CardRarity.COMMON:
-                    return Color.Green;
+                    return Color.LawnGreen;
                 case CardRarity.RARE:
-                    return Color.Blue;
+                    return new Color(Drawing.DrawConstants.RAREBLUE_RED, Drawing.DrawConstants.RAREBLUE_GREEN, Drawing.DrawConstants.RAREBLUE_BLUE);
                 case CardRarity.EPIC:
-                    return Color.Purple;
+                    return new Color(Drawing.DrawConstants.BLUE_PURPLE_RED, Drawing.DrawConstants.BLUE_PURPLE_GREEN, Drawing.DrawConstants.BLUE_PURPLE_BLUE);
                 case CardRarity.GODLY:
                     return Color.Gold;
                 case CardRarity.VOID:
                     return new Color(Drawing.DrawConstants.DARK_PURPLE_RED, Drawing.DrawConstants.DARK_PURPLE_GREEN, Drawing.DrawConstants.DARK_PURPLE_BLUE);
                 default:
-                    Game1.errorLog.Add("Card CardRarity error: " + ct.ToString());
+                    Game1.addToErrorLog("Card CardRarity error: " + ct.ToString());
                     return Color.Red;
             }
         }

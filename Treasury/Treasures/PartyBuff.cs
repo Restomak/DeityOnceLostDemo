@@ -25,5 +25,7 @@ namespace DeityOnceLost.Treasury.Treasures
         {
             //Uneccessary since they won't show up as loot
         }
+
+        public abstract void onCardProc();
     }
 }
