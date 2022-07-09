@@ -147,6 +147,8 @@ namespace DeityOnceLost.Events
             if (_event.getChoices().Count == 1)
             {
                 choiceChosen(0);
+
+                Game1.setHoveredClickable(null);
             }
         }
     }
