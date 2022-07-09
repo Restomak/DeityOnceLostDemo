@@ -6,57 +6,67 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
+    /// <summary>
+    /// Base class to make card design easier for cards that buff one  of the three unit
+    /// stats: Strength, Dexterity, or Resilience.
+    /// </summary>
     abstract class BasicReplayableSelfBuffCard : Card, IStatBuffCard
     {
-        protected int _buffAmount;
-        protected Combat.Unit.statType _buffType;
-
         public BasicReplayableSelfBuffCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int buffAmount, Combat.Unit.statType buffType) : base(name, cardType, rarity, CardEnums.TargetingType.champion)
         {
-            _buffAmount = buffAmount;
-            _buffType = buffType;
+            iStatBuffAmount = buffAmount;
+            iBuffStat = buffType;
         }
 
-        public int amount
-        {
-            get => _buffAmount;
-        }
-        public Combat.Unit.statType stat
-        {
-            get => _buffType;
-        }
+        public int iStatBuffAmount { get; }
+
+        public Combat.Unit.statType iBuffStat { get; }
 
         public override void onPlay()
         {
-            applyBuff();
+            iApplyBuff();
         }
 
-        public void applyBuff()
+        public void iApplyBuff()
         {
-            switch (_buffType)
+            switch (iBuffStat)
             {
                 case Combat.Unit.statType.strength:
-                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.strength, 1, _buffAmount, false, true, false));
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.strength, 1, iStatBuffAmount, false, true));
                     break;
                 case Combat.Unit.statType.dexterity:
-                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.dexterity, 1, _buffAmount, false, true, false));
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.dexterity, 1, iStatBuffAmount, false, true));
                     break;
                 case Combat.Unit.statType.resilience:
-                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.resilience, 1, _buffAmount, false, true, false));
+                    Game1.getChamp().gainBuff(new Combat.Buff(Combat.Buff.buffType.resilience, 1, iStatBuffAmount, false, true));
                     break;
                 default:
-                    Game1.addToErrorLog("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.applyBuff: " + _buffType.ToString());
+                    Game1.addToErrorLog("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.applyBuff: " + iBuffStat.ToString());
                     break;
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
+            List<UserInterface.ExtraInfo> extraInfo = new List<UserInterface.ExtraInfo>();
 
-            desc.Add("Gain " + _buffAmount + " " + _buffType.ToString() + ".");
+            switch (iBuffStat)
+            {
+                case Combat.Unit.statType.strength:
+                    extraInfo.Add(Combat.Buff.getExtraInfo(Combat.Buff.buffType.strength));
+                    break;
+                case Combat.Unit.statType.dexterity:
+                    extraInfo.Add(Combat.Buff.getExtraInfo(Combat.Buff.buffType.dexterity));
+                    break;
+                case Combat.Unit.statType.resilience:
+                    extraInfo.Add(Combat.Buff.getExtraInfo(Combat.Buff.buffType.resilience));
+                    break;
+                default:
+                    Game1.addToErrorLog("New Combat.Unit.statType was declared but not setup in BasicReplayableSelfBuffCard.getHoverInfo: " + iBuffStat.ToString());
+                    break;
+            }
 
-            return desc;
+            return extraInfo;
         }
     }
 }

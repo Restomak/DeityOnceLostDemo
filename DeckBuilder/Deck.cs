@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Deck and card pile storage and management.
+    /// </summary>
     public class Deck
     {
         public const int EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT = 500; //never have while loops without an emergency exit
@@ -22,8 +25,10 @@ namespace DeityOnceLost.DeckBuilder
         private List<Card> _discardPile;
         private List<Card> _removedCards;
 
-        //Used for checking cards that won't be discarded at the end of the turn (cards that automatically retain need not be added here, but it doesn't break if they are)
+        //Used for checking cards that won't be discarded at the end of the turn (cards that automatically preserve need not be added here, but it doesn't break if they are)
         private List<Card> _keepingInHand;
+
+        private Card _lastCardDrawn;
 
         public Deck(List<Card> startingCards)
         {
@@ -50,7 +55,9 @@ namespace DeityOnceLost.DeckBuilder
             _discardPile.Clear();
             _removedCards.Clear();
 
-            _drawPile = shuffle(_deck);
+            _drawPile = shuffle(_deck, true);
+
+            _lastCardDrawn = null;
 
             Game1.debugLog.Add("Deck start() called. Deck size: " + _deck.Count);
         }
@@ -82,7 +89,14 @@ namespace DeityOnceLost.DeckBuilder
 
 
 
-        public List<Card> shuffle(List<Card> cards)
+        /// <summary>
+        /// Returns a shuffled list of Cards based on the passed list. If the generateNewCards
+        /// flag is enabled, it will return a list of newly generated cards based on the passed
+        /// list instead of using that list itself (required when copying cards out of the deck
+        /// for combat, so that the cards in the deck remain unaffected by whatever happens in
+        /// combat).
+        /// </summary>
+        public List<Card> shuffle(List<Card> cards, bool generateNewCards = false)
         {
             List<Card> unshuffledCards = new List<Card>();
             List<Card> shuffledCards = new List<Card>();
@@ -92,7 +106,14 @@ namespace DeityOnceLost.DeckBuilder
             //Copy deck into unshuffled list
             for (int i = 0; i < cards.Count; i++)
             {
-                unshuffledCards.Add(cards[i]);
+                if (!generateNewCards)
+                {
+                    unshuffledCards.Add(cards[i]);
+                }
+                else
+                {
+                    unshuffledCards.Add(cards[i].getNewCard());
+                }
             }
 
             //Move unshuffled list into shuffled list
@@ -116,7 +137,8 @@ namespace DeityOnceLost.DeckBuilder
         }
 
         /// <summary>
-        /// Draws cards one at a time to make sure last of draw pile is used up before shuffling discard pile back in
+        /// Draws cards one at a time to make sure last of draw pile is used up before shuffling
+        /// discard pile back in.
         /// </summary>
         public void drawNumCards(int count)
         {
@@ -126,26 +148,42 @@ namespace DeityOnceLost.DeckBuilder
             }
         }
 
+        /// <summary>
+        /// If the draw pile is empty, it will shuffle the discard pile back into the draw pile
+        /// before drawing. If the draw pile is also empty, nothing will happen.
+        /// </summary>
         public void drawCard()
         {
-            if (_hand.Count < MAX_HAND_CAPACITY)
+            //first shuffle the draw pile if there's nothing in it
+            if (_drawPile.Count == 0)
             {
-                //first shuffle the draw pile if there's nothing in it
-                if (_drawPile.Count == 0)
-                {
-                    _drawPile = shuffle(_discardPile);
-                    _discardPile.Clear();
-                }
+                _drawPile = shuffle(_discardPile);
+                _discardPile.Clear();
+            }
 
-                //if there's still nothing in it, don't draw anything
-                if (_drawPile.Count > 0)
+            //if there's still nothing in it, don't draw anything
+            if (_drawPile.Count > 0)
+            {
+                _lastCardDrawn = _drawPile[0];
+
+                //Check if it goes in the hand or discard pile
+                if (_hand.Count < MAX_HAND_CAPACITY)
                 {
                     _hand.Add(_drawPile[0]);
+                    _drawPile.RemoveAt(0);
+                }
+                else
+                {
+                    _discardPile.Add(_drawPile[0]);
                     _drawPile.RemoveAt(0);
                 }
             }
         }
 
+        /// <summary>
+        /// Discards all cards in hand at the end of the turn, except those that have been
+        /// Preserved.
+        /// </summary>
         public void turnEndDiscardAll()
         {
             List<Card> cardsToRemove = new List<Card>();
@@ -167,16 +205,37 @@ namespace DeityOnceLost.DeckBuilder
             }
 
             int count = cardsToRemove.Count;
+            int removeIndex;
             for (int i = count; i > 0; i--)
             {
                 if (cardsToRemove.Count > 0)
                 {
-                    _hand.RemoveAt(0);
+                    removeIndex = _hand.IndexOf(cardsToRemove[0]);
+                    _hand.RemoveAt(removeIndex);
                     cardsToRemove.RemoveAt(0);
                 }
                 else //should not happen
                 {
                     Game1.addToErrorLog("Tried to end-of-turn discard more cards than exist: iterator at " + i);
+                }
+            }
+
+            //Some of the cards put in the list won't still be in hand; remove them
+            cardsToRemove = new List<Card>();
+            foreach (Card card in _keepingInHand)
+            {
+                if (!card.getRetainAlways())
+                {
+                    cardsToRemove.Add(card);
+                }
+            }
+            count = cardsToRemove.Count;
+            for (int i = count; i > 0; i--)
+            {
+                if (cardsToRemove.Count > 0)
+                {
+                    _keepingInHand.Remove(cardsToRemove[0]);
+                    cardsToRemove.RemoveAt(0);
                 }
             }
         }
@@ -242,7 +301,7 @@ namespace DeityOnceLost.DeckBuilder
         {
             if (_discardPile.Contains(card))
             {
-                _hand.Add(card);
+                addToHand(card);
                 _discardPile.Remove(card);
             }
             else
@@ -281,7 +340,7 @@ namespace DeityOnceLost.DeckBuilder
         {
             if (_drawPile.Contains(card))
             {
-                _hand.Add(card);
+                addToHand(card);
                 _drawPile.Remove(card);
             }
             else
@@ -349,12 +408,36 @@ namespace DeityOnceLost.DeckBuilder
         {
             if (_removedCards.Contains(card))
             {
-                _hand.Add(card);
+                addToHand(card);
                 _removedCards.Remove(card);
             }
             else
             {
                 Game1.addToErrorLog("Tried to move a card from removed cards to hand that wasn't in removed cards to begin with: " + card.getName());
+            }
+        }
+
+        public void addToHand(Card card)
+        {
+            if (_hand.Count == MAX_HAND_CAPACITY)
+            {
+                _discardPile.Add(card);
+            }
+            else
+            {
+                _hand.Add(card);
+            }
+        }
+
+        public void preserveCardInHand(Card card)
+        {
+            if (_hand.Contains(card))
+            {
+                _keepingInHand.Add(card);
+            }
+            else
+            {
+                Game1.addToErrorLog("Tried to preserve a card in hand but can't find it in hand: " + card.getName());
             }
         }
 
@@ -381,9 +464,36 @@ namespace DeityOnceLost.DeckBuilder
         {
             return _removedCards;
         }
+        public Card getLastDrawnCard()
+        {
+            return _lastCardDrawn;
+        }
 
 
 
+        /// <summary>
+        /// Checks through the deck to see if it can find any cards that aren't upgraded yet. If it finds
+        /// one, it returns false (not all cards are upgraded). If it can't find one, it returns true.
+        /// </summary>
+        public bool allCardsUpgraded()
+        {
+            for (int i = 0; i < _deck.Count; i++)
+            {
+                if (!_deck[i].isEmpowered() && !_deck[i].isBloodstained())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+
+        /// <summary>
+        /// Sorts cards by rarity before shuffling within rarity. Used when viewing the draw
+        /// pile, since the player isn't supposed to know the order cards will be drawn.
+        /// </summary>
         public static List<Card> shuffleAndSortByRarity(List<Card> cards)
         {
             List<Card> defaultCards = new List<Card>();
@@ -427,6 +537,28 @@ namespace DeityOnceLost.DeckBuilder
             allCards.AddRange(otherCards);
 
             return allCards;
+        }
+
+
+
+        /// <summary>
+        /// Used when a champion dies; pass that champion's deck, and this function will strip away
+        /// the default cards (unique to each Hero), and return a random number of their non-default
+        /// cards (as some cards are lost on soul transfer).
+        /// </summary>
+        public static List<Card> getSplinterDeck(List<Card> originalDeck)
+        {
+            List<Card> newCards = new List<Card>();
+
+            for (int i = 0; i < originalDeck.Count; i++)
+            {
+                if (originalDeck[i].getCardRarity() != CardEnums.CardRarity.DEFAULT && !Game1.randChance(Characters.HeroConstants.CHANCE_CARD_SPLINTERED_AWAY_ON_DEATH))
+                {
+                    newCards.Add(originalDeck[i]);
+                }
+            }
+
+            return newCards;
         }
     }
 }

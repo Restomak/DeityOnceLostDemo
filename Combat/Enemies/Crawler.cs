@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat.Enemies
 {
+    /// <summary>
+    /// Basic easy difficulty enemy used in the tutorial dungeon. A small green and
+    /// creepy many-legged monster that spits debilitating goop and has small but
+    /// sharp teeth.
+    /// </summary>
     class Crawler : Enemy
     {
         public const String NAME = "Crawler";
@@ -39,11 +44,11 @@ namespace DeityOnceLost.Combat.Enemies
         }
         public override void resetDexterity()
         {
-            _strength = DEFAULT_DEX;
+            _dexterity = DEFAULT_DEX;
         }
         public override void resetResilience()
         {
-            _strength = DEFAULT_RES;
+            _resilience = DEFAULT_RES;
         }
         public override void resetBuffs()
         {

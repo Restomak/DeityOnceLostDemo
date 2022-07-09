@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that increase the player's defense.
+    /// </summary>
     interface IDefendingCard
     {
-        int defense
+        int iDefense
         {
             get;
         }
 
-        void gainDefense();
+        void iGainDefense();
     }
 }

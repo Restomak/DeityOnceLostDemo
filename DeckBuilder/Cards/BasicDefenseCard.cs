@@ -6,38 +6,35 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
+    /// <summary>
+    /// Base class to make card design easier for cards that gain defense.
+    /// </summary>
     abstract class BasicDefenseCard : Card, IDefendingCard
     {
-        protected int _defense;
-
         public BasicDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense) : base(name, cardType, rarity, CardEnums.TargetingType.champion)
         {
-            _defense = defense;
+            iDefense = defense;
         }
 
-        public int defense
-        {
-            get => _defense;
-        }
+        public int iDefense { get; }
 
         public override void onPlay()
         {
-            gainDefense();
+            iGainDefense();
         }
 
-        public void gainDefense()
+        public void iGainDefense()
         {
-            Game1.getChamp().gainDefense(_defense);
+            Game1.getChamp().gainDefense(iDefense);
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
-            int defense = champ.getDefenseAffectedByBuffs(_defense);
+            List<UserInterface.ExtraInfo> extraInfo = new List<UserInterface.ExtraInfo>();
 
-            desc.Add("Gain " + defense + " defense.");
+            extraInfo.Add(getDefenseExtraInfo());
 
-            return desc;
+            return extraInfo;
         }
     }
 }

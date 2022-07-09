@@ -6,29 +6,32 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that apply a buff or debuff.
+    /// </summary>
     interface IDebuffCard
     {
-        Combat.Buff.buffType buffType
+        Combat.Buff.buffType iBuffType
         {
             get;
         }
-        int duration
+        int iBuffDuration
         {
             get;
         }
-        int amount
+        int iBuffAmount
         {
             get;
         }
-        bool hasDuration
+        bool iHasDuration
         {
             get;
         }
-        bool hasAmount
+        bool iHasAmount
         {
             get;
         }
 
-        void applyDebuff();
+        void iApplyDebuff();
     }
 }

@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Treasury.Treasures
 {
+    /// <summary>
+    /// Abstract base class for curses, the variant of relics that generally provide
+    /// negative effects to the champion and/or run.
+    /// 
+    /// NOTE: A rule that separates blessings from curses is that curses are not always
+    /// optional.They only appear in events, or as a result of combat somehow. While
+    /// taking a blessing can always be avoided, players will either feel the curse was
+    /// put upon them, or they took it as the lesser of evils.
+    /// </summary>
     public abstract class Curse : Relic
     {
         /* Possible curse ideas
          * 
-         * NOTE: A rule that separates blessings from curses is that curses are not always
-         * optional. They only appear in events, or as a result of combat somehow. While
-         * taking a blessing can always be avoided, players will either feel the curse was
-         * put upon them, or they took it as the lesser of evils.
          * 
          * Possible conditions:
          *    - At the start of combat / miniboss / boss
@@ -72,9 +79,14 @@ namespace DeityOnceLost.Treasury.Treasures
          *    - Can no longer upgrade (FIXIT figure out card upgrading system)
          */
 
-        public Curse(String name, List<String> description, bool persists) : base(name, description, persists, treasureType.curse)
+        public Curse(Texture2D texture, String name, List<String> description, bool persists) : base(texture, name, description, persists, treasureType.curse)
         {
 
+        }
+
+        public override Color getBorderColor()
+        {
+            return new Color(Drawing.DrawConstants.BRIGHT_PURPLE_RED, Drawing.DrawConstants.BRIGHT_PURPLE_GREEN, Drawing.DrawConstants.BRIGHT_PURPLE_BLUE);
         }
     }
 }

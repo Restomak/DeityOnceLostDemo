@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// Abstract base class for every Encounter in the game, including miniboss and boss
+    /// encounters. Stores each enemy as well as the Loot rewards from defeating them.
+    /// </summary>
     public abstract class Encounter
     {
         protected List<Enemy> _enemies;
@@ -69,5 +73,6 @@ namespace DeityOnceLost.Combat
         }
 
         public abstract void initialize();
+        public abstract double chanceForLesserSoulstone();
     }
 }

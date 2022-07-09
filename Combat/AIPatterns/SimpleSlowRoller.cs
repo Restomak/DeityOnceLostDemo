@@ -7,6 +7,14 @@ using DeityOnceLost.Characters;
 
 namespace DeityOnceLost.Combat.AIPatterns
 {
+    /// <summary>
+    /// SimpleSlowRoller is a type of AIPattern that will buff its strength every few
+    /// rounds (+ defend) and, in between those, will randomly choose between the
+    /// following actions:
+    ///    - basic attack
+    ///    - light attack + defend
+    ///    - (rarely, if enabled) heavy attack
+    /// </summary>
     class SimpleSlowRoller : AIPattern
     {
         public const int WEIGHT_BASIC_ATTACK = 6;
@@ -27,13 +35,6 @@ namespace DeityOnceLost.Combat.AIPatterns
             HEAVY_ATTACK
         }
 
-        /// <summary>
-        /// SimpleSlowRoller is a type of AIPattern that will buff its strength every few rounds (+ defend) and,
-        /// in between those, will randomly choose between the following actions:
-        /// • basic attack
-        /// • light attack + defend
-        /// • (rarely, if enabled) heavy attack
-        /// </summary>
         public SimpleSlowRoller(int strengthGain, int buffIntervalMin = DEFAULT_BUFF_INTERVAL_MIN, int buffIntervalMax = DEFAULT_BUFF_INTERVAL_MAX, bool canHeavyAttack = true) : base()
         {
             _strengthGain = strengthGain;

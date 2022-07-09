@@ -8,6 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// One of the most involved Clickables, one or more Targets are Created when the player
+    /// selects a card in combat. If a target is selected, it will run through all of the
+    /// logic involved in playing the selected card.
+    /// </summary>
     public class Target : Clickable
     {
         Clickable _clickableUnit;
@@ -103,9 +108,6 @@ namespace DeityOnceLost.UserInterface.Clickables
                 Game1.getChamp().takeDamage(card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD), false);
                 //FIXIT karma and soul costs for cards when implemented
 
-                //Play the card
-                card.onPlay();
-
                 //Discard the card or send to removed if the card dissipates
                 if (!card.getDissipates())
                 {
@@ -125,25 +127,53 @@ namespace DeityOnceLost.UserInterface.Clickables
                     }
 
                     //Relics on champion attack, including party member buffs
-                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
-                    {
-                        Game1.getDungeonHandler().getRelics()[i].onChampionAttack();
-                    }
                     for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
                     {
                         Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionAttack();
+                    }
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onChampionAttack();
                     }
                 }
                 else if (card.getCardType() == DeckBuilder.CardEnums.CardType.SKILL || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
                 {
                     //Relics on champion skill, including party member buffs
+                    for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
+                    {
+                        Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionSkill();
+                    }
                     for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
                     {
-                        Game1.getDungeonHandler().getRelics()[i].onChampionUsedSkill();
+                        Game1.getDungeonHandler().getRelics()[i].onChampionSkill();
                     }
+                }
+
+                //Play the card after it's discarded/dissipates just in case it draws to max hand size
+                card.onPlay();
+
+                if (card.getCardType() == DeckBuilder.CardEnums.CardType.ATTACK || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
+                {
+                    //Relics on champion attack after use, including party member buffs
+                    for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
+                    {
+                        Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionAttacked();
+                    }
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onChampionAttacked();
+                    }
+                }
+                else if (card.getCardType() == DeckBuilder.CardEnums.CardType.SKILL || card.getCardType() == DeckBuilder.CardEnums.CardType.HYBRID)
+                {
+                    //Relics on champion skill after use, including party member buffs
                     for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
                     {
                         Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onChampionUsedSkill();
+                    }
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onChampionUsedSkill();
                     }
                 }
 

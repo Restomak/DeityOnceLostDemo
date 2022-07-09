@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains one or types of roomContents, although I have
+    /// yet to decide upon its use.
+    /// </summary>
     public class MultiContentRoom : Room
     {
         List<Events.Happening> _roomEvents;
@@ -92,6 +96,7 @@ namespace DeityOnceLost.Dungeon.Rooms
                 switch (_roomContents[0])
                 {
                     case roomContents.combat:
+                    case roomContents.miniboss:
                         _roomEncounters.RemoveAt(0);
                         break;
                     case roomContents.story:

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains a combat encounter.
+    /// </summary>
     class CombatRoom : Room
     {
         public CombatRoom(Combat.Encounter roomEncounter)

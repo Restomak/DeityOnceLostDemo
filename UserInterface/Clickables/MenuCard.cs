@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Used by CardMenus to display all of the cards in a collection on screen. Does
+    /// nothing when clicked, though the child classes of this override that.
+    /// </summary>
     public class MenuCard : Clickable
     {
         protected DeckBuilder.Card _card;
@@ -13,6 +17,8 @@ namespace DeityOnceLost.UserInterface.Clickables
         public MenuCard(DeckBuilder.Card card)
         {
             _card = card;
+
+            _extraInfo = _card.getHoverInfo();
         }
 
         public DeckBuilder.Card getCard()
@@ -45,6 +51,16 @@ namespace DeityOnceLost.UserInterface.Clickables
         public override void onClick()
         {
             onHoverEnd();
+        }
+
+        /// <summary>
+        /// Handles what happens in logic when the user clicks on the card. Opens up the
+        /// CardInspectionMenu for the card
+        /// </summary>
+        public override void onRightClick()
+        {
+            onHoverEnd();
+            Game1.addToMenus(new Menus.CardInspectionMenu(_card));
         }
     }
 }

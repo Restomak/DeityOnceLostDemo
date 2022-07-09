@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Events
 {
+    /// <summary>
+    /// The class that contains all of the details of an event, containing both the
+    /// event writing as well as the choices the player can make when presented with
+    /// this event.
+    /// </summary>
     public class Happening
     {
         /* Possible event results

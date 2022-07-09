@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters
 {
+    /// <summary>
+    /// This class handles the storage of all of the possible Hero names in the game.
+    /// </summary>
     class Names
     {
         public const double CHANCE_OF_WHATEVER = 0.1;

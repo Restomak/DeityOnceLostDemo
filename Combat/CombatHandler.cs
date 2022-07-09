@@ -6,14 +6,29 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// The game's combat handler, which manages every step of combat. Turns are broken
+    /// down into tiny steps, each handling a single aspect of combat before moving on to
+    /// the next. Ends when all enemies are defeated, or all friendly units are downed.
+    /// </summary>
     public class CombatHandler
     {
         public enum combatTurn
         {
-            ROUND_START,
-            CHAMPION,
-            PARTY,
-            ENEMIES,
+            COMBAT_START,
+            RESETSTUFF_AND_INTENTS,
+            TURN_START,
+            DRAW_CARDS,
+            TURN_START_AFTER_DRAW_CARDS,
+            LOWER_BUFFS,
+            PLAY,
+            TURN_END_RESET_CARD_STUFF,
+            TURN_END_DEALS_DAMAGE,
+            TURN_END_BEFORE_DISCARD,
+            TURN_END_DISCARD,
+            TURN_END,
+            RESET_ENEMY_DEFENSE,
+            ENEMY_TURN,
             KARMA,
             VOID,
             ROUND_END
@@ -25,14 +40,17 @@ namespace DeityOnceLost.Combat
         Encounter _currentEncounter;
         combatTurn _turn;
         Dungeon.Room _currentRoom;
-        bool lootHandled;
+        bool _lootHandled;
         Enemy _lastAttackedEnemy;
+        List<DeckBuilder.Card> _freeForTheTurn;
+        bool _firstDraw;
+        int _relicIterator, _enemyIterator;
 
         public CombatHandler()
         {
             _combatUI = new UserInterface.CombatUI(this);
 
-            _turn = combatTurn.ROUND_START;
+            _turn = combatTurn.COMBAT_START;
             _champ = Game1.getChamp();
 
             _partyMembers = new List<PartyMember>();
@@ -44,6 +62,8 @@ namespace DeityOnceLost.Combat
                     _partyMembers.Add(new PartyMember(heroes[i]));
                 }
             }
+
+            _freeForTheTurn = new List<DeckBuilder.Card>();
         }
 
         //Setters
@@ -73,6 +93,10 @@ namespace DeityOnceLost.Combat
         public void setCurrentRoom(Dungeon.Room currentRoom)
         {
             _currentRoom = currentRoom;
+        }
+        public void makeCardFreeForTurn(DeckBuilder.Card freeCard)
+        {
+            _freeForTheTurn.Add(freeCard);
         }
 
         //Getters
@@ -119,6 +143,10 @@ namespace DeityOnceLost.Combat
 
             return targets[Game1.randint(0, targets.Count - 1)];
         }
+        public List<DeckBuilder.Card> getCardsFreeForTheTurn()
+        {
+            return _freeForTheTurn;
+        }
 
         //Setters
         public void setLastAttackedEnemy(Enemy target)
@@ -129,7 +157,7 @@ namespace DeityOnceLost.Combat
 
 
         /// <summary>
-        /// Make sure setNewEncounter is called first so that the encounter's enemies are properly set up
+        /// Make sure setNewEncounter is called first so that the encounter's enemies are properly set up.
         /// </summary>
         public void combatStart(List<UserInterface.UserInterface> activeUI)
         {
@@ -137,8 +165,9 @@ namespace DeityOnceLost.Combat
 
             _combatUI.setAsActiveUI(activeUI);
             _lastAttackedEnemy = null;
+            _freeForTheTurn.Clear();
 
-            _turn = combatTurn.ROUND_START;
+            _turn = combatTurn.COMBAT_START;
 
             _champ = Game1.getChamp();
             _champ.resetDivinity();
@@ -155,18 +184,38 @@ namespace DeityOnceLost.Combat
                 party.resetBuffs();
             }
 
-            lootHandled = false;
+            _lootHandled = false;
+            _firstDraw = false;
+            _relicIterator = -1;
+            _enemyIterator = -1;
+        }
 
-            
-            //Relics that affect the start of combat, including party member buffs
-            for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+        public void combatResetTurn_ChampDied(List<UserInterface.UserInterface> activeUI)
+        {
+            _combatUI.setAsActiveUI(activeUI);
+            _lastAttackedEnemy = null;
+            _freeForTheTurn.Clear();
+
+            _turn = combatTurn.RESETSTUFF_AND_INTENTS;
+
+            _champ = Game1.getChamp();
+            _champ.resetDivinity();
+            _champ.resetDefense();
+            _champ.resetBuffs();
+            _champ.getDeck().start();
+
+            foreach (PartyMember party in _partyMembers)
             {
-                Game1.getDungeonHandler().getRelics()[i].onCombatStart();
+                party.resetDefense();
+                party.resetStrength();
+                party.resetDexterity();
+                party.resetResilience();
+                party.resetBuffs();
             }
-            for (int i = 0; i < _partyMembers.Count; i++)
-            {
-                _partyMembers[i].getPartyMemberBuff().onCombatStart();
-            }
+
+            _lootHandled = false;
+            _relicIterator = -1;
+            _enemyIterator = -1;
         }
 
         /// <summary>
@@ -177,67 +226,124 @@ namespace DeityOnceLost.Combat
             //Check if the combat needs to end
             if (_champ.getDowned())
             {
-                //FIXIT include party member swapping mechanics when they're implemented instead of immediately ending combat here
-                endCombat(false);
+                if (_partyMembers != null && _partyMembers.Count > 0)
+                {
+                    Treasury.Loot currentEncounterLoot = _currentEncounter.getLoot();
+                    currentEncounterLoot.addTreasure(new Treasury.Equipment.Items.Corpse(Game1.getChamp().getName(), Game1.getChamp().getHero()));
+                    _currentEncounter.setLoot(currentEncounterLoot);
+
+                    //FIXIT make the new champion a choice and not random
+                    int partyIndex = Game1.randint(0, _partyMembers.Count - 1);
+                    Game1.setupNewChampion(_partyMembers[partyIndex].getHero(), true);
+                    return;
+                }
+                else
+                {
+                    Game1.endDemo(); //Game over
+                    return;
+                }
             }
             else if (_currentEncounter.areAllEnemiesDefeated())
             {
                 endCombat();
+                return;
             }
             
             //Perform turn logic
             switch (_turn)
             {
-                case combatTurn.ROUND_START:
-                    _champ.getDeck().drawNumCards(_champ.getCardDraw(true)); //Draw new cards at turn start, and set the champion's card draw back to normal
-                    nextTurn();
-                    break;
-                case combatTurn.CHAMPION:
-                    //Nothing much needs to be called here, since it's all handled by the UI. Even the End Turn button that switches to the next turn is handled by the UI
-                    break;
-                case combatTurn.PARTY:
-                    nextTurn(); //FIXIT when party members are added, do their logic. remember to ADD PARTY CONTROL BUTTONS/COMMANDS for the player
-                    break;
-                case combatTurn.ENEMIES:
-                    handleEnemyTurn();
-                    nextTurn(); //FIXIT this will disappear when things get done one by one visually (animations, etc)
-                    break;
-                case combatTurn.KARMA:
-                    nextTurn(); //don't have anything for karma turns yet, so skip
-                    break;
-                case combatTurn.VOID:
-                    nextTurn(); //don't have anything for void turns yet, so skip
-                    break;
-                case combatTurn.ROUND_END:
-                    //Stuff that happens at the end of a round goes here
-                    nextTurn();
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Handles what happens when handleCombat wants to begin the next turn. Only things that happen in an instant should be
-        /// handled here; anything with an animation or something that needs to happen gradually should be handled in handleCombat
-        /// or any other function it will call more than once per turn transition.
-        /// </summary>
-        public void nextTurn()
-        {
-            switch (_turn)
-            {
-                case combatTurn.ROUND_START:
-                    _turn = combatTurn.CHAMPION;
-
-                    //Relics that affect the start of your turn, including party member buffs
-                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                case combatTurn.COMBAT_START:
+                    //Relics & party buffs that affect the start of combat before any cards are drawn
+                    _relicIterator++;
+                    if (_relicIterator < _partyMembers.Count)
                     {
-                        Game1.getDungeonHandler().getRelics()[i].onTurnStart();
+                        _partyMembers[_relicIterator].getPartyMemberBuff().onCombatStart();
                     }
-                    for (int i = 0; i < _partyMembers.Count; i++)
+                    else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
                     {
-                        _partyMembers[i].getPartyMemberBuff().onTurnStart();
+                        Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onCombatStart();
                     }
-
-
+                    else
+                    {
+                        _relicIterator = -1;
+                        Game1.getDungeonHandler().clearRemovedRelics();
+                        nextTurn();
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.RESETSTUFF_AND_INTENTS:
+                    _champ.resetDivinity();
+                    _champ.resetDefense();
+                    _currentEncounter.determineIntents(_champ, _partyMembers);
+                    nextTurn();
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_START:
+                    //Relics & party buffs that affect the start of the turn before any cards are drawn
+                    _relicIterator++;
+                    if (_relicIterator < _partyMembers.Count)
+                    {
+                        _partyMembers[_relicIterator].getPartyMemberBuff().onTurnStart();
+                    }
+                    else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
+                    {
+                        Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onTurnStart();
+                    }
+                    else
+                    {
+                        _relicIterator = -1;
+                        Game1.getDungeonHandler().clearRemovedRelics();
+                        nextTurn();
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.DRAW_CARDS:
+                    _champ.getDeck().drawNumCards(_champ.getCardDraw(true)); //Draw new cards and set the champion's card draw back to normal
+                    nextTurn();
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_START_AFTER_DRAW_CARDS:
+                    if (!_firstDraw)
+                    {
+                        //Relics & party buffs that affect the start of the combat after the first time the champion draws cards
+                        _relicIterator++;
+                        if (_relicIterator < _partyMembers.Count)
+                        {
+                            _partyMembers[_relicIterator].getPartyMemberBuff().onCombatStartAfterFirstDraw();
+                        }
+                        else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
+                        {
+                            Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onCombatStartAfterFirstDraw();
+                        }
+                        else
+                        {
+                            _relicIterator = -1;
+                            Game1.getDungeonHandler().clearRemovedRelics();
+                            _firstDraw = true;
+                        }
+                    }
+                    else
+                    {
+                        //Relics & party buffs that affect the start of the turn after the champion draws cards
+                        _relicIterator++;
+                        if (_relicIterator < _partyMembers.Count)
+                        {
+                            _partyMembers[_relicIterator].getPartyMemberBuff().onTurnStartAfterDraw();
+                        }
+                        else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
+                        {
+                            Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onTurnStartAfterDraw();
+                        }
+                        else
+                        {
+                            _relicIterator = -1;
+                            Game1.getDungeonHandler().clearRemovedRelics();
+                            nextTurn();
+                        }
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.LOWER_BUFFS:
                     _champ.newTurnLowerBuffs();
                     for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
                     {
@@ -253,38 +359,161 @@ namespace DeityOnceLost.Combat
                             party.newTurnLowerBuffs();
                         }
                     }
-                    _champ.resetDivinity();
-                    _champ.resetDefense();
-                    _currentEncounter.determineIntents(_champ, _partyMembers);
+                    nextTurn();
                     updateCombatUI();
                     break;
-                case combatTurn.CHAMPION:
-                    _turn = combatTurn.PARTY;
-
-                    //Relics that affect the end of your turn, including party member buffs
-                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                case combatTurn.PLAY:
+                    //Nothing needs to be called here since it's all handled by the UI
+                    break;
+                case combatTurn.TURN_END_RESET_CARD_STUFF:
+                    //Reset cards to normal costs if any were made free for the turn
+                    for (int i = 0; i < _freeForTheTurn.Count; i++)
                     {
-                        Game1.getDungeonHandler().getRelics()[i].onTurnEnd();
+                        findAndResetCardCost(_freeForTheTurn[i]);
                     }
-                    for (int i = 0; i < _partyMembers.Count; i++)
+                    nextTurn();
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_END_DEALS_DAMAGE:
+                    _relicIterator++;
+                    if (_relicIterator < _partyMembers.Count)
                     {
-                        _partyMembers[i].getPartyMemberBuff().onTurnEnd();
+                        _partyMembers[_relicIterator].getPartyMemberBuff().onTurnEndDealsDamage();
                     }
-
-
-                    if (_partyMembers != null)
+                    else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
                     {
-                        foreach (Unit party in _partyMembers)
+                        Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onTurnEndDealsDamage();
+                    }
+                    else
+                    {
+                        _relicIterator = -1;
+                        Game1.getDungeonHandler().clearRemovedRelics();
+                        nextTurn();
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_END_BEFORE_DISCARD:
+                    _relicIterator++;
+                    if (_relicIterator < _partyMembers.Count)
+                    {
+                        _partyMembers[_relicIterator].getPartyMemberBuff().onTurnEndBeforeDiscard();
+                    }
+                    else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
+                    {
+                        Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onTurnEndBeforeDiscard();
+                    }
+                    else
+                    {
+                        _relicIterator = -1;
+                        Game1.getDungeonHandler().clearRemovedRelics();
+                        nextTurn();
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_END_DISCARD:
+                    //Discard cards that are in your hand
+                    Game1.getChamp().getDeck().turnEndDiscardAll();
+                    nextTurn();
+                    updateCombatUI();
+                    break;
+                case combatTurn.TURN_END:
+                    _relicIterator++;
+                    if (_relicIterator < _partyMembers.Count)
+                    {
+                        _partyMembers[_relicIterator].getPartyMemberBuff().onTurnEnd();
+                    }
+                    else if (_relicIterator < _partyMembers.Count + Game1.getDungeonHandler().getRelics().Count)
+                    {
+                        Game1.getDungeonHandler().getRelics()[_relicIterator - _partyMembers.Count].onTurnEnd();
+                    }
+                    else
+                    {
+                        _relicIterator = -1;
+                        Game1.getDungeonHandler().clearRemovedRelics();
+                        nextTurn();
+                    }
+                    updateCombatUI();
+                    break;
+                case combatTurn.RESET_ENEMY_DEFENSE:
+                    _currentEncounter.resetDefense();
+                    nextTurn();
+                    updateCombatUI();
+                    break;
+                case combatTurn.ENEMY_TURN:
+                    _enemyIterator++;
+                    if (_enemyIterator < _currentEncounter.getEnemies().Count)
+                    {
+                        if (!_currentEncounter.getEnemies()[_enemyIterator].getDowned())
                         {
-                            party.resetDefense();
+                            _currentEncounter.getEnemies()[_enemyIterator].getAIPattern().doTurnAction(_champ, _partyMembers);
                         }
                     }
+                    else
+                    {
+                        _enemyIterator = -1;
+                        nextTurn();
+                    }
                     break;
-                case combatTurn.PARTY:
-                    _turn = combatTurn.ENEMIES;
-                    _currentEncounter.resetDefense();
+                case combatTurn.KARMA:
+                    nextTurn(); //don't have anything for karma turns yet, so skip
                     break;
-                case combatTurn.ENEMIES:
+                case combatTurn.VOID:
+                    nextTurn(); //don't have anything for void turns yet, so skip
+                    break;
+                case combatTurn.ROUND_END:
+                    //Stuff that happens at the end of a round goes here
+                    nextTurn();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Transitions to the next step of combat (not necessarily he next turn).
+        /// </summary>
+        public void nextTurn()
+        {
+            switch (_turn)
+            {
+                case combatTurn.COMBAT_START:
+                    _turn = combatTurn.RESETSTUFF_AND_INTENTS;
+                    break;
+                case combatTurn.RESETSTUFF_AND_INTENTS:
+                    _turn = combatTurn.TURN_START;
+                    break;
+                case combatTurn.TURN_START:
+                    _turn = combatTurn.DRAW_CARDS;
+                    break;
+                case combatTurn.DRAW_CARDS:
+                    _turn = combatTurn.TURN_START_AFTER_DRAW_CARDS;
+                    break;
+                case combatTurn.TURN_START_AFTER_DRAW_CARDS:
+                    _turn = combatTurn.LOWER_BUFFS;
+                    break;
+                case combatTurn.LOWER_BUFFS:
+                    _turn = combatTurn.PLAY;
+                    break;
+                case combatTurn.PLAY:
+                    _turn = combatTurn.TURN_END_RESET_CARD_STUFF;
+                    break;
+                case combatTurn.TURN_END_RESET_CARD_STUFF:
+                    _turn = combatTurn.TURN_END_DEALS_DAMAGE;
+                    break;
+                case combatTurn.TURN_END_DEALS_DAMAGE:
+                    _turn = combatTurn.TURN_END_BEFORE_DISCARD;
+                    break;
+                case combatTurn.TURN_END_BEFORE_DISCARD:
+                    _turn = combatTurn.TURN_END_DISCARD;
+                    break;
+                case combatTurn.TURN_END_DISCARD:
+                    _turn = combatTurn.TURN_END;
+                    break;
+                case combatTurn.TURN_END:
+                    _turn = combatTurn.RESET_ENEMY_DEFENSE;
+                    break;
+                case combatTurn.RESET_ENEMY_DEFENSE:
+                    _turn = combatTurn.ENEMY_TURN;
+                    break;
+                case combatTurn.ENEMY_TURN:
                     _turn = combatTurn.KARMA;
                     break;
                 case combatTurn.KARMA:
@@ -294,33 +523,35 @@ namespace DeityOnceLost.Combat
                     _turn = combatTurn.ROUND_END;
                     break;
                 case combatTurn.ROUND_END:
-                    _turn = combatTurn.ROUND_START;
+                    _turn = combatTurn.RESETSTUFF_AND_INTENTS;
                     break;
             }
         }
 
         /// <summary>
-        /// Main game loop for handling the enemies' turn during combat. Checks _currentEncounter's enemies & performs logic based on their AI
+        /// Handles the end of combat when all enemies have been defeated. Sets up loot if
+        /// that hasn't been done yet, and tells the engine to return to the dungeon otherwise.
         /// </summary>
-        public void handleEnemyTurn()
-        {
-            //this implementation will change when animations are in: will need a currentEnemyIndex variable, etc
-            for (int i = 0; i < _currentEncounter.getEnemies().Count; i++)
-            {
-                if (!_currentEncounter.getEnemies()[i].getDowned())
-                {
-                    _currentEncounter.getEnemies()[i].getAIPattern().doTurnAction(_champ, _partyMembers);
-                }
-            }
-        }
-
         public void endCombat(bool enemiesDefeated = true)
         {
+            //Reset things so weird stuff doesn't happen out of combat
             _champ.resetBuffs();
-            if (enemiesDefeated)
+            _champ.resetDefense();
+
+            if (enemiesDefeated) //double-check to make sure
             {
-                if (!lootHandled)
+                if (!_lootHandled)
                 {
+                    //Relics on champion attack after use, including party member buffs
+                    for (int i = 0; i < Game1.getCombatHandler().getParty().Count; i++)
+                    {
+                        Game1.getCombatHandler().getParty()[i].getPartyMemberBuff().onCombatEnd();
+                    }
+                    for (int i = 0; i < Game1.getDungeonHandler().getRelics().Count; i++)
+                    {
+                        Game1.getDungeonHandler().getRelics()[i].onCombatEnd();
+                    }
+
                     Game1.debugLog.Add("Enemies defeated; generating loot.");
 
                     //Set stats in a way that they don't affect card numbers
@@ -328,7 +559,7 @@ namespace DeityOnceLost.Combat
                     _champ.tempSetDexterityTo0();
                     _champ.tempSetResilienceTo0();
                     Game1.addToMenus(new UserInterface.Menus.LootMenu(_currentEncounter.getLoot(), UserInterface.Menus.LootMenu.COMBAT_LOOT));
-                    lootHandled = true;
+                    _lootHandled = true;
                 }
                 else
                 {
@@ -336,17 +567,16 @@ namespace DeityOnceLost.Combat
                     {
                         Game1.getDungeonHandler().randomEncounterComplete();
                     }
+                    else if (Game1.getDungeonHandler().isRestEncounter())
+                    {
+                        Game1.getDungeonHandler().restEncounterComplete();
+                    }
                     else
                     {
                         _currentRoom.finishTopContent();
                     }
                     Game1.returnToDungeon();
                 }
-
-            }
-            else //the champion has died and no party members can replace them
-            {
-
             }
         }
 
@@ -358,6 +588,42 @@ namespace DeityOnceLost.Combat
         public void updateEnemyIntents()
         {
             _combatUI.updateEnemyIntents(this);
+        }
+
+
+
+        public void findAndResetCardCost(DeckBuilder.Card cardToReset)
+        {
+            //Check hand first
+            if (_champ.getDeck().getHand().Contains(cardToReset))
+            {
+                _champ.getDeck().getHand()[_champ.getDeck().getHand().IndexOf(cardToReset)].resetCosts();
+                return;
+            }
+            
+            //Check discard pile next; maybe the card was played
+            if (_champ.getDeck().getDiscardPile().Contains(cardToReset))
+            {
+                _champ.getDeck().getDiscardPile()[_champ.getDeck().getDiscardPile().IndexOf(cardToReset)].resetCosts();
+                return;
+            }
+
+            //Check draw pile next
+            if (_champ.getDeck().getDrawPile().Contains(cardToReset))
+            {
+                _champ.getDeck().getDrawPile()[_champ.getDeck().getDrawPile().IndexOf(cardToReset)].resetCosts();
+                return;
+            }
+
+            //Check removed cards last
+            if (_champ.getDeck().getRemovedCards().Contains(cardToReset))
+            {
+                _champ.getDeck().getRemovedCards()[_champ.getDeck().getRemovedCards().IndexOf(cardToReset)].resetCosts();
+                return;
+            }
+
+            //Can't find it; that's bad
+            Game1.addToErrorLog("Tried to reset card costs at end of turn but couldn't find card: " + cardToReset.getName());
         }
     }
 }

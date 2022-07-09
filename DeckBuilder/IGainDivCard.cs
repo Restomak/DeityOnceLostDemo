@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that have Divinity gain.
+    /// </summary>
     interface IGainDivCard
     {
-        int divGain
+        int iDivGain
         {
             get;
         }
 
-        void gainDivinity();
+        void iGainDivinity();
     }
 }

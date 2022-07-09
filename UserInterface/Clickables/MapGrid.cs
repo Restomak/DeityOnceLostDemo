@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Used to display a room in the dungeon on screen. Handled by the MapUI.
+    /// </summary>
     public class MapGrid : Clickable
     {
         Dungeon.Room _room;
@@ -69,6 +72,11 @@ namespace DeityOnceLost.UserInterface.Clickables
 
 
 
+        /// <summary>
+        /// Called when the player hovers over or clicks on the MapGrid. Determines
+        /// where the player would be moving from and checks if the space is both
+        /// adjacent and traversable. If not, returns false.
+        /// </summary>
         public bool playerCanTraverseToRoom()
         {
             Point playerLocation = Game1.getPlayerLocationOnMap();
@@ -123,7 +131,8 @@ namespace DeityOnceLost.UserInterface.Clickables
                     MapGrid room = new MapGrid(rooms[x][y], new Point(x, y));
 
                     room._x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - drawWidth / 2 + x * (Drawing.DrawConstants.MAP_GRIDSPACE_WIDTH + Drawing.DrawConstants.MAP_GRID_CONNECTOR_SPACING);
-                    room._y = Game1.VIRTUAL_WINDOW_HEIGHT / 2 - drawHeight / 2 + y * (Drawing.DrawConstants.MAP_GRIDSPACE_HEIGHT + Drawing.DrawConstants.MAP_GRID_CONNECTOR_SPACING);
+                    room._y = (Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT - Drawing.DrawConstants.TOPBAR_RELICS_SPACE_FROM_TOP - Drawing.DrawConstants.TOPBAR_RELICS_SIZE) / 2 -
+                        drawHeight / 2 + y * (Drawing.DrawConstants.MAP_GRIDSPACE_HEIGHT + Drawing.DrawConstants.MAP_GRID_CONNECTOR_SPACING);
                     room._width = Drawing.DrawConstants.MAP_GRIDSPACE_WIDTH;
                     room._height = Drawing.DrawConstants.MAP_GRIDSPACE_HEIGHT;
 

@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters.PartyBuffs
 {
+    /// <summary>
+    /// At the end of your turn, will attack the last enemy you attacked
+    /// for 6. Without a target, will attack a random enemy.
+    /// </summary>
     public class Fighter : Treasury.Treasures.PartyBuff
     {
         public const int FIGHTER_DAMAGE = 6;
 
         public Combat.Enemy _target;
 
-        public Fighter() : base("Fighter", new List<String>()
+        public Fighter() : base(Game1.pic_functionality_bar, "Fighter", new List<String>()
             { "This hero is a fighter, and they make",
               "themselves useful by attacking. At the",
               "end of your turn, will attack the last",
@@ -21,6 +25,11 @@ namespace DeityOnceLost.Characters.PartyBuffs
             })
         {
 
+        }
+
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
+        {
+            return null;
         }
 
         public override void onCombatStart()
@@ -33,7 +42,7 @@ namespace DeityOnceLost.Characters.PartyBuffs
             _target = Game1.getCombatHandler().getLastAttackedEnemy();
         }
 
-        public override void onTurnEnd()
+        public override void onTurnEndDealsDamage()
         {
             if (_target != null && _target.getDowned())
             {
@@ -47,13 +56,13 @@ namespace DeityOnceLost.Characters.PartyBuffs
 
             if (_target != null)
             {
-                _target.takeDamage(_target.getDamageAffectedByBuffs(FIGHTER_DAMAGE));
+                _target.takeDamage(Combat.PartyMember.getDamageAffectedByBuffs(FIGHTER_DAMAGE, _target));
             }
         }
 
         public override void onCardProc()
         {
-            onTurnEnd();
+            onTurnEndDealsDamage();
         }
     }
 }

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Treasury.Treasures
 {
+    /// <summary>
+    /// A type of Treasure that, when taken, creates a NewCardChoiceMenu for the
+    /// player to select a card they wish to add to their deck.
+    /// </summary>
     public class AddCardToDeck : Treasure
     {
         public const int EMERGENCY_SHUFFLE_LOOP_BREAK_COUNT = 500; //never have while loops without an emergency exit
@@ -36,14 +40,49 @@ namespace DeityOnceLost.Treasury.Treasures
 
 
 
-        public static List<DeckBuilder.Card> getRandomCards(int numCards, bool forceAllCardsCommon = false, bool cardsMustBeUnique = true)
+        /// <summary>
+        /// Generates a random set of cards for use in the NewCardChoiceMenu. This function
+        /// can be used to force these cards to be all common, or force them above a specific
+        /// rarity (such as when a defeated miniboss provides a set of cards all rare quality
+        /// or above). This function makes use of the weights defined in LootConstants.
+        /// </summary>
+        public static List<DeckBuilder.Card> getRandomCards(int numCards, bool forceAllCardsCommon = false, bool cardsMustBeUnique = true,
+            DeckBuilder.CardEnums.CardRarity minimumRarity = DeckBuilder.CardEnums.CardRarity.COMMON)
         {
             List<DeckBuilder.Card> randomCards = new List<DeckBuilder.Card>();
             int emergencyExitCounter = 0;
             int randomIndex;
 
-            if (!forceAllCardsCommon && Game1.randChance(LootConstants.ADDCARD_CHANCE_NOT_ALL_COMMON))
+            if (!forceAllCardsCommon && (minimumRarity != DeckBuilder.CardEnums.CardRarity.COMMON || Game1.randChance(LootConstants.ADDCARD_CHANCE_NOT_ALL_COMMON)))
             {
+                bool commonAllowed = true;
+                bool rareAllowed = true;
+                bool epicAllowed = true;
+                bool godlyAllowed = true;
+
+                if (minimumRarity == DeckBuilder.CardEnums.CardRarity.RARE)
+                {
+                    commonAllowed = false;
+                }
+                else if (minimumRarity == DeckBuilder.CardEnums.CardRarity.EPIC)
+                {
+                    commonAllowed = false;
+                    rareAllowed = false;
+                }
+                else if (minimumRarity == DeckBuilder.CardEnums.CardRarity.GODLY)
+                {
+                    commonAllowed = false;
+                    rareAllowed = false;
+                    epicAllowed = false;
+                }
+                else if (minimumRarity == DeckBuilder.CardEnums.CardRarity.VOID)
+                {
+                    commonAllowed = false;
+                    rareAllowed = false;
+                    epicAllowed = false;
+                    godlyAllowed = false;
+                }
+
                 List<DeckBuilder.Card> allCommonCards = Game1.getCardCollection().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.COMMON);
                 List<DeckBuilder.Card> allRareCards = Game1.getCardCollection().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.RARE);
                 List<DeckBuilder.Card> allEpicCards = Game1.getCardCollection().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.EPIC);
@@ -58,27 +97,27 @@ namespace DeityOnceLost.Treasury.Treasures
                     randomRarity = Game1.randint(1, LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE +
                         LootConstants.ADDCARD_WEIGHT_EPIC + LootConstants.ADDCARD_WEIGHT_GODLY + LootConstants.ADDCARD_WEIGHT_VOID);
 
-                    if (randomRarity < LootConstants.ADDCARD_WEIGHT_COMMON)
+                    if (randomRarity <= LootConstants.ADDCARD_WEIGHT_COMMON && commonAllowed)
                     {
                         allCardsOfRarity = allCommonCards;
                     }
-                    else if (randomRarity < LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE)
+                    else if (randomRarity <= LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE && rareAllowed)
                     {
                         allCardsOfRarity = allRareCards;
                     }
-                    else if (randomRarity < LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC)
+                    else if (randomRarity <= LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC && epicAllowed)
                     {
-                        allCardsOfRarity = allRareCards;
+                        allCardsOfRarity = allEpicCards;
                     }
-                    else if (randomRarity < LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC +
-                        LootConstants.ADDCARD_WEIGHT_GODLY)
+                    else if (randomRarity <= LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC +
+                        LootConstants.ADDCARD_WEIGHT_GODLY && godlyAllowed)
                     {
-                        allCardsOfRarity = allRareCards;
+                        allCardsOfRarity = allGodlyCards;
                     }
-                    else if (randomRarity < LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC +
+                    else if (randomRarity <= LootConstants.ADDCARD_WEIGHT_COMMON + LootConstants.ADDCARD_WEIGHT_RARE + LootConstants.ADDCARD_WEIGHT_EPIC +
                         LootConstants.ADDCARD_WEIGHT_GODLY + LootConstants.ADDCARD_WEIGHT_VOID)
                     {
-                        allCardsOfRarity = allRareCards;
+                        allCardsOfRarity = allGodlyCards;//allVoidCards; //FIXIT fix when void cards added
                     }
                     else
                     {

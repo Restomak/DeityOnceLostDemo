@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Opponents are the Clickables used for displaying enemy units on screen. When initialized,
+    /// they will also set up the enemy's HP bar, buffs/debuffs, and intents.
+    /// </summary>
     public class Opponent : Clickable
     {
         Combat.Enemy _enemy;

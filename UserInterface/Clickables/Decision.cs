@@ -8,21 +8,28 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Used as buttons for event choices.
+    /// </summary>
     class Decision : Clickable
     {
-        Events.Choice _choice;
-        int _choiceNum;
+        protected Events.Choice _choice;
+        protected int _choiceNum;
 
         public Decision(int choiceNum, Events.Choice choice)
         {
             _x = Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.EVENT_CHOICE_WIDTH / 2;
-            _y = Game1.VIRTUAL_WINDOW_HEIGHT / 2 - Drawing.DrawConstants.EVENT_BACKGROUND_HEIGHT / 2 + Drawing.DrawConstants.EVENT_CHOICE_INTIAL_BUFFER +
+            _y = (Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT) / 2 - Drawing.DrawConstants.EVENT_BACKGROUND_HEIGHT / 2 + Drawing.DrawConstants.EVENT_CHOICE_INTIAL_BUFFER +
                 choiceNum * (Drawing.DrawConstants.EVENT_CHOICE_HEIGHT + Drawing.DrawConstants.EVENT_CHOICE_BUFFER);
             _width = Drawing.DrawConstants.EVENT_CHOICE_WIDTH;
             _height = Drawing.DrawConstants.EVENT_CHOICE_HEIGHT;
 
             _choiceNum = choiceNum;
             _choice = choice;
+
+            _extraInfo = _choice.getExtraInfo();
+
+            _extraInfoAtMouse = true;
         }
 
         public Events.Choice getChoice()
@@ -59,7 +66,6 @@ namespace DeityOnceLost.UserInterface.Clickables
         /// </summary>
         public override void onClick()
         {
-            _choice.onChoose();
             Game1.getEventHandler().choiceChosen(_choiceNum);
 
             onHoverEnd();

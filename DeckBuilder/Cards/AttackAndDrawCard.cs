@@ -6,52 +6,28 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class AttackAndDrawCard : BasicAttackCard, IDrawCard
+    /// <summary>
+    /// Base class to make card design easier for cards that both deal damage to an enemy
+    /// and draw more cards.
+    /// </summary>
+    abstract class AttackAndDrawCard : BasicAttackCard, IDrawCard
     {
-        protected int _drawAmount;
-
         public AttackAndDrawCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage, int drawAmount) : base(name, cardType, rarity, damage)
         {
-            _drawAmount = drawAmount;
+            iDrawAmount = drawAmount;
         }
 
-        public int amount
-        {
-            get => _drawAmount;
-        }
+        public int iDrawAmount { get; }
 
         public override void onPlay()
         {
-            dealDamage();
-            cardDraw();
+            iDealDamage();
+            iCardDraw();
         }
 
-        public void cardDraw()
+        public void iCardDraw()
         {
-            Game1.getChamp().getDeck().drawNumCards(_drawAmount);
-        }
-
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
-        {
-            List<String> desc = new List<string>();
-            Combat.Unit descTarget = null;
-            if (activeCard)
-            {
-                descTarget = Card.getTargetForDescription(_targetType);
-            }
-            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
-
-            String drawCardString = "Draw " + _drawAmount + " card";
-            if (_drawAmount > 1)
-            {
-                drawCardString += "s";
-            }
-            drawCardString += ".";
-
-            desc.Add("Deal " + damage + " damage.");
-            desc.Add(drawCardString);
-
-            return desc;
+            Game1.getChamp().getDeck().drawNumCards(iDrawAmount);
         }
     }
 }

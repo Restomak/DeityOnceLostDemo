@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Used by LootMenus to display individual treasures. Calls the passed treasure's
+    /// onTaken function when clicked.
+    /// </summary>
     public class LootableTreasure : Clickable
     {
         Treasury.Treasure _treasure;
@@ -13,6 +17,8 @@ namespace DeityOnceLost.UserInterface.Clickables
         public LootableTreasure(Treasury.Treasure treasure)
         {
             _treasure = treasure;
+
+            _extraInfoAtMouse = true;
         }
 
         public Treasury.Treasure getTreasure()

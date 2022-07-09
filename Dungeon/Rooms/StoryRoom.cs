@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains an event. Although it is functionally the
+    /// same as an EventRoom, it sets the roomContents slightly differently in case
+    /// I eventually want a different icon to differentiate the types of events.
+    /// </summary>
     public class StoryRoom : Room
     {
         Events.Happening _roomEvent;

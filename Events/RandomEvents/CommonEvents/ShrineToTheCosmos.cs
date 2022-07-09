@@ -6,26 +6,30 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Events.RandomEvents.CommonEvents
 {
+    /// <summary>
+    /// A common RandomEvent with three choices:
+    ///    - Add to it: Remove a card from your deck
+    ///    - Contemplate: Heal 20% of max HP
+    ///    - Smash: (does nothing)
+    /// </summary>
     class ShrineToTheCosmos : CommonRandomEvent
     {
-        /* Shrine to the Cosmos
-         * 
-         * Choices:
-         *    - Add to it: Remove a card from your deck
-         *    - Ccontemplate: Heal 20% of max HP
-         *    - Smash: --
-         */
         public ShrineToTheCosmos() : base (new List<String>()
-        { "An old stone shrine sits on a pedestal before you, with artwork depicting the cosmos.",
-          "The craftsmanship is masterful, but doesn't include anything about yourself. You feel",
-          "a desire to acknowledge this in some way.",
+        { "An |[c: Dark Gray][s: Darker Gray][f: 12 bb]old stone shrine| sits on a pedestal before you, directly in the center of the room. The torchlight here is |[c: Monogame Orange][f: 12 bb]dimmed|, as if in reverence. Curious,",
+          "you approach.",
           "",
-          "<DEV NOTE: event text is first draft (FIXIT)>"
+          "As you reach the shrine, you notice that the craftsmanship involved is |[f: 12 bb]masterful|. It appears to be a beautiful portrayal of the cosmos. Among",
+          "the stars and celestial bodies, there are numerous symbolic likenesses of |[s: Dark Red][f: 12 bb]various deities|. Looking at them triggers a |[s: Darker Purple][f: 12 bb]stirring| within you, some",
+          "distant memory reacting to what lays before your eyes.",
+          "",
+          "Searching carefully, you are somehow certain that there is nothing in this carving that portrays |[f: 12 bb]you|.",
+          "",
+          "You are overcome with a desire to |[s: Darker Purple][c: Powder Blue][f: 12 bb]acknowledge| this in some way."
         })
         {
             _choices = new List<Choice>();
             Choice choice1_add = new Choice("[f: 12 bb]Add a piece of yourself to the shrine |[f: 12 bb][c: Gold](Remove a card from your deck)");
-            Choice choice2_contemplate = new Choice("[f: 12 bb]Contemplate your existence |[f: 12 bb][c: Gold](Heal [HP: 20%] hitpoints)"); //FIXIT I want this to dynamically say the amount
+            Choice choice2_contemplate = new Choice("[f: 12 bb]Contemplate your existence |[f: 12 bb][c: Lawn Green](Heal [HP: 20%] hitpoints)");
             Choice choice3_smash = new Choice("[f: 12 bb]Smash apart the shrine");
             _choices.Add(choice3_smash);
             _choices.Add(choice2_contemplate);
@@ -37,41 +41,11 @@ namespace DeityOnceLost.Events.RandomEvents.CommonEvents
             choice1_add_loot.addTreasure(choice1_add_removeCard);
             choice1_add.setResult(choice1_add_loot);
 
-            //Choice 1 result
-            Happening choice1_result = new Happening(new List<String>()
-            {
-                "Feeling satisfied, you continue on.",
-                "",
-                "<DEV NOTE: choice 1 result text is first draft (FIXIT)>"
-            });
-            choice1_result.setChoices(new List<Choice>() { new Choice("[f: 12 bb]Continue.") });
-            choice1_add.setResult(choice1_result);
-
             //Choice 2: heal
             choice2_contemplate.setOnChoose(() =>
             {
-                Game1.getChamp().heal(Game1.getChamp().getMaxHP() / 5);
+                Game1.getChamp().heal((int)Math.Round(Game1.getChamp().getMaxHP() * 0.2));
             });
-
-            //Choice 2 result
-            Happening choice2_result = new Happening(new List<String>()
-            {
-                "Feeling refreshed, you continue on.",
-                "",
-                "<DEV NOTE: choice 2 result text is first draft (FIXIT)>"
-            });
-            choice2_result.setChoices(new List<Choice>() { new Choice("[f: 12 bb]Continue.") });
-            choice2_contemplate.setResult(choice2_result);
-
-            //Choice 3 result (smash)
-            Happening choice3_result = new Happening(new List<String>()
-            {
-                "Feeling vindicated, you continue on.",
-                "",
-                "<DEV NOTE: choice 3 result text is first draft (FIXIT)>"
-            });
-            choice3_result.setChoices(new List<Choice>() { new Choice("[f: 12 bb]Continue.") });
-            choice3_smash.setResult(choice3_result);
         }
     }
 }

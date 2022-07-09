@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Connectors
 {
+    /// <summary>
+    /// A variant of Connector that is window-style; the player can see (scout)
+    /// through it, but passage through it is impossible.
+    /// </summary>
     public class SeeNotTraverse : Connector
     {
         public SeeNotTraverse()

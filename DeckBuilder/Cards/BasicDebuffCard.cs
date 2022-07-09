@@ -6,54 +6,38 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class BasicDebuffCard : Card, IDebuffCard
+    /// <summary>
+    /// Base class to make card design easier for cards that apply a debuff to an enemy.
+    /// </summary>
+    abstract class BasicDebuffCard : Card, IDebuffCard
     {
-        protected Combat.Buff.buffType _buffType;
-        protected int _duration, _amount;
-        protected bool _hasDuration, _hasAmount;
-
         public BasicDebuffCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, Combat.Buff.buffType buffType,
             int duration, int amount, bool hasDuration, bool hasAmount) :
             base(name, cardType, rarity, CardEnums.TargetingType.enemies)
         {
-            _buffType = buffType;
-            _duration = duration;
-            _amount = amount;
-            _hasDuration = hasDuration;
-            _hasAmount = hasAmount;
+            iBuffType = buffType;
+            iBuffDuration = duration;
+            iBuffAmount = amount;
+            iHasDuration = hasDuration;
+            iHasAmount = hasAmount;
         }
 
-        public Combat.Buff.buffType buffType
-        {
-            get => _buffType;
-        }
-        public int duration
-        {
-            get => _duration;
-        }
-        public int amount
-        {
-            get => _amount;
-        }
-        public bool hasDuration
-        {
-            get => _hasDuration;
-        }
-        public bool hasAmount
-        {
-            get => _hasAmount;
-        }
+        public Combat.Buff.buffType iBuffType { get; }
+        public int iBuffDuration { get; }
+        public int iBuffAmount { get; }
+        public bool iHasDuration { get; }
+        public bool iHasAmount { get; }
 
         public override void onPlay()
         {
-            applyDebuff();
+            iApplyDebuff();
         }
 
-        public virtual void applyDebuff()
+        public virtual void iApplyDebuff()
         {
             if (_target != null)
             {
-                _target.gainBuff(new Combat.Buff(_buffType, _duration, _amount, _hasDuration, _hasAmount));
+                _target.gainBuff(new Combat.Buff(iBuffType, iBuffDuration, iBuffAmount, iHasDuration, iHasAmount));
             }
             else
             {
@@ -61,25 +45,13 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
+            List<UserInterface.ExtraInfo> extraInfo = new List<UserInterface.ExtraInfo>();
 
-            if (_hasDuration && !_hasAmount)
-            {
-                desc.Add("Apply " + _duration + " " + Combat.Buff.buffString(buffType) + ".");
-            }
-            else if(!_hasDuration && _hasAmount)
-            {
-                desc.Add("Apply " + _amount + " " + Combat.Buff.buffString(buffType) + ".");
-            }
-            else
-            {
-                desc.Add("Apply " + _amount + " " + Combat.Buff.buffString(buffType));
-                desc.Add("for " + _duration + " turns.");
-            }
+            extraInfo.Add(Combat.Buff.getExtraInfo(iBuffType));
 
-            return desc;
+            return extraInfo;
         }
     }
 }

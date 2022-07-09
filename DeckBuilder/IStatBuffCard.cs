@@ -6,18 +6,22 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that buff one of the three unit stats:
+    /// Strength, Dexterity, or Resilience.
+    /// </summary>
     interface IStatBuffCard
     {
-        int amount
+        int iStatBuffAmount
         {
             get;
         }
 
-        Combat.Unit.statType stat
+        Combat.Unit.statType iBuffStat
         {
             get;
         }
 
-        void applyBuff();
+        void iApplyBuff();
     }
 }

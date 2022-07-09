@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Treasury.Equipment
 {
+    /// <summary>
+    /// A specific type of Treasure that is only kept for the duration the player
+    /// remains on the floor on which the key was found. Works similarly to old
+    /// style dungeon crawler games; a key unlocks all doors of the associated
+    /// colour. There are four colours: red, blue, green, and yellow.
+    /// </summary>
     public class Key : Treasure
     {
         public const int MAX_NUM_KEYS = 4;

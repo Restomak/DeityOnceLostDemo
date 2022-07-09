@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// Abstract base class for the AI used by enemies.
+    /// </summary>
     public abstract class AIPattern
     {
         public enum intent
@@ -18,6 +21,7 @@ namespace DeityOnceLost.Combat
             AOE, //attacking the party members as well
             OMINOUS, //void or karma related bad shit
             REINFORCEMENTS,
+            HEAL,
             OTHER,
             HIDDEN
         }

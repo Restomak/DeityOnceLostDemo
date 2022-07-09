@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of TreasureRoom that contains a key in its Loot object, possibly
+    /// along with other Treasures.
+    /// </summary>
     class KeyRoom : TreasureRoom
     {
         protected Treasury.Equipment.Key _roomKey;

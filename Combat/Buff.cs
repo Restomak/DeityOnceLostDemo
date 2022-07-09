@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// Buffs are all handled in a single class, using the buffType enum to differentiate
+    /// between the types rather than multiple buff subclasses.
+    /// </summary>
     public class Buff
     {
         public const double FEEBLE_MODIFIER = 0.75; //reduced by 0.25
@@ -22,8 +26,8 @@ namespace DeityOnceLost.Combat
             feeble, //deal a percentage less damage
             sluggish, //gain a percentage less defense
             vulnerable, //take a percentage more damage
-            cardDraw, //increases/lowers card draw amount linearly
-            divGain //increases/lowers divination at the start of the turn linearly
+            cardDrawNextTurn, //increases/lowers card draw amount linearly
+            divGainNextTurn //increases/lowers divination at the start of the turn linearly
         }
 
         buffType _buffType;
@@ -98,6 +102,10 @@ namespace DeityOnceLost.Combat
 
 
 
+        /// <summary>
+        /// Adds a new buff to a list of buffs, making sure that if it's a duplicate buff that
+        /// it merges instead, adding to the duration or amount.
+        /// </summary>
         public static List<Buff> addBuff(List<Buff> buffs, Buff newBuff)
         {
             for (int i = 0; i < buffs.Count; i++)
@@ -146,9 +154,9 @@ namespace DeityOnceLost.Combat
                     return "Sluggish";
                 case buffType.vulnerable:
                     return "Vulnerable";
-                case buffType.cardDraw:
+                case buffType.cardDrawNextTurn:
                     return "Card Draw";
-                case buffType.divGain:
+                case buffType.divGainNextTurn:
                     return "Resilience";
                 default:
                     Game1.addToErrorLog("buffString not yet implemented for new buffType: " + type.ToString());
@@ -187,16 +195,15 @@ namespace DeityOnceLost.Combat
                     description.Add("by " + buff.getAmount() + ".");
                     break;
                 case buffType.resilience:
-                    description.Add("Takes " + buff.getAmount());
+                    description.Add("Anytime you take damage,");
                     if (buff.getAmount() > 0)
                     {
-                        description[0] += " less damage";
+                        description.Add("reduce it by " + buff.getAmount() + ".");
                     }
                     else
                     {
-                        description[0] += " more damage";
+                        description.Add("increase it by " + buff.getAmount() + ".");
                     }
-                    description.Add("on each attack taken.");
                     break;
                 case buffType.feeble:
                     description.Add("Deal 25% less damage.");
@@ -210,9 +217,9 @@ namespace DeityOnceLost.Combat
                     description.Add("Take 50% more damage.");
                     description.Add(lastsXMoreTurns(buff.getDuration()));
                     break;
-                /*case buffType.cardDraw:
+                /*case buffType.cardDrawNextTurn:
                     break;
-                case buffType.divGain:
+                case buffType.divGainNextTurn:
                     break;*/
                 default:
                     Game1.addToErrorLog("buffDescription not yet implemented for new buffType: " + buff.getType().ToString());
@@ -242,19 +249,19 @@ namespace DeityOnceLost.Combat
         {
             switch (type)
             {
-                /*case buffType.strength:
-                    return;
+                case buffType.strength:
+                    return Game1.pic_buff_strength;
                 case buffType.dexterity:
-                    return;
+                    return Game1.pic_buff_dexterity;
                 case buffType.resilience:
-                    return;
+                    return Game1.pic_buff_resilience;
                 case buffType.feeble:
-                    return;
+                    return Game1.pic_buff_feeble;
                 case buffType.sluggish:
-                    return;
+                    return Game1.pic_buff_sluggish;
                 case buffType.vulnerable:
-                    return;
-                case buffType.cardDraw:
+                    return Game1.pic_buff_vulnerable;
+                /*case buffType.cardDraw:
                     return;
                 case buffType.divGain:
                     return;*/
@@ -271,8 +278,8 @@ namespace DeityOnceLost.Combat
                 case buffType.strength:
                 case buffType.dexterity:
                 case buffType.resilience:
-                case buffType.cardDraw:
-                case buffType.divGain:
+                case buffType.cardDrawNextTurn:
+                case buffType.divGainNextTurn:
                     if (buff.getAmount() > 0)
                     {
                         return Color.LawnGreen;
@@ -289,6 +296,73 @@ namespace DeityOnceLost.Combat
                     Game1.addToErrorLog("buffOutlineColor not yet implemented for new buffType: " + buff.getType().ToString());
                     return Color.MonoGameOrange;
             }
+        }
+
+        public static UserInterface.ExtraInfo getExtraInfo(buffType type)
+        {
+            switch (type)
+            {
+                case buffType.strength:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Strength:",
+                      "Increases the amount",
+                      "of damage dealt."
+                    });
+                case buffType.dexterity:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Dexterity:",
+                      "Increases the amount",
+                      "of defense gained."
+                    });
+                case buffType.resilience:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Resilience:",
+                      "Decreases HP loss",
+                      "from damage."
+                    });
+                /*case buffType.cardDrawNextTurn:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Card Draw:",
+                      "Increases the amount of",
+                      "cards drawn next turn."
+                    });
+                case buffType.divGainNextTurn:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Divinity:",
+                      "Increases the amount of",
+                      "Divinity gained next turn."
+                    });*/
+                case buffType.feeble:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Feeble:",
+                      "Causes 25% less",
+                      "damage dealt."
+                    });
+                case buffType.sluggish:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Sluggish:",
+                      "Causes 25% less",
+                      "defense gained."
+                    });
+                case buffType.vulnerable:
+                    return new UserInterface.ExtraInfos.IconAndTextInfo(buffIcon(type), Drawing.DrawConstants.COMBAT_DEBUFF_WIDTH,
+                        Drawing.DrawConstants.COMBAT_DEBUFF_HEIGHT, new List<string>()
+                    { "Vulnerable:",
+                      "Causes 50% more",
+                      "damage taken."
+                    });
+                default:
+                    break;
+            }
+
+            return null;
         }
     }
 }

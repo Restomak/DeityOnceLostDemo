@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Base class for Clickables that don't have a use for being left-clicked, but
+    /// also display information when the player hovers their mouse over them.
+    /// </summary>
     public abstract class HoverInfo : Clickable
     {
         protected List<String> _description;

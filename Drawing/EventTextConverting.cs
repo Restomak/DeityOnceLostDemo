@@ -8,6 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Drawing
 {
+    /// <summary>
+    /// The purpose of this class is a text parser and stylizer. It breaks apart lines of text
+    /// sent to it and converts the stuff in square brackets into formatting (font, size, color,
+    /// shadow color, and even names, pronouns, and HP percentages).
+    /// </summary>
     class EventTextConverting
     {
         /*
@@ -33,8 +38,13 @@ namespace DeityOnceLost.Drawing
          * [c: Red] to red
          * etc.
          */
-
-        public static void drawLineOfText(SpriteBatch sprites, Point drawStartLoc, String text)
+        
+        /// <summary>
+        /// Takes a line of text and sends it off to the various functions that prepare style,
+        /// and the various pieces of the line are then drawn one at a time with the proper
+        /// formatting.
+        /// </summary>
+        public static void drawLineOfText(SpriteBatch sprites, Point drawStartLoc, String text, bool grayOutText = false)
         {
             text = insertNames(text);
             text = insertPronouns(text);
@@ -51,7 +61,12 @@ namespace DeityOnceLost.Drawing
             int lineX = drawStartLoc.X;
             for (int i = 0; i < piecesWithData.Count; i++)
             {
-                if (!piecesWithData[i]._shadow)
+                if (grayOutText)
+                {
+                    sprites.DrawString(piecesWithData[i]._font, piecesWithData[i]._text,
+                        new Vector2(lineX, DrawHandler.yFromBottom(drawStartLoc.Y, (int)piecesWithData[i]._font.MeasureString(piecesWithData[i]._text).Y)), Color.DarkGray);
+                }
+                else if (!piecesWithData[i]._shadow)
                 {
                     sprites.DrawString(piecesWithData[i]._font, piecesWithData[i]._text,
                         new Vector2(lineX, DrawHandler.yFromBottom(drawStartLoc.Y, (int)piecesWithData[i]._font.MeasureString(piecesWithData[i]._text).Y)), piecesWithData[i]._color);
@@ -77,6 +92,10 @@ namespace DeityOnceLost.Drawing
             }
         }
 
+        /// <summary>
+        /// Replaces all name indicators with the associated names (see StoryConstants
+        /// for a better description on the formatting required for this).
+        /// </summary>
         private static String insertNames(String text)
         {
             if (Game1.getChamp() != null)
@@ -98,6 +117,10 @@ namespace DeityOnceLost.Drawing
             return text;
         }
 
+        /// <summary>
+        /// Replaces all pronoun indicators with the associated pronouns (see StoryConstants
+        /// for a better description on the formatting required for this).
+        /// </summary>
         private static String insertPronouns(String text)
         {
             if (Game1.getChamp() != null)
@@ -175,6 +198,10 @@ namespace DeityOnceLost.Drawing
             return text;
         }
 
+        /// <summary>
+        /// Replaces all HP percentage indicators with the proper integer amount of HP (see
+        /// StoryConstants for a better description on the formatting required for this).
+        /// </summary>
         private static String insertChampionHitpoints(String text)
         {
             if (Game1.getChamp() != null)
@@ -202,11 +229,15 @@ namespace DeityOnceLost.Drawing
             return text;
         }
 
+        /// <summary>
+        /// Splits the line of text into pieces based on the separator character |, which
+        /// indicates a change in format for that piece.
+        /// </summary>
         private static List<String> trimToPieces(String text)
         {
             String[] pieces = text.Split('|');
 
-            List<String> returnPieces = new List<string>();
+            List<String> returnPieces = new List<String>();
             
             for (int i = 0; i < pieces.Length; i++)
             {
@@ -216,6 +247,15 @@ namespace DeityOnceLost.Drawing
             return returnPieces;
         }
 
+        /// <summary>
+        /// A struct that is basically an improved-upon version of a String containing
+        /// format data such as font (including boldness and size), text color, shadow
+        /// color, and whether or not the text even should draw a shadow color.
+        /// 
+        /// The StringWithData is created before formatting by passing a String, and
+        /// that string is sent off to the assignData function which converts the
+        /// formatting from text to actual data stored in the struct.
+        /// </summary>
         struct StringWithData
         {
             public StringWithData(String text)
@@ -261,7 +301,11 @@ namespace DeityOnceLost.Drawing
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Determines the appropriate font for the piece of text. See the top of this
+        /// class for more information.
+        /// </summary>
         public static SpriteFont getFontFromText(String piece)
         {
             SpriteFont font = Game1.roboto_medium_12;
@@ -284,12 +328,20 @@ namespace DeityOnceLost.Drawing
                         return Game1.roboto_black_12;
                     case 14:
                         return Game1.roboto_black_14;
+                    case 15:
+                        return Game1.roboto_black_15;
                     case 16:
                         return Game1.roboto_black_16;
+                    case 18:
+                        return Game1.roboto_black_18;
                     case 20:
                         return Game1.roboto_black_20;
+                    case 21:
+                        return Game1.roboto_black_21;
                     case 24:
                         return Game1.roboto_black_24;
+                    case 28:
+                        return Game1.roboto_black_28;
                     default:
                         Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
@@ -309,12 +361,20 @@ namespace DeityOnceLost.Drawing
                         return Game1.roboto_bold_12;
                     case 14:
                         return Game1.roboto_bold_14;
+                    case 15:
+                        return Game1.roboto_bold_15;
                     case 16:
                         return Game1.roboto_bold_16;
+                    case 18:
+                        return Game1.roboto_bold_18;
                     case 20:
                         return Game1.roboto_bold_20;
+                    case 21:
+                        return Game1.roboto_bold_21;
                     case 24:
                         return Game1.roboto_bold_24;
+                    case 28:
+                        return Game1.roboto_bold_28;
                     default:
                         Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
@@ -334,12 +394,20 @@ namespace DeityOnceLost.Drawing
                         return Game1.roboto_medium_12;
                     case 14:
                         return Game1.roboto_medium_14;
+                    case 15:
+                        return Game1.roboto_medium_15;
                     case 16:
                         return Game1.roboto_medium_16;
+                    case 18:
+                        return Game1.roboto_medium_18;
                     case 20:
+                        return Game1.roboto_medium_20;
+                    case 21:
                         return Game1.roboto_medium_20;
                     case 24:
                         return Game1.roboto_medium_24;
+                    case 28:
+                        return Game1.roboto_medium_20;
                     default:
                         Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
@@ -359,12 +427,20 @@ namespace DeityOnceLost.Drawing
                         return Game1.roboto_regular_12;
                     case 14:
                         return Game1.roboto_regular_14;
+                    case 15:
+                        return Game1.roboto_regular_15;
                     case 16:
                         return Game1.roboto_regular_16;
+                    case 18:
+                        return Game1.roboto_regular_18;
                     case 20:
+                        return Game1.roboto_regular_20;
+                    case 21:
                         return Game1.roboto_regular_20;
                     case 24:
                         return Game1.roboto_regular_24;
+                    case 28:
+                        return Game1.roboto_regular_20;
                     default:
                         Game1.addToErrorLog("Attempting to getFontFromText but the font size doesn't exist: " + fontSize);
                         break;
@@ -377,7 +453,11 @@ namespace DeityOnceLost.Drawing
 
             return font;
         }
-
+        
+        /// <summary>
+        /// Determines the appropriate text color for the piece of text. See the top of
+        /// this class for more information. Handles both text color and shadow color.
+        /// </summary>
         public static Color getColorFromText(String piece, bool isShadow = false)
         {
             //Defaults
@@ -460,6 +540,22 @@ namespace DeityOnceLost.Drawing
             else if (piece == "Darker Purple")
             {
                 return new Color(DrawConstants.DARK_PURPLE_RED, DrawConstants.DARK_PURPLE_GREEN, DrawConstants.DARK_PURPLE_BLUE);
+            }
+            else if (piece == "Green Yellow")
+            {
+                return Color.GreenYellow;
+            }
+            else if (piece == "Dark Olive Green")
+            {
+                return Color.DarkOliveGreen;
+            }
+            else if (piece == "Bright Purple")
+            {
+                return new Color(DrawConstants.BRIGHT_PURPLE_RED, DrawConstants.BRIGHT_PURPLE_GREEN, DrawConstants.BRIGHT_PURPLE_BLUE);
+            }
+            else if (piece == "Brown")
+            {
+                return Color.SandyBrown;
             }
 
             Game1.addToErrorLog("Attempting to get Color from getColorFromText but " + piece + " not implemented");

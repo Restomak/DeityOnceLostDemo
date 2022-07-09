@@ -8,11 +8,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Clickables that function like a button to be pressed. Generally used for the exit button
+    /// of menus, as well as the End Turn button in combat, and others. Each button is initialized
+    /// with an Action passed to the constructor, which will be called when the button is pressed.
+    /// </summary>
     public class Button : Clickable
     {
-        Action _buttonFunction;
+        protected Action _buttonFunction;
         Texture2D _texture; //buttons need to supply their texture since there's no other way to determine which button is which in the DrawHandler
         List<String> _description;
+        Color _color;
 
         public Button(Texture2D texture, Point xy, int width, int height, Action function, List<String> hoverDescription)
         {
@@ -23,6 +29,7 @@ namespace DeityOnceLost.UserInterface.Clickables
             _height = height;
             _buttonFunction = function;
             _description = hoverDescription;
+            _color = Color.White;
         }
 
         //Getter
@@ -34,6 +41,19 @@ namespace DeityOnceLost.UserInterface.Clickables
         {
             return _description;
         }
+        public Color getColor()
+        {
+            return _color;
+        }
+
+
+
+        public void setColor(Color color)
+        {
+            _color = color;
+        }
+
+
 
         /// <summary>
         /// Handles what happens in logic when the user hovers over the button. It will
@@ -69,6 +89,7 @@ namespace DeityOnceLost.UserInterface.Clickables
             }
 
             _buttonFunction();
+            onHoverEnd();
         }
     }
 }

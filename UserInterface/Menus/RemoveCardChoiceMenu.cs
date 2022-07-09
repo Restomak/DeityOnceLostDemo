@@ -8,13 +8,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Menus
 {
+    /// <summary>
+    /// Version of CardMenu that's used specifically for choosing a card to remove from the
+    /// player's deck. Usually pops up as a result of an event choice.
+    /// </summary>
     class RemoveCardChoiceMenu : CardMenu
     {
         Treasury.Treasures.RemoveCardFromDeck _removeCardFromDeck;
+        bool _skippable;
 
-        public RemoveCardChoiceMenu(Treasury.Treasures.RemoveCardFromDeck removeCardFromDeck) : base(Game1.getChamp().getDeck().getDeck(), "Remove a card from your deck:")
+        public RemoveCardChoiceMenu(Treasury.Treasures.RemoveCardFromDeck removeCardFromDeck, bool skippable = true) : base(Game1.getChamp().getDeck().getDeck(), "Remove a card from your deck:")
         {
             _removeCardFromDeck = removeCardFromDeck;
+            _skippable = skippable;
         }
 
         public override void updateUI()
@@ -22,6 +28,19 @@ namespace DeityOnceLost.UserInterface.Menus
             setupChoicesAsClickables();
         }
 
+        public override void onEscapePressed()
+        {
+            if (_skippable)
+            {
+                Game1.closeMenu(this);
+            }
+        }
+
+        /// <summary>
+        /// When a card is chosen, it will double-check to make sure the card is actually in
+        /// the player's deck. If so, it will be removed. The menu closes afterwards, having
+        /// accomplished its purpose.
+        /// </summary>
         public void chooseCard(Clickables.CardChoice chosenCard)
         {
             if (chosenCard != null)
@@ -58,7 +77,11 @@ namespace DeityOnceLost.UserInterface.Menus
                 {
                     chooseCard(null);
                 }, new List<String>());
-            _cardsAsClickables.addClickableToBack(skipButton); //order doesn't matter
+
+            if (_skippable)
+            {
+                _cardsAsClickables.addClickableToBack(skipButton); //order doesn't matter
+            }
         }
     }
 }

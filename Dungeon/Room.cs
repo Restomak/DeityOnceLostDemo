@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon
 {
+    /// <summary>
+    /// The base class for the various types of rooms in a dungeon. As many rooms
+    /// don't have contents, it's not made abstract; all rooms are this base type
+    /// by default.
+    /// </summary>
     public class Room
     {
         public enum roomContents
@@ -21,10 +26,10 @@ namespace DeityOnceLost.Dungeon
             exit
         }
 
-        public const int NO_BATTLE_CHANCE_ON_RETURN = 0;
-        public const int DEFAULT_RANDOM_BATTLE_CHANCE_ON_RETURN = 20;
+        public const double NO_BATTLE_CHANCE_ON_RETURN = 0;
+        public const double DEFAULT_RANDOM_BATTLE_CHANCE_ON_RETURN = 0.2;
 
-        protected int _randomBattleChanceOnReturn;
+        protected double _randomBattleChanceOnReturn;
         protected Room _northRoom, _eastRoom, _southRoom, _westRoom;
         protected Connector _northConnector, _eastConnector, _southConnector, _westConnector;
         protected List<roomContents> _roomContents;
@@ -67,8 +72,12 @@ namespace DeityOnceLost.Dungeon
         {
             _partialRevealed = true;
         }
-
-        public void setConnectedRoom(Connector.direction dir, Room connectedRoom, Connector connector)
+        
+        /// <summary>
+        /// Called by the connectRooms function to tie two rooms together. Must be called twice,
+        /// once for each room, otherwise they won't be properly connected.
+        /// </summary>
+        private void setConnectedRoom(Connector.direction dir, Room connectedRoom, Connector connector)
         {
             switch (dir)
             {
@@ -210,10 +219,16 @@ namespace DeityOnceLost.Dungeon
 
 
 
+        /// <summary>
+        /// Used to connect two adjacent rooms together.
+        /// </summary>
         public static void connectRooms(Room room, Connector.direction dir, Room connectedRoom)
         {
             connectRooms(room, dir, connectedRoom, new Connector());
         }
+        /// <summary>
+        /// Used to connect two adjacent rooms together with a specific connector.
+        /// </summary>
         public static void connectRooms(Room room, Connector.direction dir, Room connectedRoom, Connector connector)
         {
             if (room != null && connectedRoom != null && connector != null)
@@ -223,6 +238,9 @@ namespace DeityOnceLost.Dungeon
             }
         }
 
+        /// <summary>
+        /// Used to remove the connector between rooms. The result of this is a wall between them.
+        /// </summary>
         public static void removeConnector(Room room, Connector.direction dir, Room connectedRoom)
         {
             switch (dir)

@@ -34,7 +34,7 @@ namespace DeityOnceLost.Story
         public const String INTRO_LINE_4 = "consciousness so weak, it seems to make the time drag on, and on, and on...";
         public const String INTRO_LINE_5 = "";
         public const String INTRO_LINE_6 = "With effort, you remember a little. You need |[c: Powder Blue][f: 12 bb]followers|. Belief and worship are what power a deity. Without them, you see nothing, you feel nothing.";
-        public const String INTRO_LINE_7 = "Without them, you |[f: 12 bb][s: Black]are| nothing but a |[s: Darker Purple][c: Purple]shadow| of yourself.";
+        public const String INTRO_LINE_7 = "Without them, you |[f: 12 bb][s: Black]are| nothing but a |[s: Darker Purple][c: Bright Purple]shadow| of yourself.";
         public const String INTRO_LINE_8 = "";
         public const String INTRO_LINE_9 = "A voice sounds in your mind, faint and desperate. |[c: Lawn Green][f: 10 b]\"...please...\"";
         public const String INTRO_LINE_10 = "";
@@ -60,7 +60,7 @@ namespace DeityOnceLost.Story
         public const String INTRO_RESULT_LINE_13 = "";
         public const String INTRO_RESULT_LINE_14 = "[They: c] shall be your |[c: Gold][f: 12 bb]champion|.";
 
-        public const String INTRO_ROOM2_LINE_1 = "As you reach the cell door with your new champion, you can feel [their: c] confidence |[c: Powder Blue][f: 12 bb]growing|. You can tell that [they're: c] a fighter among [their: c] people, and";
+        public const String INTRO_ROOM2_LINE_1 = "As you reach the cell door with your new champion, you can feel [their: c] confidence |[c: Lawn Green][f: 12 bb]growing|. You can tell that [they're: c] a fighter among [their: c] people, and";
         public const String INTRO_ROOM2_LINE_2 = "under your control [they're: c] a |[f: 12 bb]force to be reckoned with|.";
         public const String INTRO_ROOM2_LINE_3 = "";
         public const String INTRO_ROOM2_LINE_4 = "A |[c: Dark Red][s: Darker Red][f: 12 bb]dungeon guard| leans against the wall by the cell door, scowling at your champion and [their: c] people. You can sense that the guard is itching for a";
@@ -79,7 +79,7 @@ namespace DeityOnceLost.Story
         public const String INTRO_ROOM3_LINE_2 = "pleasure they feel over it, but to you, that fight felt sloppy. It was an |[c: Red][f: 12 bb]unrefined melee| between mortals, and you know that |[f: 12 bb]you| can do |[f: 12 bb]better|.";
         public const String INTRO_ROOM3_LINE_3 = "You could infuse |[f: 12 bb]more| of yourself into your champion, if only you could remember your own powers a little better...";
         public const String INTRO_ROOM3_LINE_4 = "";
-        public const String INTRO_ROOM3_LINE_5 = "You focus inward, looking through the vastness of your very being. Long has it been since you've known anything other than the |[s: Darker Purple][c: Purple]void|.";
+        public const String INTRO_ROOM3_LINE_5 = "You focus inward, looking through the vastness of your very being. Long has it been since you've known anything other than the |[s: Darker Purple][c: Bright Purple]void|.";
         public const String INTRO_ROOM3_LINE_6 = "";
         public const String INTRO_ROOM3_LINE_7 = "Something catches your attention. A hint of |[s: Purple][c: Powder Blue][f: 12 bb]something greater|- a fragment of a memory long lost- gains some tenuous hold in your mind.";
         public const String INTRO_ROOM3_LINE_8 = "";
@@ -106,11 +106,11 @@ namespace DeityOnceLost.Story
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C1_4 = "Feeling |[c: Powder Blue][f: 12 bb]invigorated|, you continue on.";
 
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_1 = "Face filled with awe, she stays for a moment before moving back to the group, speaking in a hushed yet excited voice. Many of them look at you with awe, but some";
-        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_2 = "display a new expression on their faces: one of |[c: Powder Blue][f: 12 bb]faith|.";
+        public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_2 = "display a new expression on their faces: a |[c: Powder Blue][f: 12 bb]belief| in your existence.";
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_3 = "";
         public const String INTRO_F2_RANDOM_ROOM_RESULT_C2_4 = "Feeling |[c: Powder Blue][f: 12 bb]invigorated|, you continue on.";
 
-        public const String INTRO_F2_PARTY_ROOM_LINE_1 = "Figures huddle together in the shadows, |[c: Purple][f: 12 bb]cowering| as you enter the room. Frail and half-starved, they wear the tattered rags of prisoners, much like";
+        public const String INTRO_F2_PARTY_ROOM_LINE_1 = "Figures huddle together in the shadows, |[c: Bright Purple][f: 12 bb]cowering| as you enter the room. Frail and half-starved, they wear the tattered rags of prisoners, much like";
         public const String INTRO_F2_PARTY_ROOM_LINE_2 = "those your of your new followers. They appear to have escaped on their own, somehow. Perhaps there are some among them with the ability to";
         public const String INTRO_F2_PARTY_ROOM_LINE_3 = "defend themselves|.";
         public const String INTRO_F2_PARTY_ROOM_LINE_4 = "";
@@ -125,5 +125,34 @@ namespace DeityOnceLost.Story
         public const String INTRO_F2_PARTY_ROOM_LINE_13 = "";
         public const String INTRO_F2_PARTY_ROOM_LINE_14 = "They want to join you. They want to help. They could be |[s: Purple][c: Powder Blue][f: 12 bb]useful|.";
         public const String INTRO_F2_PARTY_ROOM_CHOICE = "[f: 12 bb]Accept their offer |[c: Lawn Green][f: 12 bb](Gain party members)";
+
+        public const String INTRO_F3_CORPSE_ROOM_LINE_1 = "The smell of |[c: Red][f: 12 bb]blood| assaults your senses as you step into the room, and among the wreckage of destroyed furniture you spot a |[c: Dark Red][f: 12 bb]body|.";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_2 = "";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_3 = "Recently-deceased, the corpse is covered in |[c: Red][f: 12 bb]bite marks| and the same weird |[c: Dark Olive Green][f: 12 bb]goop| spat by crawlers. The bite marks, however, are much |[f: 12 bb]larger|";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_4 = "than what a crawler can make.";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_5 = "";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_6 = "There is likely something |[c: Darker Red][s: Red][f: 12 bb]dangerous| up ahead. It might be wise to |[c: Powder Blue][f: 12 bb]rest| using the |[c: Green Yellow][f: 12 bb]Firewood| you just found.";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_7 = "";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_8 = "Taking one last look at the body, you get the sudden |[s: Purple][c: Powder Blue][f: 12 bb]impulse| to carry it with you. If you were to carry them the entire way out of this dungeon";
+        public const String INTRO_F3_CORPSE_ROOM_LINE_9 = "and to safety, you could resurrect them. You get the feeling that whoever this was, they would |[s: Purple][c: Powder Blue][f: 12 bb]follow| you if you did.";
+        public const String INTRO_F3_CORPSE_ROOM_CHOICE_1 = "[f: 12 bb]Carry them out with you.";
+        public const String INTRO_F3_CORPSE_ROOM_CHOICE_2 = "[f: 12 bb]Leave them behind.";
+
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_1 = "Your footsteps echo faintly on the stone flooring of the empty hallway as you stride purposely towards the stairwell that leads to the next level of the";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_2 = "dungeon. Your champion swells with a sense of |[c: Lawn Green][f: 12 bb]accomplishment|, a confidence that [their: c] goal is attainable. Pausing for a moment to allow the rest of";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_3 = "your followers to catch up, you watch as they scramble nervously past the massive carcass- all that remains of the battle from moments ago.";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_4 = "";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_5 = "Most eye the felled creature as they pass, as if in disbelief that such a |[c: Red][f: 12 bb]terror| lies slain. You have an unshakable feeling that there will be worse";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_6 = "dangers to come, however your champion grins at them proudly, and you sense a new emotion budding within the group: |[s: Dark Goldenrod][c: Powder Blue][f: 14 bb]faith|. They see what";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_7 = "you've accomplished, and they now believe that you will give them the freedom they so crave.";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_8 = "";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_9 = "One of them stumbles out of the group towards you, pushed by two others. He looks back at his companions nervously, but seeing their encouraging";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_10 = "gestures, he steps forward. He holds his hands out before him, palms upwards, displaying a crude |[c: Brown][f: 12 bb]wooden sculpture|. You aren't sure exactly when";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_11 = "he had the time to make this, however it would appear to be some kind of |[c: Powder Blue][f: 12 bb]offering| to you, whittled with one of the shoddy knives left behind by the";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_12 = "downed guards as you've made your escape.";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_13 = "";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_14 = "You sense a hidden |[s: Dark Goldenrod][f: 12 bb]potential| within this offering, a small power that would |[c: Gold][f: 12 bb]flourish| should you accept it. Despite its craftsmanship, it has an";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_LINE_15 = "important quality: it was made in reverence of |[s: Purple][c: Powder Blue][f: 12 bb]you|.";
+        public const String INTRO_F3_MINIBOSS_DEFEATED_CHOICE = "[f: 12 bb]Accept it as your blessing.";
     }
 }

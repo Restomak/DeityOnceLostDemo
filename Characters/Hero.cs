@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters
 {
+    /// <summary>
+    /// Every friendly character in the game that can be taken on a dungeon run is
+    /// considered a Hero, including the Champion. The data in the Hero class
+    /// represents the individuality of that character, and stores their name,
+    /// pronouns, hitpoints, default deck, appearance, traits, buff they supply
+    /// if used as a party member, and so on.
+    /// </summary>
     public class Hero
     {
         List<DeckBuilder.Card> _defaultCards;
@@ -125,6 +132,11 @@ namespace DeityOnceLost.Characters
 
         
 
+        /// <summary>
+        /// Called upon generation of the Hero, and determines their pronouns. Used before
+        /// choosing a name, as the name has a chance to be dependent upon the pronouns
+        /// that the Hero uses.
+        /// </summary>
         private void generateRandomPronouns(bool firstChampion)
         {
             int randomPronoun = Game1.randint(1, HeroConstants.PRONOUN_WEIGHT_HE + HeroConstants.PRONOUN_WEIGHT_SHE + HeroConstants.PRONOUN_WEIGHT_THEY + HeroConstants.PRONOUN_WEIGHT_XE + HeroConstants.PRONOUN_WEIGHT_VE);
@@ -196,6 +208,10 @@ namespace DeityOnceLost.Characters
             }
         }
 
+        /// <summary>
+        /// Called upon generation of the Hero, and determines their name. Has a chance of
+        /// being dependant upon the Hero's pronouns.
+        /// </summary>
         private void generateRandomName(bool firstChampion)
         {
             List<String> names = new List<String>();
@@ -252,11 +268,22 @@ namespace DeityOnceLost.Characters
             _name = names[Game1.randint(0, names.Count - 1)];
         }
 
+        /// <summary>
+        /// Called upon generation of the Hero, and determines the traits that make up
+        /// their individuality. Currently not yet implemented.
+        /// </summary>
         private void generateRandomTraits()
         {
             //FIXIT make this function when traits are added
         }
 
+        /// <summary>
+        /// Called upon generation of the Hero, and determines the Hero's default deck,
+        /// to be used if they are selected as the Champion for the dungeon run. Heroes
+        /// have many different possibilities for their default deck, providing another
+        /// source of individuality and making them feel more real. Their deck represents
+        /// how they fight without deific intervention.
+        /// </summary>
         private void generateRandomDefaultDeck(bool firstChampion)
         {
             List<DeckBuilder.Card> allDefaultCards = Game1.getAllCards().getAllCardsByRarity(DeckBuilder.CardEnums.CardRarity.DEFAULT);
@@ -284,16 +311,16 @@ namespace DeityOnceLost.Characters
             {
                 bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                 DeckBuilder.Card specializedCard = allDefaultAttackCards[Game1.randint(0, numDefaultAttackCards - 1)];
-                _defaultCards.Add(specializedCard);
+                _defaultCards.Add(specializedCard.getNewCard());
                 for (int i = 1; i < HeroConstants.NUM_ATTACK_CARDS_IN_DEFAULT_DECK; i++)
                 {
                     if (specializedDeck && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_CARD)
                     {
-                        _defaultCards.Add(specializedCard);
+                        _defaultCards.Add(specializedCard.getNewCard());
                     }
                     else
                     {
-                        _defaultCards.Add(allDefaultAttackCards[Game1.randint(0, numDefaultAttackCards - 1)]);
+                        _defaultCards.Add(allDefaultAttackCards[Game1.randint(0, numDefaultAttackCards - 1)].getNewCard());
                     }
                 }
             }
@@ -302,16 +329,16 @@ namespace DeityOnceLost.Characters
             {
                 bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                 DeckBuilder.Card specializedCard = allDefaultSkillCards[Game1.randint(0, numDefaultSkillCards - 1)];
-                _defaultCards.Add(specializedCard);
+                _defaultCards.Add(specializedCard.getNewCard());
                 for (int i = 1; i < HeroConstants.NUM_SKILL_CARDS_IN_DEFAULT_DECK; i++)
                 {
                     if (specializedDeck && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_CARD)
                     {
-                        _defaultCards.Add(specializedCard);
+                        _defaultCards.Add(specializedCard.getNewCard());
                     }
                     else
                     {
-                        _defaultCards.Add(allDefaultSkillCards[Game1.randint(0, numDefaultSkillCards - 1)]);
+                        _defaultCards.Add(allDefaultSkillCards[Game1.randint(0, numDefaultSkillCards - 1)].getNewCard());
                     }
                 }
             }
@@ -322,7 +349,7 @@ namespace DeityOnceLost.Characters
                 int rolledOtherCards = 0;
                 for (int i = 0; i < HeroConstants.NUM_OTHER_CARD_ROLLS_IN_DEFAULT_DECK; i++)
                 {
-                    if (Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK)
+                    if (Game1.randint(1, 100) <= HeroConstants.OTHER_CARD_CHANCE_IN_DEFAULT_DECK)
                     {
                         rolledOtherCards++;
                     }
@@ -333,16 +360,16 @@ namespace DeityOnceLost.Characters
                 {
                     bool specializedDeck = (!firstChampion && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_DECK);
                     DeckBuilder.Card specializedCard = allDefaultOtherCards[Game1.randint(0, numDefaultOtherCards - 1)];
-                    _defaultCards.Add(specializedCard);
+                    _defaultCards.Add(specializedCard.getNewCard());
                     for (int i = 1; i < rolledOtherCards; i++)
                     {
                         if (specializedDeck && Game1.randint(1, 100) <= HeroConstants.CHANCE_AT_SPECIALIZED_CARD)
                         {
-                            _defaultCards.Add(specializedCard);
+                            _defaultCards.Add(specializedCard.getNewCard());
                         }
                         else
                         {
-                            _defaultCards.Add(allDefaultOtherCards[Game1.randint(0, numDefaultOtherCards - 1)]);
+                            _defaultCards.Add(allDefaultOtherCards[Game1.randint(0, numDefaultOtherCards - 1)].getNewCard());
                         }
                     }
                 }
@@ -353,7 +380,7 @@ namespace DeityOnceLost.Characters
             //Add any random default card until deck is considered full
             for (int i = numCardsSoFar; i < numCardsTotal; i++)
             {
-                _defaultCards.Add(allDefaultCards[Game1.randint(0, numDefaultCards - 1)]);
+                _defaultCards.Add(allDefaultCards[Game1.randint(0, numDefaultCards - 1)].getNewCard());
             }
 
             String log = "New Hero default deck created: ";
@@ -364,6 +391,11 @@ namespace DeityOnceLost.Characters
             Game1.debugLog.Add(log);
         }
 
+        /// <summary>
+        /// Called upon generation of the Hero, and determines their maximum hitpoints.
+        /// Weighted to be towards the middle between minimum and maximum HP, but with
+        /// a chance of extreme.
+        /// </summary>
         private void generateRandomHP(bool firstChampion)
         {
             int maxHP_1 = Game1.randint(HeroConstants.HERO_MAX_HP_MIN, HeroConstants.HERO_MAX_HP_MAX);
@@ -385,6 +417,11 @@ namespace DeityOnceLost.Characters
             }
         }
 
+        /// <summary>
+        /// Called upon generation of the Hero if a specific party buff has not been 
+        /// supplied to the constructor. Generates randomly from a list of all party
+        /// buffs. Currently not yet implemented.
+        /// </summary>
         private void generateRandomPartyMemberBuff()
         {
             //FIXIT implement

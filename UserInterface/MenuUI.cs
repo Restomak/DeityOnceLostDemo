@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface
 {
+    /// <summary>
+    /// Base class for all menus. Each menus is required to follow a similar structure in order
+    /// to make cycling through them (as well as updating or closing them) a simple process.
+    /// </summary>
     public abstract class MenuUI
     {
         protected List<UserInterface> _wholeUI;
@@ -18,7 +22,7 @@ namespace DeityOnceLost.UserInterface
         protected SpriteFont _titleFont;
         public int _titleX, _titleY, _titleFontHeight;
         protected bool _scrollable;
-        public int _scrollY;
+        protected int _scrollY;
 
         public MenuUI(int x, int y, int width, int height, Texture2D backgroundTexture, Color backgroundColor,
             String titleString, int titleX, int titleY, SpriteFont titleFont, int titleFontHeight, Color titleColor, Color titleShadowColor)
@@ -72,6 +76,10 @@ namespace DeityOnceLost.UserInterface
         {
             return _scrollable;
         }
+        public int getScrollY()
+        {
+            return _scrollY;
+        }
 
 
 
@@ -79,6 +87,11 @@ namespace DeityOnceLost.UserInterface
         public void setTitleString(String title)
         {
             _titleString = title;
+        }
+        public void setScrollY(int newScrollY)
+        {
+            _scrollY = newScrollY;
+            updateScrollBar();
         }
 
 
@@ -89,5 +102,8 @@ namespace DeityOnceLost.UserInterface
         public abstract bool addTopBar();
 
         public abstract void updateUI();
+
+        public abstract void onEscapePressed();
+        public virtual void updateScrollBar() { } //by default unneeded since most menus don't scroll
     }
 }

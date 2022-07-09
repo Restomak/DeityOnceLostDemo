@@ -6,32 +6,30 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class BasicMultiAttackCard : BasicAttackCard, IMultiAttack
+    /// <summary>
+    /// Base class to make card design easier for cards that attack multiple times.
+    /// </summary>
+    abstract class BasicMultiAttackCard : BasicAttackCard, IMultiAttack
     {
-        protected int _numHits;
-
         public BasicMultiAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage, int numHits) : base(name, cardType, rarity, damage)
         {
-            _numHits = numHits;
+            iNumHits = numHits;
         }
 
-        public int numHits
-        {
-            get => _numHits;
-        }
+        public int iNumHits { get; }
 
         public override void onPlay()
         {
-            dealDamage();
+            iDealDamage();
         }
 
-        public override void dealDamage()
+        public override void iDealDamage()
         {
             if (_target != null)
             {
-                for (int i = 0; i < _numHits; i++)
+                for (int i = 0; i < iNumHits; i++)
                 {
-                    _target.takeDamage(Game1.getChamp().getDamageAffectedByBuffs(_damage, _target));
+                    _target.takeDamage(Game1.getChamp().getDamageAffectedByBuffs(iDamage, _target));
                 }
             }
             else
@@ -40,20 +38,9 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
-            Combat.Unit descTarget = null;
-            if (activeCard)
-            {
-                descTarget = Card.getTargetForDescription(_targetType);
-            }
-            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
-
-            desc.Add("Deal " + damage + " damage " + numHits);
-            desc.Add("times.");
-
-            return desc;
+            return null;
         }
     }
 }

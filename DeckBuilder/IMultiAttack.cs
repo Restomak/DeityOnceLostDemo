@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that attack multiple times.
+    /// </summary>
     interface IMultiAttack
     {
-        int numHits
+        int iNumHits
         {
             get;
         }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains the floor's exit.
+    /// </summary>
     public class ExitRoom : Room
     {
         public ExitRoom()

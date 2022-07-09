@@ -8,6 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface
 {
+    /// <summary>
+    /// One of the major three gameState UIs along with MapI and EventUI. CombatUI is the
+    /// most involved of the three, requiring UserInterfaces for all of the different parts
+    /// of combat (cards, piles, enemies, party members, and the champion, as well as the
+    /// less obvious ones such as buffs/debuffs and targets that appear when a card is in
+    /// use. For the CombatUI in particular, proper ordering of Clickables is important, as
+    /// there is much more opportunity for overlap.
+    /// </summary>
     public class CombatUI
     {
         List<UserInterface> _wholeUI;
@@ -24,6 +32,7 @@ namespace DeityOnceLost.UserInterface
         Clickables.HandCard _activeCard;
         UserInterface _targets;
         UserInterface _resources;
+        UserInterface _relics;
 
         public CombatUI(Combat.CombatHandler combatHandler)
         {
@@ -40,6 +49,7 @@ namespace DeityOnceLost.UserInterface
             _championHovers = new UserInterface();
             _targets = new UserInterface();
             _resources = new UserInterface();
+            _relics = new UserInterface();
 
             //added in sorted fashion, top to bottom is front of the screen to back
             _wholeUI.Add(_targets);
@@ -53,6 +63,7 @@ namespace DeityOnceLost.UserInterface
             _wholeUI.Add(_cardPiles);
             _wholeUI.Add(_combatUIButtons);
             _wholeUI.Add(_resources);
+            _wholeUI.Add(_relics);
 
             //Further initialization
             initializeCombatButtons(combatHandler);
@@ -68,9 +79,8 @@ namespace DeityOnceLost.UserInterface
                 Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_WIDTH, Drawing.DrawConstants.COMBAT_ENDTURNBUTTON_HEIGHT, () =>
                 {
                     //Make sure it's your turn
-                    if (combatHandler.getTurn() == Combat.CombatHandler.combatTurn.CHAMPION)
+                    if (combatHandler.getTurn() == Combat.CombatHandler.combatTurn.PLAY)
                     {
-                        Game1.getChamp().getDeck().turnEndDiscardAll();
                         combatHandler.nextTurn();
                     }
                 }, new List<String>() { "Ends your turn." });
@@ -150,9 +160,9 @@ namespace DeityOnceLost.UserInterface
             Clickables.HandCard.setupHandUI(_handCards, Game1.getChamp().getDeck().getHand());
 
             _cardPiles.resetClickables();
-            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.REMOVEDPILE, Game1.getChamp()));
-            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DISCARDPILE, Game1.getChamp()));
-            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DRAWPILE, Game1.getChamp()));
+            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.REMOVEDPILE, Game1.getChamp(), "Removed card"));
+            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DISCARDPILE, Game1.getChamp(), "Discard pile"));
+            _cardPiles.addClickableToFront(new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DRAWPILE, Game1.getChamp(), "Draw pile"));
 
             initializeCombatButtons(combatHandler);
 
@@ -164,6 +174,7 @@ namespace DeityOnceLost.UserInterface
             }
 
             Clickables.Avatar.setupChampionUI(_championUI, Game1.getChamp(), _championHovers);
+            Clickables.Hovers.RelicDisplay.setupRelicsUI(_relics);
 
             _resources.resetClickables();
             _resources.addClickableToBack(new Clickables.Hovers.Resource(new Point(Drawing.DrawConstants.COMBAT_DIVINITY_X, Drawing.DrawConstants.COMBAT_DIVINITY_Y),

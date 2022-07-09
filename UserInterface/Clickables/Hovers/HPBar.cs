@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that stores a unit and displays its HP.
+    /// </summary>
     public class HPBar : HoverInfo
     {
         public enum hpBarType

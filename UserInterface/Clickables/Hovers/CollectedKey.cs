@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that stores and displays a key in inventory.
+    /// </summary>
     class CollectedKey : HoverInfo
     {
         Treasury.Equipment.Key _key;

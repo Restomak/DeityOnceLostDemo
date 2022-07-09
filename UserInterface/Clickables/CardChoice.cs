@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Version of MenuCard used by the NewCardChoiceMenus and RemoveCardChoiceMenu that has
+    /// an onClick call that depends on the menu that uses it.
+    /// </summary>
     public class CardChoice : MenuCard
     {
         Menus.CardMenu _cardChoiceMenu;

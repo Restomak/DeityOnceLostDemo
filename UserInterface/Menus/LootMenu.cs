@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Menus
 {
+    /// <summary>
+    /// The menu used when the player encounters loot (either from a treasure room on the map,
+    /// or after defeating the enemies in combat, etc). Each treasure is stored in the Loot
+    /// object, and this menu sets them all up as LootableTreasure objects (the user interface
+    /// version that the player can interact with).
+    /// </summary>
     public class LootMenu : MenuUI
     {
         public const String COMBAT_LOOT = "Rewards:";
@@ -33,6 +39,30 @@ namespace DeityOnceLost.UserInterface.Menus
             setupTreasuresAsClickables();
         }
 
+        public override void onEscapePressed()
+        {
+            checkForKeys();
+            Game1.closeMenu(this);
+        }
+
+        /// <summary>
+        /// Called when the menu is closed before all of the loot has been taken. Since picking up
+        /// keys is mandatory, the menu will not close before automatically looting each key that
+        /// was left behind (if any).
+        /// </summary>
+        public void checkForKeys()
+        {
+            List<Treasury.Treasure> treasures = _loot.getTreasures();
+            
+            for (int i = 0; i < treasures.Count; i++)
+            {
+                if (!treasures[i].isTaken() && treasures[i].GetType() == typeof(Treasury.Equipment.Key))
+                {
+                    treasures[i].onTaken(); //Take any key left behind
+                }
+            }
+        }
+
 
 
         public void setupTreasuresAsClickables()
@@ -53,6 +83,15 @@ namespace DeityOnceLost.UserInterface.Menus
             {
                 Clickables.LootableTreasure lootable = new Clickables.LootableTreasure(treasures[i]);
 
+                if (treasures[i].GetType().IsSubclassOf(typeof(Treasury.Treasures.Relic)))
+                {
+                    lootable.setExtraInfo(((Treasury.Treasures.Relic)treasures[i]).getHoverExtraInfo());
+                }
+                else if (treasures[i].GetType().IsSubclassOf(typeof(Treasury.Equipment.Item)))
+                {
+                    lootable.setExtraInfo(((Treasury.Equipment.Item)treasures[i]).getHoverExtraInfo());
+                }
+
                 lootable._x = _x + Drawing.DrawConstants.LOOTMENU_TREASURE_BUFFER_X;
                 lootable._y = _y + _height - Drawing.DrawConstants.LOOTMENU_TREASURE_HEIGHT - Drawing.DrawConstants.LOOTMENU_TREASURE_BUFFER_START_Y -
                     i * (Drawing.DrawConstants.LOOTMENU_TREASURE_HEIGHT + Drawing.DrawConstants.LOOTMENU_TREASURE_BUFFER_Y);
@@ -66,6 +105,7 @@ namespace DeityOnceLost.UserInterface.Menus
                 new Point(Game1.VIRTUAL_WINDOW_WIDTH / 2 - Drawing.DrawConstants.LOOTMENU_SKIP_BUTTON_WIDTH / 2, Drawing.DrawConstants.LOOTMENU_SKIP_BUTTON_Y),
                 Drawing.DrawConstants.LOOTMENU_SKIP_BUTTON_WIDTH, Drawing.DrawConstants.LOOTMENU_SKIP_BUTTON_HEIGHT, () =>
                 {
+                    checkForKeys();
                     Game1.closeMenu(this);
                 }, new List<String>());
             _treasuresAsClickables.addClickableToBack(skipButton); //order doesn't matter

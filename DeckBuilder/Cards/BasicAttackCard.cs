@@ -6,30 +6,28 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
+    /// <summary>
+    /// Base class to make card design easier for cards that deal damage to an enemy.
+    /// </summary>
     abstract class BasicAttackCard : Card, IDamagingCard
     {
-        protected int _damage;
-
         public BasicAttackCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage) : base(name, cardType, rarity, CardEnums.TargetingType.enemies)
         {
-            _damage = damage;
+            iDamage = damage;
         }
 
-        public int damage
-        {
-            get => _damage;
-        }
+        public int iDamage { get; }
 
         public override void onPlay()
         {
-            dealDamage();
+            iDealDamage();
         }
 
-        public virtual void dealDamage()
+        public virtual void iDealDamage()
         {
             if (_target != null)
             {
-                _target.takeDamage(Game1.getChamp().getDamageAffectedByBuffs(_damage, _target));
+                _target.takeDamage(Game1.getChamp().getDamageAffectedByBuffs(iDamage, _target));
             }
             else
             {
@@ -37,19 +35,9 @@ namespace DeityOnceLost.DeckBuilder.Cards
             }
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
-            Combat.Unit descTarget = null;
-            if (activeCard)
-            {
-                descTarget = Card.getTargetForDescription(_targetType);
-            }
-            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
-
-            desc.Add("Deal " + damage + " damage.");
-
-            return desc;
+            return null;
         }
     }
 }

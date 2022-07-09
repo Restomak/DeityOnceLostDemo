@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains one or more Treasures, stored in a Loot object.
+    /// </summary>
     class TreasureRoom : Room
     {
         protected Treasury.Loot _roomTreasure;

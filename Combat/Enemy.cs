@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// Abstract base unit class for enemies, used by Encounters and stores the enemy's AIPattern.
+    /// </summary>
     public abstract class Enemy : Unit
     {
         public const int DEFAULT_AOE_DAMAGE = 5;
@@ -53,12 +56,12 @@ namespace DeityOnceLost.Combat
 
         public int getDamageAffectedByBuffs(int damage)
         {
+            double newDamage = damage + _strength;
+
             if (!_feeble && !Game1.getChamp().vulnerable())
             {
-                return damage + _strength;
+                return (int)(Math.Round(newDamage));
             }
-
-            double newDamage = damage + _strength;
 
             if (_feeble)
             {

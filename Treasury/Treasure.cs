@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Treasury
 {
+    /// <summary>
+    /// Base class for every possible treasure in the game, be it items or the abstract of
+    /// adding a new card to your deck, or a relic- even a curse.
+    /// </summary>
     public abstract class Treasure
     {
         public enum treasureType
@@ -54,17 +58,15 @@ namespace DeityOnceLost.Treasury
             switch(_treasureType)
             {
                 case treasureType.addCard:
-                    break;
                 case treasureType.removeCard:
-                    break;
+                    return Game1.pic_functionality_cardBackLootIcon;
                 case treasureType.money:
-                    break;
+                    return Game1.pic_functionality_goldLootIcon;
                 case treasureType.blessing:
-                    break;
                 case treasureType.curse:
-                    break;
+                    return Treasures.Relic.getRelicIcon(this);
                 case treasureType.addInventoryItem:
-                    break;
+                    return Game1.pic_functionality_combatInventoryIcon;
                 case treasureType.key:
                     return Game1.pic_item_key;
             }

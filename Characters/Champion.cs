@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters
 {
+    /// <summary>
+    /// The unit class for the chosen champion of a dungeon run (or in the case of the
+    /// tutorial dungeon, the one that is forced upon the player randomly). Stores many
+    /// combat details unique to the champion, such as the current turn's Divinity.
+    /// </summary>
     public class Champion : Combat.Unit
     {
         public const int DEFAULT_DIVINITY = 4;
@@ -15,6 +20,8 @@ namespace DeityOnceLost.Characters
         Hero _hero;
         DeckBuilder.Deck _deck;
         int _cardDraw, _nextTurnCardDraw;
+        bool _dealDoubleDamage;
+        int _numCardsToPreserve;
 
         public Champion(Hero hero) : base (hero.getName(), hero.getMaxHP() * CHAMPION_HERO_HP_MODIFIER)
         {
@@ -25,6 +32,10 @@ namespace DeityOnceLost.Characters
             _divinity = DEFAULT_DIVINITY;
             _nextTurnCardDraw = DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START;
             _cardDraw = DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START;
+
+            //Buff stuff
+            _dealDoubleDamage = false;
+            _numCardsToPreserve = 0;
         }
 
         public void resetDivinity()
@@ -51,6 +62,16 @@ namespace DeityOnceLost.Characters
         public void resetRunCardDraw()
         {
             _cardDraw = DeckBuilder.Deck.DEFAULT_DRAW_ON_TURN_START;
+        }
+
+        public void setDoubleDamage(bool doubleDamage)
+        {
+            _dealDoubleDamage = doubleDamage;
+        }
+
+        public void setNumCardsToPreserve(int numCards)
+        {
+            _numCardsToPreserve = numCards;
         }
 
 
@@ -83,6 +104,10 @@ namespace DeityOnceLost.Characters
         public int getRunDivinity()
         {
             return _runDivinity;
+        }
+        public int getNumCardsToPreserve()
+        {
+            return _numCardsToPreserve;
         }
 
         /// <summary>
@@ -136,6 +161,10 @@ namespace DeityOnceLost.Characters
             base.gainBuff(buff);
         }
 
+        /// <summary>
+        /// Called by cards needing to determine the amount of defense the Champion would
+        /// gain by using the card, so that the information can be displayed to the player.
+        /// </summary>
         public int getDefenseAffectedByBuffs(int defense)
         {
             double newDefense = defense + _dexterity;
@@ -148,14 +177,24 @@ namespace DeityOnceLost.Characters
             return (int)(Math.Round(newDefense));
         }
 
+        /// <summary>
+        /// Called by cards needing to determine the amount of damage that would be caused,
+        /// either to a target or in general, so that the information can be displayed to
+        /// the player.
+        /// </summary>
         public int getDamageAffectedByBuffs(int damage, Combat.Unit target)
         {
-            if (!_feeble && (target == null || !target.vulnerable()))
+            double newDamage = damage + _strength;
+
+            if (_dealDoubleDamage)
             {
-                return damage + _strength;
+                newDamage *= 2.0;
             }
 
-            double newDamage = damage + _strength;
+            if (!_feeble && (target == null || !target.vulnerable()))
+            {
+                return (int)(Math.Round(newDamage));
+            }
 
             if (_feeble)
             {
@@ -167,7 +206,7 @@ namespace DeityOnceLost.Characters
                 newDamage = newDamage * Combat.Buff.VULNERABLE_MODIFIER;
             }
 
-            return (int)(Math.Round(newDamage)); ;
+            return (int)(Math.Round(newDamage));
         }
 
 
@@ -185,53 +224,18 @@ namespace DeityOnceLost.Characters
             _resilience = 0;
         }
 
-
-
-        /// <summary>
-        /// Used when calculating damage shown on enemy intents
-        /// </summary>
-        public int calculateDamageIntakeFromEnemyAttack(int enemyDamage, bool affectedByResilience = true)
-        {
-            if (affectedByResilience)
-            {
-                enemyDamage -= _resilience;
-            }
-
-            return enemyDamage;
-        }
+        
 
         /// <summary>
         /// Damage taken is affected by resilience by default. Things that bypass resilience should set affectedByResilience to false
         /// </summary>
         public override void takeDamage(int damage, bool affectedByResilience = true)
         {
-            if (affectedByResilience)
+            base.takeDamage(damage, affectedByResilience);
+
+            if (_downed)
             {
-                damage -= _resilience;
-            }
-
-            if (damage > 0)
-            {
-                if (_defense > 0)
-                {
-                    _defense -= damage;
-
-                    if (_defense < 0)
-                    {
-                        damage = -_defense;
-                    }
-                    else
-                    {
-                        damage = 0;
-                    }
-                }
-
-                _currentHP -= damage;
-                if (_currentHP <= 0)
-                {
-                    _currentHP = 0;
-                    _hero.kill();
-                }
+                _hero.kill();
             }
         }
 
@@ -276,6 +280,25 @@ namespace DeityOnceLost.Characters
         {
             _nextTurnCardDraw += amount;
             _cardDraw += amount;
+        }
+
+        /// <summary>
+        /// Affects the champion's maximum HP. When losing max HP, only affects current
+        /// HP if it becomes over the maximum. When gaining max HP, also heals for that
+        /// amount.
+        /// </summary>
+        public void affectMaxHP(int amount)
+        {
+            _maxHP += amount;
+
+            if (amount < 0 && _currentHP > _maxHP)
+            {
+                _currentHP = _maxHP;
+            }
+            else if (amount > 0)
+            {
+                _currentHP += amount;
+            }
         }
     }
 }

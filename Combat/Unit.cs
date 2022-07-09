@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// Abstract base class for all units: the champion, party members, and all enemies.
+    /// </summary>
     public abstract class Unit
     {
         public enum statType
@@ -135,11 +138,7 @@ namespace DeityOnceLost.Combat
         /// </summary>
         public virtual void takeDamage(int damage, bool affectedByResilience = true)
         {
-            if (affectedByResilience)
-            {
-                damage -= _resilience;
-            }
-
+            //Affected by defense first
             if (damage > 0)
             {
                 if (_defense > 0)
@@ -155,17 +154,27 @@ namespace DeityOnceLost.Combat
                         damage = 0;
                     }
                 }
-                
+            }
+
+            //Affected by resilience if it passes defense
+            if (affectedByResilience)
+            {
+                damage -= _resilience;
+            }
+
+            //Check if they actually took any damage
+            if (damage > 0)
+            {
+                onDamageTaken();
+
                 _currentHP -= damage;
-            }
-            if (_currentHP <= 0)
-            {
-                _currentHP = 0;
-                _downed = true;
-            }
-            else if (damage > 0)
-            {
-                onDamageTaken(); //only call if they actually took damage
+
+                //Check if they die
+                if (_currentHP <= 0)
+                {
+                    _currentHP = 0;
+                    _downed = true;
+                }
             }
         }
 
@@ -211,7 +220,8 @@ namespace DeityOnceLost.Combat
         }
 
         /// <summary>
-        /// 
+        /// Called at the start of a new turn. Checks all buffs/debuffs and if they have a duration,
+        /// lowers it by one. Removes any buffs/debuffs that have reached 0 duration.
         /// </summary>
         public virtual void newTurnLowerBuffs()
         {

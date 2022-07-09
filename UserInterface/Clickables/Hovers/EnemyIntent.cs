@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that stores an AIPattern and displays its intents.
+    /// </summary>
     public class EnemyIntent : HoverInfo
     {
         Combat.AIPattern _enemyAI;

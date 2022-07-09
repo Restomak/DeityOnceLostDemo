@@ -21,6 +21,10 @@ namespace DeityOnceLost.Drawing
             _pulseIncrease = DrawConstants.PULSE_START;
         }
 
+        /// <summary>
+        /// Used for pulsing animations, though currently it is only used for showing
+        /// the player's location on the dungeon map.
+        /// </summary>
         public void pulse()
         {
             _pulse += (int)(_pulseIncrease + DrawConstants.PULSE_BOOST);
@@ -50,10 +54,18 @@ namespace DeityOnceLost.Drawing
         /// <summary>
         /// Draws the space behind the UI. Aesthetics only.
         /// </summary>
-        public static void drawTitle_Background(SpriteBatch sprites)
+        public static void drawTitle_Background(SpriteBatch sprites, bool end)
         {
-            sprites.Draw(Game1.pic_functionality_uiSketch, new Rectangle(
-                0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+            if (!end)
+            {
+                sprites.Draw(Game1.pic_functionality_demoIntro, new Rectangle(
+                    0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+            }
+            else
+            {
+                sprites.Draw(Game1.pic_functionality_demoOutro, new Rectangle(
+                    0, 0, Game1.VIRTUAL_WINDOW_WIDTH, Game1.VIRTUAL_WINDOW_HEIGHT), Color.White);
+            }
         }
 
         /// <summary>
@@ -96,7 +108,8 @@ namespace DeityOnceLost.Drawing
         public void drawEvent_Background(SpriteBatch sprites)
         {
             sprites.Draw(Game1.pic_background_event, new Rectangle(
-                Game1.VIRTUAL_WINDOW_WIDTH / 2 - DrawConstants.EVENT_BACKGROUND_WIDTH / 2, Game1.VIRTUAL_WINDOW_HEIGHT / 2 - DrawConstants.EVENT_BACKGROUND_HEIGHT / 2,
+                Game1.VIRTUAL_WINDOW_WIDTH / 2 - DrawConstants.EVENT_BACKGROUND_WIDTH / 2,
+                DrawConstants.TOPBAR_HEIGHT + (Game1.VIRTUAL_WINDOW_HEIGHT - DrawConstants.TOPBAR_HEIGHT) / 2 - DrawConstants.EVENT_BACKGROUND_HEIGHT / 2,
                 DrawConstants.EVENT_BACKGROUND_WIDTH, DrawConstants.EVENT_BACKGROUND_HEIGHT), Color.White);
 
             if (_eventTextBox != null)
@@ -113,22 +126,25 @@ namespace DeityOnceLost.Drawing
         {
             sprites.Draw(menu._backgroundTexture, new Rectangle(menu._x, yFromBottom(menu._y, menu._height), menu._width, menu._height), menu.getBackgroundColor());
 
-            sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
-                new Vector2(menu._titleX + 1, yFromBottom(menu._titleY + 1, menu._titleFontHeight)), menu.getTitleShadowColor());
-            sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
-                new Vector2(menu._titleX + 1, yFromBottom(menu._titleY - 1, menu._titleFontHeight)), menu.getTitleShadowColor());
-            sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
-                new Vector2(menu._titleX - 1, yFromBottom(menu._titleY + 1, menu._titleFontHeight)), menu.getTitleShadowColor());
-            sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
-                new Vector2(menu._titleX - 1, yFromBottom(menu._titleY - 1, menu._titleFontHeight)), menu.getTitleShadowColor());
+            if (menu.getTitle() != "")
+            {
+                sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
+                    new Vector2(menu._titleX + 1, yFromBottom(menu._titleY + 1, menu._titleFontHeight)), menu.getTitleShadowColor());
+                sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
+                    new Vector2(menu._titleX + 1, yFromBottom(menu._titleY - 1, menu._titleFontHeight)), menu.getTitleShadowColor());
+                sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
+                    new Vector2(menu._titleX - 1, yFromBottom(menu._titleY + 1, menu._titleFontHeight)), menu.getTitleShadowColor());
+                sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
+                    new Vector2(menu._titleX - 1, yFromBottom(menu._titleY - 1, menu._titleFontHeight)), menu.getTitleShadowColor());
 
-            sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
-                new Vector2(menu._titleX, yFromBottom(menu._titleY, menu._titleFontHeight)), menu.getTitleColor());
+                sprites.DrawString(menu.getTitleFont(), menu.getTitle(),
+                    new Vector2(menu._titleX, yFromBottom(menu._titleY, menu._titleFontHeight)), menu.getTitleColor());
+            }
         }
 
         /// <summary>
         /// Receives as a parameter a list of every active UI element that should be on the
-        /// screen. Iterates through each from back to front so that front is on top.
+        /// screen. Iterates through each from back to front so that front is drawn on top.
         /// </summary>
         public void drawUI(SpriteBatch sprites, List<UserInterface.UserInterface> activeUI, Characters.Champion champ)
         {
@@ -158,7 +174,9 @@ namespace DeityOnceLost.Drawing
 
         /// <summary>
         /// Determines the type of Clickable passed to it, and then sends it off to the
-        /// appropriate function for drawing.
+        /// appropriate function for drawing. Afterwards, it checks if the Clickable has
+        /// any ExtraInfo that needs displaying and sends it off to the appropriate
+        /// function for drawing if so (since ExtraInfo is drawn on top, it is done last).
         /// </summary>
         public void drawInterface(SpriteBatch sprites, UserInterface.Clickable current, Characters.Champion champ)
         {
@@ -254,22 +272,70 @@ namespace DeityOnceLost.Drawing
             {
                 drawCollectedKey(sprites, (UserInterface.Clickables.Hovers.CollectedKey)current);
             }
+            else if (current.GetType() == typeof(UserInterface.Clickables.MissableDecision))
+            {
+                drawDecision(sprites, (UserInterface.Clickables.MissableDecision)current, true);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.InventoryItem))
+            {
+                drawInventoryItem(sprites, (UserInterface.Clickables.InventoryItem)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.SpecialButtons.DropDownButton))
+            {
+                drawDropDownButton(sprites, (UserInterface.Clickables.SpecialButtons.DropDownButton)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.SpecialButtons.CannotHover))
+            {
+                drawButton(sprites, (UserInterface.Clickables.Button)current); //Just use base method
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Hovers.RelicDisplay))
+            {
+                drawRelicDisplay(sprites, (UserInterface.Clickables.Hovers.RelicDisplay)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.Checkbox))
+            {
+                drawCheckbox(sprites, (UserInterface.Clickables.Checkbox)current);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.AestheticOnly_InspectedCard))
+            {
+                drawAestheticOnly_InspectedCard(sprites, (UserInterface.Clickables.AestheticOnly_InspectedCard)current, champ);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.MenuCard_ForUpgrade))
+            {
+                drawMenuCard(sprites, (UserInterface.Clickables.MenuCard)current, champ);
+            }
+            else if (current.GetType() == typeof(UserInterface.Clickables.SpecialButtons.ClickAndDrag))
+            {
+                drawClickAndDragButton(sprites, (UserInterface.Clickables.SpecialButtons.ClickAndDrag)current);
+            }
             else
             {
                 Game1.addToErrorLog("drawUI attempting to draw from activeUI but typeof Clickable is not defined in if statement: " + current.GetType().ToString());
             }
+
+            //Draw extra info boxes if it's hovered
+            if (Game1.getHoveredClickable() == current && current.getExtraInfo() != null && current.getExtraInfo().Count > 0)
+            {
+                drawExtraInfoBoxes(sprites, current, champ);
+            }
         }
 
-        public static void drawCard(SpriteBatch sprites, DeckBuilder.Card card, Rectangle cardRect, SpriteFont nameFont, int nameFontHeight,
-            SpriteFont descFont, int descFontHeight, SpriteFont costFont, int costFontHeight, int nameAreaWidth, int nameYBuffer, int divinityAdjustX,
+        /// <summary>
+        /// Accepts a large amount of parameters as font and size information and uses it
+        /// to draw a card on the screen.
+        /// </summary>
+        public static void drawCard(SpriteBatch sprites, DeckBuilder.Card card, Rectangle cardRect, SpriteFont nameFont, int nameFontSize, int nameFontHeight,
+            SpriteFont descFont, int descFontSize, int descFontHeight, SpriteFont costFont, int costFontSize, int costFontHeight, int nameAreaWidth, int nameYBuffer, int divinityAdjustX,
             int costAdjustYFromTop, int costIconSize, int bloodAdjustX, Characters.Champion champ, bool isHovered, bool isActive, bool glowCard)
         {
-            String name = card.getName();
+            String name = card.getName(nameFontSize);
 
             List<String> description = card.getDescription(champ);
+            List<String> stylizedDescription = card.getStylizedDescription(champ, descFontSize);
             if (isActive)
             {
                 description = card.getDescription(champ, true);
+                stylizedDescription = card.getStylizedDescription(champ, descFontSize, true);
             }
 
             Texture2D cardFromRarity = Game1.pic_card_front_default;
@@ -307,58 +373,124 @@ namespace DeityOnceLost.Drawing
                 }
             }
 
+            //Draw card art
+            sprites.Draw(card.getCardArt(), new Rectangle(cardRect.X, yFromBottom(cardRect.Y, cardRect.Height), cardRect.Width, cardRect.Height), Color.White);
+
             //Draw card background
             sprites.Draw(cardFromRarity, new Rectangle(cardRect.X, yFromBottom(cardRect.Y, cardRect.Height), cardRect.Width, cardRect.Height), Color.White);
 
-            //Draw card art
-
-
-            
-            int divinityCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
-            int bloodCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
-
-            //Draw card name
+            //Draw colored bar behind card name
             sprites.Draw(Game1.pic_functionality_bar, new Rectangle(cardRect.X + cardRect.Width / 2 - nameAreaWidth / 2,
                 yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 - cardRect.Height / 12,
                 nameFontHeight), nameAreaWidth, nameFontHeight),
                 DeckBuilder.CardEnums.cardRarityToColor(card.getCardRarity()) * DrawConstants.CARD_NAME_RARITY_FADE);
-            sprites.DrawString(nameFont, name,
-                new Vector2(cardRect.X + cardRect.Width / 2 - nameFont.MeasureString(name).X / 2,
-                yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 - cardRect.Height / 12,
-                nameFontHeight)), Color.Black);
+
+            //Draw card name
+            EventTextConverting.drawLineOfText(sprites, new Point(cardRect.X + cardRect.Width / 2 - (int)(nameFont.MeasureString(card.getName()).X / 2.0f),
+                cardRect.Y + nameYBuffer + cardRect.Height / 2 - cardRect.Height / 12), name);
 
             //Draw card description
+            int descriptionStartY = cardRect.Y + cardRect.Height / 2 - cardRect.Height / 6 -
+                (DrawConstants.CARD_MAX_DESCRIPTION_HEIGHT * descFontHeight + descFontHeight) / 2 +
+                ((description.Count - 1) * descFontHeight) / 2 + descFontHeight;
             for (int i_d = 0; i_d < description.Count; i_d++)
             {
-                sprites.DrawString(descFont, description[i_d],
-                    new Vector2(cardRect.X + cardRect.Width / 2 - descFont.MeasureString(description[i_d]).X / 2,
-                    yFromBottom(cardRect.Y + nameYBuffer + cardRect.Height / 2 -
-                    cardRect.Height / 6 - descFontHeight * i_d,
-                    descFontHeight)), Color.Black);
+                EventTextConverting.drawLineOfText(sprites, new Point(cardRect.X + cardRect.Width / 2 - (int)(descFont.MeasureString(description[i_d]).X / 2.0f),
+                    descriptionStartY - descFontHeight * i_d), stylizedDescription[i_d]);
             }
 
             //Draw card cost
-            if (divinityCost > 0 || bloodCost == 0 && card.getPlayCost(DeckBuilder.CardEnums.CostType.KARMA) == 0 && card.getPlayCost(DeckBuilder.CardEnums.CostType.SOUL) == 0)
+            int baseDivinityCost = card.getBaseCost(DeckBuilder.CardEnums.CostType.DIVINITY);
+            int divinityCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.DIVINITY);
+            int baseBloodCost = card.getBaseCost(DeckBuilder.CardEnums.CostType.BLOOD);
+            int bloodCost = card.getPlayCost(DeckBuilder.CardEnums.CostType.BLOOD);
+            if (baseDivinityCost > 0 || baseBloodCost == 0)
             {
+                bool drawShadow = false;
+                Color divinityColor = Color.Black;
+                if (divinityCost < baseDivinityCost)
+                {
+                    divinityColor = Color.LawnGreen;
+                    drawShadow = true;
+                }
+                else if (divinityCost > baseDivinityCost)
+                {
+                    divinityColor = Color.Red;
+                    drawShadow = true;
+                }
+
                 sprites.Draw(Game1.pic_functionality_cardDivinityIcon, new Rectangle(cardRect.X + divinityAdjustX,
                     yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop, costIconSize),
                     costIconSize, costIconSize), Color.White);
 
+                if (drawShadow)
+                {
+                    sprites.DrawString(costFont, divinityCost.ToString(),
+                        new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2 + 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 + 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, divinityCost.ToString(),
+                        new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2 + 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 - 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, divinityCost.ToString(),
+                        new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2 - 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 + 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, divinityCost.ToString(),
+                        new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2 - 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 - 1,
+                        costFontHeight)), Color.Black);
+                }
+
                 sprites.DrawString(costFont, divinityCost.ToString(),
                     new Vector2(cardRect.X + divinityAdjustX + costIconSize / 2 - costFont.MeasureString(divinityCost.ToString()).X / 2,
                     yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2,
-                    costFontHeight)), Color.Black);
+                    costFontHeight)), divinityColor);
             }
-            if (bloodCost > 0)
+            if (baseBloodCost > 0)
             {
+                bool drawShadow = false;
+                Color bloodColor = Color.Black;
+                if (bloodCost < baseBloodCost)
+                {
+                    bloodColor = Color.LawnGreen;
+                    drawShadow = true;
+                }
+                else if (bloodCost > baseBloodCost)
+                {
+                    bloodColor = Color.Red;
+                    drawShadow = true;
+                }
+
                 sprites.Draw(Game1.pic_functionality_cardBloodIcon, new Rectangle(cardRect.X + bloodAdjustX,
                     yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop, costIconSize),
                     costIconSize, costIconSize), Color.White);
 
+                if (drawShadow)
+                {
+                    sprites.DrawString(costFont, bloodCost.ToString(),
+                        new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2 + 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 + 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, bloodCost.ToString(),
+                        new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2 + 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 - 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, bloodCost.ToString(),
+                        new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2 - 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 + 1,
+                        costFontHeight)), Color.Black);
+                    sprites.DrawString(costFont, bloodCost.ToString(),
+                        new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2 - 1,
+                        yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2 - 1,
+                        costFontHeight)), Color.Black);
+                }
+
                 sprites.DrawString(costFont, bloodCost.ToString(),
                     new Vector2(cardRect.X + bloodAdjustX + costIconSize / 2 - costFont.MeasureString(bloodCost.ToString()).X / 2,
                     yFromBottom(cardRect.Y + cardRect.Height + costAdjustYFromTop + costIconSize / 2 - costFontHeight / 2,
-                    costFontHeight)), Color.Black);
+                    costFontHeight)), bloodColor);
             }
         }
 
@@ -367,8 +499,8 @@ namespace DeityOnceLost.Drawing
             if (card == Game1.getCombatHandler().getCombatUI().getActiveCard() || card == Game1.getHoveredClickable())
             {
                 //Grow sizes
-                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_20, DrawConstants.TEXT_20_HEIGHT,
-                    Game1.roboto_medium_16, DrawConstants.TEXT_16_HEIGHT, Game1.roboto_black_24, DrawConstants.TEXT_24_HEIGHT, DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH,
+                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_20, 20, DrawConstants.TEXT_20_HEIGHT,
+                    Game1.roboto_medium_16, 16, DrawConstants.TEXT_16_HEIGHT, Game1.roboto_black_28, 28, DrawConstants.TEXT_28_HEIGHT, DrawConstants.COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH,
                     DrawConstants.COMBAT_HANDCARD_GROW_NAME_Y_BUFFER, DrawConstants.COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X, DrawConstants.COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP,
                     DrawConstants.COMBAT_HANDCARDS_GROW_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(),
                     card == Game1.getCombatHandler().getCombatUI().getActiveCard(), glowCard);
@@ -376,8 +508,8 @@ namespace DeityOnceLost.Drawing
             else
             {
                 //Smaller sizes
-                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_10, DrawConstants.TEXT_10_HEIGHT,
-                    Game1.roboto_medium_8, DrawConstants.TEXT_8_HEIGHT, Game1.roboto_black_12, DrawConstants.TEXT_12_HEIGHT, DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH,
+                drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_10, 10, DrawConstants.TEXT_10_HEIGHT,
+                    Game1.roboto_medium_8, 8, DrawConstants.TEXT_8_HEIGHT, Game1.roboto_black_14, 14, DrawConstants.TEXT_14_HEIGHT, DrawConstants.COMBAT_HANDCARD_NAME_AREA_WIDTH,
                     DrawConstants.COMBAT_HANDCARD_NAME_Y_BUFFER, DrawConstants.COMBAT_HANDCARDS_DIVINITY_ADJUST_X, DrawConstants.COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP,
                     DrawConstants.COMBAT_HANDCARDS_COST_ICON_SIZE, DrawConstants.COMBAT_HANDCARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(),
                     card == Game1.getCombatHandler().getCombatUI().getActiveCard(), glowCard);
@@ -414,6 +546,12 @@ namespace DeityOnceLost.Drawing
                         deck._x + DrawConstants.COMBAT_DRAW_PILE_BUFFER + (int)((double)i * 0.25),
                         yFromBottom(deck._y + DrawConstants.COMBAT_DRAW_PILE_BUFFER + i * 2, DrawConstants.COMBAT_CARDDOWN_HEIGHT),
                         DrawConstants.COMBAT_CARDDOWN_WIDTH, DrawConstants.COMBAT_CARDDOWN_HEIGHT), Color.White);
+            }
+
+            //Draw info when hovered
+            if (Game1.getHoveredClickable() == deck && deck.getHoverDescription() != "")
+            {
+                drawInfoBox(sprites, new List<string>() { deck.getHoverDescription() }, new Rectangle(deck._x, deck._y, deck._width, deck._height));
             }
         }
 
@@ -471,7 +609,10 @@ namespace DeityOnceLost.Drawing
 
         private static void drawButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
         {
-            sprites.Draw(button.getTexture(), new Rectangle(button._x, yFromBottom(button._y, button._height), button._width, button._height), Color.White);
+            if (button.getTexture() != null)
+            {
+                sprites.Draw(button.getTexture(), new Rectangle(button._x, yFromBottom(button._y, button._height), button._width, button._height), button.getColor());
+            }
             
             if (button == Game1.getHoveredClickable() && button.getHoverDescription() != null)
             {
@@ -481,15 +622,18 @@ namespace DeityOnceLost.Drawing
 
         public static void drawUI_glowButton(SpriteBatch sprites, UserInterface.Clickables.Button button)
         {
-            for (int i = 0; i < DrawConstants.BUTTON_GLOW_NUM_STEPS; i++)
+            if (button.getTexture() != null)
             {
-                sprites.Draw(button.getTexture(),
-                    new Rectangle(button._x - DrawConstants.BUTTON_GLOW_FURTHEST + DrawConstants.BUTTON_GLOW_STEP * i,
-                    yFromBottom(button._y - DrawConstants.BUTTON_GLOW_FURTHEST + DrawConstants.BUTTON_GLOW_STEP * i,
-                    button._height + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2),
-                    button._width + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2,
-                    button._height + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2),
-                    Color.PowderBlue * DrawConstants.BUTTON_GLOW_OPACITY);
+                for (int i = 0; i < DrawConstants.BUTTON_GLOW_NUM_STEPS; i++)
+                {
+                    sprites.Draw(button.getTexture(),
+                        new Rectangle(button._x - DrawConstants.BUTTON_GLOW_FURTHEST + DrawConstants.BUTTON_GLOW_STEP * i,
+                        yFromBottom(button._y - DrawConstants.BUTTON_GLOW_FURTHEST + DrawConstants.BUTTON_GLOW_STEP * i,
+                        button._height + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2),
+                        button._width + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2,
+                        button._height + DrawConstants.BUTTON_GLOW_FURTHEST * 2 - DrawConstants.BUTTON_GLOW_STEP * i * 2),
+                        Color.PowderBlue * DrawConstants.BUTTON_GLOW_OPACITY);
+                }
             }
         }
 
@@ -530,7 +674,7 @@ namespace DeityOnceLost.Drawing
                     yFromBottom(enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER, DrawConstants.COMBAT_INTENTS_HEIGHT),
                     DrawConstants.COMBAT_INTENTS_WIDTH, DrawConstants.COMBAT_INTENTS_HEIGHT), Color.White);
 
-                drawShadowedText(sprites, Game1.roboto_bold_16, Game1.getChamp().calculateDamageIntakeFromEnemyAttack(enemy.getEnemy().getAIPattern().getIntendedDamage()).ToString(),
+                drawShadowedText(sprites, Game1.roboto_bold_16, enemy.getEnemy().getAIPattern().getIntendedDamage().ToString(),
                     enemy._x + enemy._width / 2, enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_HEIGHT + DrawConstants.COMBAT_INTENTS_DAMAGE_BUFFER,
                     DrawConstants.TEXT_16_HEIGHT, Color.Red, Color.Black);
             }
@@ -553,7 +697,7 @@ namespace DeityOnceLost.Drawing
                     yFromBottom(enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_AOE_YBUFFER, DrawConstants.COMBAT_INTENTS_AOE_HEIGHT),
                     DrawConstants.COMBAT_INTENTS_AOE_WIDTH, DrawConstants.COMBAT_INTENTS_AOE_HEIGHT), Color.White);
 
-                drawShadowedText(sprites, Game1.roboto_bold_16, Game1.getChamp().calculateDamageIntakeFromEnemyAttack(enemy.getEnemy().getAIPattern().getIntendedDamage()).ToString(),
+                drawShadowedText(sprites, Game1.roboto_bold_16, enemy.getEnemy().getAIPattern().getIntendedDamage().ToString(),
                     enemy._x + enemy._width / 2, enemy._y + enemy._height + DrawConstants.COMBAT_INTENTS_BUFFER + DrawConstants.COMBAT_INTENTS_HEIGHT + DrawConstants.COMBAT_INTENTS_DAMAGE_BUFFER,
                     DrawConstants.TEXT_16_HEIGHT, Color.Red, Color.Black);
             }
@@ -593,6 +737,11 @@ namespace DeityOnceLost.Drawing
                 new Rectangle(hpBar._x, yFromBottom(hpBar._y, hpBar._height),
                 (int)((double)hpBar._width * hpPercent), hpBar._height), hpBar.getBarColor());
 
+            //Draw HP numbers
+            String hpText = "(" + hpBar.getUnit().getCurrentHP() + "/" + hpBar.getUnit().getMaxHP() + ")";
+            drawShadowedText(sprites, Game1.roboto_medium_12, hpText,
+                hpBar._x + hpBar._width / 2, hpBar._y, DrawConstants.TEXT_12_HEIGHT, Color.White, Color.Black);
+
             //Draw defense icon & number
             if (defense > 0)
             {
@@ -604,13 +753,9 @@ namespace DeityOnceLost.Drawing
                     anchor.Y + DrawConstants.COMBAT_DEFENSE_ICON_HEIGHT / 2 - DrawConstants.TEXT_12_HEIGHT / 2, DrawConstants.TEXT_12_HEIGHT, Color.Black, Color.White);
             }
 
-            //Draw hover info & exact numbers
-            if (hpBar == Game1.getHoveredClickable()) //FIXIT: or there's an option enabled to always display HP numbers
+            //Draw hover info
+            if (hpBar == Game1.getHoveredClickable()) //FIXIT: or there's an option enabled to not always display HP numbers
             {
-                String hpText = "(" + hpBar.getUnit().getCurrentHP() + "/" + hpBar.getUnit().getMaxHP() + ")";
-                drawShadowedText(sprites, Game1.roboto_medium_12, hpText,
-                    hpBar._x + hpBar._width / 2, hpBar._y, DrawConstants.TEXT_12_HEIGHT, Color.White, Color.Black);
-
                 drawInfoBox(sprites, hpBar.getDescription(), new Rectangle(hpBar._x, hpBar._y, hpBar._width, hpBar._height));
             }
         }
@@ -718,6 +863,12 @@ namespace DeityOnceLost.Drawing
                                 break;
                             case Dungeon.Room.roomContents.combat:
                                 sprites.Draw(Game1.pic_functionality_mapCombatIcon,
+                                    new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
+                                    yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
+                                    DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
+                                break;
+                            case Dungeon.Room.roomContents.miniboss:
+                                sprites.Draw(Game1.pic_functionality_mapMinibossIcon,
                                     new Rectangle(room._x + DrawConstants.MAP_GRIDSPACE_WIDTH / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH / 2 + centering + centering * (roomContents.Count - 1) * 2,
                                     yFromBottom(room._y + DrawConstants.MAP_GRIDSPACE_HEIGHT / 2 - DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT / 2 - centering - centering * (roomContents.Count - 1) * 2,
                                     DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), DrawConstants.MAP_ROOM_CONTENTS_ICON_WIDTH, DrawConstants.MAP_ROOM_CONTENTS_ICON_HEIGHT), Color.Black);
@@ -929,7 +1080,7 @@ namespace DeityOnceLost.Drawing
             }
         }
 
-        public static void drawDecision(SpriteBatch sprites, UserInterface.Clickables.Decision decision)
+        public static void drawDecision(SpriteBatch sprites, UserInterface.Clickables.Decision decision, bool missable = false)
         {
             //If hovered, glow
             if (Game1.getHoveredClickable() == decision)
@@ -948,9 +1099,15 @@ namespace DeityOnceLost.Drawing
 
             sprites.Draw(Game1.pic_functionality_bar, new Rectangle(decision._x, yFromBottom(decision._y, decision._height), decision._width, decision._height),
                 new Color(DrawConstants.EVENT_CHOICE_BACKGROUND_RED, DrawConstants.EVENT_CHOICE_BACKGROUND_GREEN, DrawConstants.EVENT_CHOICE_BACKGROUND_BLUE));
-            
+
+            bool grayOut = false;
+            if (missable)
+            {
+                grayOut = !((UserInterface.Clickables.MissableDecision)decision).getChoice().canChoose();
+            }
+
             EventTextConverting.drawLineOfText(sprites, new Point(decision._x + DrawConstants.EVENT_CHOICE_TEXT_X_BUFFER, decision._y + decision._height / 2 - DrawConstants.TEXT_12_HEIGHT / 2),
-                decision.getChoice().getText());
+                decision.getChoice().getText(), grayOut);
         }
 
         public static void drawLootableTreasure(SpriteBatch sprites, UserInterface.Clickables.LootableTreasure treasure)
@@ -1003,8 +1160,8 @@ namespace DeityOnceLost.Drawing
 
         public static void drawCardChoice(SpriteBatch sprites, UserInterface.Clickables.CardChoice card, Characters.Champion champ, bool glowCard = false)
         {
-            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, DrawConstants.TEXT_15_HEIGHT,
-                Game1.roboto_medium_12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_18, DrawConstants.TEXT_18_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
+            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, 15, DrawConstants.TEXT_15_HEIGHT,
+                Game1.roboto_medium_12, 12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_21, 21, DrawConstants.TEXT_21_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
                 DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER, DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP,
                 DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(), false, glowCard);
         }
@@ -1016,8 +1173,8 @@ namespace DeityOnceLost.Drawing
 
         public static void drawMenuCard(SpriteBatch sprites, UserInterface.Clickables.MenuCard card, Characters.Champion champ, bool glowCard = false)
         {
-            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, DrawConstants.TEXT_15_HEIGHT,
-                Game1.roboto_medium_12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_18, DrawConstants.TEXT_18_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
+            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_15, 15, DrawConstants.TEXT_15_HEIGHT,
+                Game1.roboto_medium_12, 12, DrawConstants.TEXT_12_HEIGHT, Game1.roboto_black_21, 21, DrawConstants.TEXT_21_HEIGHT, DrawConstants.CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH,
                 DrawConstants.CARDSELECTIONMENU_CARD_NAME_Y_BUFFER, DrawConstants.CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X, DrawConstants.CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP,
                 DrawConstants.CARDSELECTIONMENU_CARDS_COST_ICON_SIZE, DrawConstants.CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(), false, glowCard);
         }
@@ -1073,7 +1230,7 @@ namespace DeityOnceLost.Drawing
             //Draw info if hovered
             if (statusEffect == Game1.getHoveredClickable())
             {
-                drawInfoBox(sprites, statusEffect.getDescription(), new Rectangle(statusEffect._x, statusEffect._y, statusEffect._width, statusEffect._height));
+                //drawInfoBox(sprites, statusEffect.getDescription(), new Rectangle(statusEffect._x, statusEffect._y, statusEffect._width, statusEffect._height));
             }
         }
 
@@ -1097,7 +1254,348 @@ namespace DeityOnceLost.Drawing
             }
         }
 
+        public static void drawInventoryItem(SpriteBatch sprites, UserInterface.Clickables.InventoryItem item, bool faded = false)
+        {
+            Color color = Color.White;
+            if (faded)
+            {
+                color = Color.White * DrawConstants.INVENTORYMENU_HELD_ITEM_FADE;
+            }
 
+            sprites.Draw(item.getItem().getTexture(), new Rectangle(item._x, yFromBottom(item._y, item._height),
+                item._width, item._height), color);
+        }
+
+        public static void drawGlowInventoryItem(SpriteBatch sprites, UserInterface.Clickables.InventoryItem item)
+        {
+            for (int i = 0; i < DrawConstants.ITEM_GLOW_NUM_STEPS; i++)
+            {
+                sprites.Draw(item.getItem().getTexture(),
+                    new Rectangle(item._x - DrawConstants.ITEM_GLOW_FURTHEST + DrawConstants.ITEM_GLOW_STEP * i,
+                    yFromBottom(item._y - DrawConstants.ITEM_GLOW_FURTHEST + DrawConstants.ITEM_GLOW_STEP * i,
+                    item._height + DrawConstants.ITEM_GLOW_FURTHEST * 2 - DrawConstants.ITEM_GLOW_STEP * i * 2),
+                    item._width + DrawConstants.ITEM_GLOW_FURTHEST * 2 - DrawConstants.ITEM_GLOW_STEP * i * 2,
+                    item._height + DrawConstants.ITEM_GLOW_FURTHEST * 2 - DrawConstants.ITEM_GLOW_STEP * i * 2),
+                    Color.PowderBlue * DrawConstants.ITEM_GLOW_OPACITY);
+            }
+        }
+
+        public static void drawDropDownButton(SpriteBatch sprites, UserInterface.Clickables.SpecialButtons.DropDownButton button)
+        {
+            sprites.Draw(button.getTexture(), new Rectangle(button._x, yFromBottom(button._y, button._height),
+                button._width, button._height), button.getColor(button == Game1.getHoveredClickable()));
+
+            sprites.DrawString(UserInterface.Clickables.SpecialButtons.DropDownButton.getDropDownButtonFont(), button.getButtonText(),
+                new Vector2(button._x + DrawConstants.ITEM_RIGHT_CLICK_MENU_HORIZONTAL_BUFFER,
+                yFromBottom(button._y, button._height)), button.getTextColor());
+        }
+
+        public static void drawRelicDisplay(SpriteBatch sprites, UserInterface.Clickables.Hovers.RelicDisplay relic)
+        {
+            if (!relic.grayedOut())
+            {
+                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(relic._x - DrawConstants.TOPBAR_RELICS_BUFFER,
+                    yFromBottom(relic._y - DrawConstants.TOPBAR_RELICS_BUFFER, relic._height + DrawConstants.TOPBAR_RELICS_BUFFER * 2),
+                    relic._width + DrawConstants.TOPBAR_RELICS_BUFFER * 2, relic._height + DrawConstants.TOPBAR_RELICS_BUFFER * 2), relic.getRelic().getBorderColor());
+
+                sprites.Draw(relic.getRelic().getTexture(), new Rectangle(relic._x, yFromBottom(relic._y, relic._height), relic._width, relic._height), Color.White);
+            }
+            else
+            {
+                sprites.Draw(Game1.pic_functionality_bar, new Rectangle(relic._x - DrawConstants.TOPBAR_RELICS_BUFFER,
+                    yFromBottom(relic._y - DrawConstants.TOPBAR_RELICS_BUFFER, relic._height + DrawConstants.TOPBAR_RELICS_BUFFER * 2),
+                    relic._width + DrawConstants.TOPBAR_RELICS_BUFFER * 2, relic._height + DrawConstants.TOPBAR_RELICS_BUFFER * 2), Color.Gray);
+
+                sprites.Draw(relic.getRelic().getTexture(), new Rectangle(relic._x, yFromBottom(relic._y, relic._height), relic._width, relic._height), Color.DarkGray);
+            }
+
+            //FIXIT draw any related numbers if needed
+
+            //Draw info if hovered
+            if (relic == Game1.getHoveredClickable())
+            {
+                //drawInfoBox(sprites, relic.getDescription(), new Rectangle(relic._x, relic._y, relic._width, relic._height));
+            }
+        }
+
+        public static void drawCheckbox(SpriteBatch sprites, UserInterface.Clickables.Checkbox checkbox)
+        {
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(checkbox._x, yFromBottom(checkbox._y, DrawConstants.CHECKBOX_SIZE + 2),
+                DrawConstants.CHECKBOX_SIZE + 2, DrawConstants.CHECKBOX_SIZE + 2), Color.White);
+
+            sprites.Draw(Game1.pic_functionality_bar, new Rectangle(checkbox._x + 1, yFromBottom(checkbox._y + 1, DrawConstants.CHECKBOX_SIZE),
+                DrawConstants.CHECKBOX_SIZE, DrawConstants.CHECKBOX_SIZE), Color.DarkSlateGray);
+
+            if (checkbox.isChecked())
+            {
+                sprites.Draw(Game1.pic_functionality_checkmark, new Rectangle(checkbox._x + 1, yFromBottom(checkbox._y + 1, DrawConstants.CHECKBOX_SIZE),
+                    DrawConstants.CHECKBOX_SIZE, DrawConstants.CHECKBOX_SIZE), Color.White);
+            }
+
+            if (checkbox.hasShadowColor())
+            {
+                sprites.DrawString(checkbox.getFont(), checkbox.getText(),
+                    new Vector2(checkbox._x + DrawConstants.CHECKBOX_SIZE + DrawConstants.CARDINSPECTIONMENU_CHECKBOX_BUFFER + 1,
+                    yFromBottom(checkbox._y + 1, checkbox._height)), checkbox.getShadowColor());
+                sprites.DrawString(checkbox.getFont(), checkbox.getText(),
+                    new Vector2(checkbox._x + DrawConstants.CHECKBOX_SIZE + DrawConstants.CARDINSPECTIONMENU_CHECKBOX_BUFFER + 1,
+                    yFromBottom(checkbox._y - 1, checkbox._height)), checkbox.getShadowColor());
+                sprites.DrawString(checkbox.getFont(), checkbox.getText(),
+                    new Vector2(checkbox._x + DrawConstants.CHECKBOX_SIZE + DrawConstants.CARDINSPECTIONMENU_CHECKBOX_BUFFER - 1,
+                    yFromBottom(checkbox._y + 1, checkbox._height)), checkbox.getShadowColor());
+                sprites.DrawString(checkbox.getFont(), checkbox.getText(),
+                    new Vector2(checkbox._x + DrawConstants.CHECKBOX_SIZE + DrawConstants.CARDINSPECTIONMENU_CHECKBOX_BUFFER - 1,
+                    yFromBottom(checkbox._y - 1, checkbox._height)), checkbox.getShadowColor());
+            }
+
+            sprites.DrawString(checkbox.getFont(), checkbox.getText(),
+                new Vector2(checkbox._x + DrawConstants.CHECKBOX_SIZE + DrawConstants.CARDINSPECTIONMENU_CHECKBOX_BUFFER,
+                yFromBottom(checkbox._y, checkbox._height)), checkbox.getTextColor());
+        }
+        
+        public static void drawAestheticOnly_InspectedCard(SpriteBatch sprites, UserInterface.Clickables.AestheticOnly_InspectedCard card, Characters.Champion champ)
+        {
+            drawCard(sprites, card.getCard(), new Rectangle(card._x, card._y, card._width, card._height), Game1.roboto_bold_20, 20, DrawConstants.TEXT_20_HEIGHT,
+                Game1.roboto_medium_16, 16, DrawConstants.TEXT_16_HEIGHT, Game1.roboto_black_28, 28, DrawConstants.TEXT_28_HEIGHT, DrawConstants.CARDINSPECTIONMENU_CARD_NAME_AREA_WIDTH,
+                DrawConstants.CARDINSPECTIONMENU_CARD_NAME_Y_BUFFER, DrawConstants.CARDINSPECTIONMENU_CARD_DIVINITY_ADJUST_X, DrawConstants.CARDINSPECTIONMENU_CARD_COST_ADJUST_Y_FROMTOP,
+                DrawConstants.CARDINSPECTIONMENU_CARD_COST_ICON_SIZE, DrawConstants.CARDINSPECTIONMENU_CARD_BLOOD_ADJUST_X, champ, card == Game1.getHoveredClickable(), false, false);
+        }
+
+        private static void drawClickAndDragButton(SpriteBatch sprites, UserInterface.Clickables.SpecialButtons.ClickAndDrag button)
+        {
+            if (button.getTexture() != null)
+            {
+                sprites.Draw(button.getTexture(), new Rectangle(button._x, yFromBottom(button._y, button._height), button._width, button._height), button.getColor());
+            }
+        }
+
+        public static void drawCombat_TargetingReticle(SpriteBatch sprites, UserInterface.Clickables.HandCard activeCard, Point mousePos)
+        {
+            double startX = activeCard._x + activeCard._width / 2;
+            double startY = activeCard._y + activeCard._height / 2;
+            double endX = mousePos.X - DrawConstants.COMBAT_TARGETING_RETICLE_SIZE / 2;
+            double endY = mousePos.Y - DrawConstants.COMBAT_TARGETING_RETICLE_SIZE / 2;
+
+            for (int i = 0; i < DrawConstants.COMBAT_TARGETING_RETICLE_AMOUNT; i++)
+            {
+                double currentX = startX + (double)(endX - startX) * ((double)i / (double)(DrawConstants.COMBAT_TARGETING_RETICLE_AMOUNT - 1));
+                double currentY = startY + (double)(endY - startY) * ((double)i / (double)(DrawConstants.COMBAT_TARGETING_RETICLE_AMOUNT - 1));
+
+                sprites.Draw(Game1.pic_functionality_handCardTargetDot, new Rectangle((int)currentX, yFromBottom((int)currentY, DrawConstants.COMBAT_TARGETING_RETICLE_SIZE),
+                    DrawConstants.COMBAT_TARGETING_RETICLE_SIZE, DrawConstants.COMBAT_TARGETING_RETICLE_SIZE), Color.White);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Called if the currently-hovered Clickable has any ExtraInfo to be displayed. Determines
+        /// the anchor for where it should be drawn (and which direction it expands in), and then
+        /// iterates through each ExtraInfo by type and draws them, adjusting the anchor position
+        /// for the next ExtraInfo as it does.
+        /// </summary>
+        public static void drawExtraInfoBoxes(SpriteBatch sprites, UserInterface.Clickable current, Characters.Champion champ)
+        {
+            int numExtraInfoBoxes = current.getExtraInfo().Count;
+            Rectangle prevAnchor = new Rectangle(current._x, current._y, current._width, current._height);
+            if (prevAnchor.Y + prevAnchor.Height - DrawConstants.EXTRAINFO_CARD_HEIGHT < 0)
+            {
+                prevAnchor.Y = DrawConstants.EXTRAINFO_CARD_HEIGHT;
+            }
+            Point anchorPos = new Point(prevAnchor.Right, prevAnchor.Y + prevAnchor.Height);
+            Point anchorPosLeft = new Point(prevAnchor.Left, prevAnchor.Y + prevAnchor.Height);
+            if (current.extraInfoAtMouse())
+            {
+                anchorPos = new Point(Game1.getInputController().getMousePos().X, Game1.getInputController().getMousePos().Y);
+                if (anchorPos.Y - DrawConstants.EXTRAINFO_CARD_HEIGHT < 0)
+                {
+                    anchorPos.Y = DrawConstants.EXTRAINFO_CARD_HEIGHT;
+                }
+                anchorPosLeft = anchorPos;
+            }
+            bool buildLeft = (anchorPos.X + DrawConstants.EXTRAINFO_CARD_WIDTH * 3 > Game1.VIRTUAL_WINDOW_WIDTH);
+            bool buildUp = (anchorPos.Y - DrawConstants.EXTRAINFO_CARD_HEIGHT * 2 < 0);
+            UserInterface.ExtraInfo currentInfo;
+            int currentX = 0, currentY = 0, currentWidth = 0, currentHeight = 0, rowHeight = 0, prevRowHeight = 0; //Initialize them so the engine doesn't yell at us
+            bool newRow = false;
+
+            for (int ci = 0; ci < numExtraInfoBoxes; ci++)
+            {
+                currentInfo = current.getExtraInfo()[ci];
+
+                //Calculations
+                if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.CardInfo))
+                {
+                    currentWidth = DrawConstants.EXTRAINFO_CARD_WIDTH;
+                    currentHeight = DrawConstants.EXTRAINFO_CARD_HEIGHT;
+                }
+                else if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.IconAndTextInfo))
+                {
+                    float totalText = -DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES; //negate the first addition of the buffer space
+                    float longestText = 0.0f;
+                    for (int ti = 0; ti < ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription().Count; ti++)
+                    {
+                        totalText += DrawConstants.TEXT_10_HEIGHT + DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES;
+                        float measureText = Game1.roboto_medium_10.MeasureString(((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription()[ti]).X;
+                        if (measureText > longestText)
+                        {
+                            longestText = measureText;
+                        }
+                    }
+
+                    currentWidth = DrawConstants.INFO_BOX_BUFFER_EDGES * 2 + (int)longestText + 2;
+                    currentHeight = DrawConstants.INFO_BOX_BUFFER_EDGES * 2 + (int)totalText + 2 + ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo)._height + 2;
+                    if (currentWidth < ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo)._width + 2)
+                    {
+                        currentWidth = ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo)._width + 2;
+                    }
+                }
+                else if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.TextInfo))
+                {
+                    float totalText = -DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES; //negate the first addition of the buffer space
+                    float longestText = 0.0f;
+                    for (int ti = 0; ti < ((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription().Count; ti++)
+                    {
+                        totalText += DrawConstants.TEXT_10_HEIGHT + DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES;
+                        float measureText = Game1.roboto_medium_10.MeasureString(((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription()[ti]).X;
+                        if (measureText > longestText)
+                        {
+                            longestText = measureText;
+                        }
+                    }
+
+                    currentWidth = DrawConstants.INFO_BOX_BUFFER_EDGES * 2 + (int)longestText + 2;
+                    currentHeight = DrawConstants.INFO_BOX_BUFFER_EDGES * 2 + (int)totalText + 2;
+                }
+
+                if (currentHeight > rowHeight)
+                {
+                    rowHeight = currentHeight;
+                }
+
+                if (ci == 0)
+                {
+                    if (!buildLeft)
+                    {
+                        currentX = anchorPos.X + DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                    }
+                    else
+                    {
+                        currentX = anchorPosLeft.X - currentWidth - DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                    }
+                    currentY = anchorPos.Y - currentHeight;
+                }
+                else
+                {
+                    if (!buildLeft)
+                    {
+                        if (prevAnchor.Right + DrawConstants.SPACE_BETWEEN_INFO_BOXES > Game1.VIRTUAL_WINDOW_WIDTH)
+                        {
+                            currentX = anchorPos.X + DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                            newRow = true;
+                        }
+                        else
+                        {
+                            currentX = prevAnchor.Right + DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                        }
+                    }
+                    else
+                    {
+                        if (prevAnchor.Left - currentWidth - DrawConstants.SPACE_BETWEEN_INFO_BOXES < 0)
+                        {
+                            currentX = anchorPosLeft.X - currentWidth - DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                            newRow = true;
+                        }
+                        else
+                        {
+                            currentX = prevAnchor.Left - currentWidth - DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                        }
+                    }
+
+                    if (!newRow)
+                    {
+                        currentY = prevAnchor.Y + prevAnchor.Height - currentHeight;
+                    }
+                    else
+                    {
+                        newRow = false;
+                        prevRowHeight = rowHeight;
+                        currentY = prevAnchor.Y + prevAnchor.Height - prevRowHeight - currentHeight - DrawConstants.SPACE_BETWEEN_INFO_BOXES;
+                    }
+                }
+
+                prevAnchor = new Rectangle(currentX, currentY, currentWidth, currentHeight);
+
+
+                //Drawing
+                if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.CardInfo))
+                {
+                    DeckBuilder.Card card = ((UserInterface.ExtraInfos.CardInfo)current.getExtraInfo()[ci]).getCard();
+
+                    drawCard(sprites, card, prevAnchor, Game1.roboto_bold_10, 10, DrawConstants.TEXT_10_HEIGHT,
+                        Game1.roboto_medium_8, 8, DrawConstants.TEXT_8_HEIGHT, Game1.roboto_black_12, 12, DrawConstants.TEXT_12_HEIGHT, DrawConstants.EXTRAINFO_CARD_NAME_AREA_WIDTH,
+                        DrawConstants.EXTRAINFO_CARD_NAME_Y_BUFFER, DrawConstants.EXTRAINFO_CARD_DIVINITY_ADJUST_X, DrawConstants.EXTRAINFO_CARD_COST_ADJUST_Y_FROMTOP,
+                        DrawConstants.EXTRAINFO_CARD_COST_ICON_SIZE, DrawConstants.EXTRAINFO_CARD_BLOOD_ADJUST_X, champ, false, false, false);
+                }
+                else if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.IconAndTextInfo))
+                {
+                    //int imageBottom = prevAnchor.Y + prevAnchor.Height - ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height - 2;
+                    int textBoxY = prevAnchor.Y + ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height + 2;
+                    int textBoxHeight = currentHeight - ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height - 2;
+
+                    //Icon
+                    sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X,
+                        yFromBottom(prevAnchor.Y, ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height + 2),
+                        ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._width + 2,
+                        ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height + 2), Color.White);
+                    if (((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci]).isTransparent())
+                    {
+                        sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X + 1,
+                            yFromBottom(prevAnchor.Y + 1, ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height),
+                            ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._width,
+                            ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height), Color.Black);
+                    }
+                    sprites.Draw(((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci]).getTexture(), new Rectangle(prevAnchor.X + 1,
+                        yFromBottom(prevAnchor.Y + 1, ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height),
+                        ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._width,
+                        ((UserInterface.ExtraInfos.IconAndTextInfo)current.getExtraInfo()[ci])._height), Color.White);
+
+                    //Text - Borders
+                    sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X, yFromBottom(textBoxY, textBoxHeight), prevAnchor.Width, textBoxHeight), Color.White * 0.5f);
+
+                    //Text - Box
+                    sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X + 1, yFromBottom(textBoxY + 1, textBoxHeight - 2),
+                        prevAnchor.Width - 2, textBoxHeight - 2), Color.Black * 0.75f);
+
+                    //Text - Writing
+                    for (int ti = ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription().Count - 1; ti >= 0; ti--)
+                    {
+                        sprites.DrawString(Game1.roboto_medium_10, ((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription()[ti],
+                            new Vector2(prevAnchor.X + prevAnchor.Width / 2 - Game1.roboto_medium_10.MeasureString(((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription()[ti]).X / 2,
+                            yFromBottom(textBoxY + DrawConstants.INFO_BOX_BUFFER_EDGES + 1 + (((UserInterface.ExtraInfos.IconAndTextInfo)currentInfo).getDescription().Count - 1 - ti) *
+                            (DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES + DrawConstants.TEXT_10_HEIGHT), DrawConstants.TEXT_10_HEIGHT)), Color.White);
+                    }
+                }
+                else if (currentInfo.GetType() == typeof(UserInterface.ExtraInfos.TextInfo))
+                {
+                    //Text - Borders
+                    sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X, yFromBottom(prevAnchor.Y, prevAnchor.Height), prevAnchor.Width, prevAnchor.Height), Color.White * 0.5f);
+
+                    //Text - Box
+                    sprites.Draw(Game1.pic_functionality_bar, new Rectangle(prevAnchor.X + 1, yFromBottom(prevAnchor.Y + 1, prevAnchor.Height - 2),
+                        prevAnchor.Width - 2, prevAnchor.Height - 2), Color.Black * 0.75f);
+
+                    //Text - Writing
+                    for (int ti = ((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription().Count - 1; ti >= 0; ti--)
+                    {
+                        sprites.DrawString(Game1.roboto_medium_10, ((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription()[ti],
+                            new Vector2(prevAnchor.X + prevAnchor.Width / 2 - Game1.roboto_medium_10.MeasureString(((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription()[ti]).X / 2,
+                            yFromBottom(prevAnchor.Y + DrawConstants.INFO_BOX_BUFFER_EDGES + 1 + (((UserInterface.ExtraInfos.TextInfo)currentInfo).getDescription().Count - 1 - ti) *
+                            (DrawConstants.INFO_BOX_BUFFER_BETWEEN_LINES + DrawConstants.TEXT_10_HEIGHT), DrawConstants.TEXT_10_HEIGHT)), Color.White);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Calculates the dimensions of the info box and draws it at the corner of the
@@ -1133,7 +1631,7 @@ namespace DeityOnceLost.Drawing
             {
                 anchorPos.X = anchor.Left - width;
             }
-            if (anchorPos.Y + height > Game1.VIRTUAL_WINDOW_HEIGHT)
+            if (anchorPos.Y + height > Game1.VIRTUAL_WINDOW_HEIGHT - DrawConstants.TOPBAR_HEIGHT)
             {
                 anchorPos.Y = anchor.Top - height;
             }

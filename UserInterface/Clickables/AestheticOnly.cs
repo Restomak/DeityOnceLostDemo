@@ -8,6 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Created as a Clickable but without any of the functionality of being clicked. Meant
+    /// for aesthetic non-functional parts of the user interface that need to be drawn in a
+    /// specific order in the stack.
+    /// </summary>
     class AestheticOnly : Clickable
     {
         Texture2D _texture;

@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Opponents are the Clickables used for displaying party members on screen. When initialized,
+    /// will also set up their HP bar.
+    /// </summary>
     class GroupMember : Clickable
     {
         Combat.PartyMember _partyMember;

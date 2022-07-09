@@ -6,41 +6,38 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class ReplayableSelfBuffAndDefenseCard : BasicReplayableSelfBuffCard, IDefendingCard
+    /// <summary>
+    /// Base class to make card design easier for cards that both gain defense and buff one
+    /// of the three unit stats: Strength, Dexterity, or Resilience.
+    /// </summary>
+    abstract class ReplayableSelfBuffAndDefenseCard : BasicReplayableSelfBuffCard, IDefendingCard
     {
-        protected int _defense;
-
         public ReplayableSelfBuffAndDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int buffAmount, Combat.Unit.statType buffType, int defense) :
             base(name, cardType, rarity, buffAmount, buffType)
         {
-            _defense = defense;
+            iDefense = defense;
         }
 
-        public int defense
-        {
-            get => _defense;
-        }
+        public int iDefense { get; }
 
         public override void onPlay()
         {
-            applyBuff();
-            gainDefense();
+            iGainDefense();
+            iApplyBuff();
         }
 
-        public void gainDefense()
+        public void iGainDefense()
         {
-            Game1.getChamp().gainDefense(_defense);
+            Game1.getChamp().gainDefense(iDefense);
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
-            int defense = champ.getDefenseAffectedByBuffs(_defense);
+            List<UserInterface.ExtraInfo> extraInfo = base.getHoverInfo();
 
-            desc.Add("Gain " + _buffAmount + " " + _buffType.ToString() + ".");
-            desc.Add("Gain " + defense + " defense.");
+            extraInfo.Add(getDefenseExtraInfo());
 
-            return desc;
+            return extraInfo;
         }
     }
 }

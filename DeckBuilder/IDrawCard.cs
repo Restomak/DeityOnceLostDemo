@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that draw more cards.
+    /// </summary>
     interface IDrawCard
     {
-        int amount
+        int iDrawAmount
         {
             get;
         }
 
-        void cardDraw();
+        void iCardDraw();
     }
 }

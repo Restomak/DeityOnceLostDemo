@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Version of Target that involves a list of others of the same, so that when one is
+    /// highlighted, they all are.
+    /// </summary>
     class MultiTarget : Target
     {
-        Clickable _clickableUnit;
         List<MultiTarget> otherTargets;
-        DeckBuilder.CardEnums.TargetingType _targetType;
 
         public MultiTarget(Clickable clickableUnit, DeckBuilder.CardEnums.TargetingType targetType) : base (clickableUnit, targetType)
         {

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Connectors
 {
+    /// <summary>
+    /// A variant of Connector that blocks scouting, and is also impassable to the
+    /// player until the Key with the associated color is found.
+    /// </summary>
     class LockedDoor : Door
     {
         Treasury.Equipment.Key.keyColor _lockColor;

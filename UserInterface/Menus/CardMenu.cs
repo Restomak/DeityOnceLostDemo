@@ -8,6 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Menus
 {
+    /// <summary>
+    /// Base class for all card menus, including those that don't have a selection involved.
+    /// Includes several functions for setting up the display of the cards on the screen, as
+    /// it needs to be able to determine whether or not the menu can be scrolled (when more
+    /// cards need to be displayed than can be done at once).
+    /// </summary>
     public abstract class CardMenu : MenuUI
     {
         protected enum setupParameter
@@ -20,6 +26,7 @@ namespace DeityOnceLost.UserInterface.Menus
 
         protected List<DeckBuilder.Card> _cards;
         protected UserInterface _cardsAsClickables;
+        UserInterface _scrollBar;
 
         public CardMenu(List<DeckBuilder.Card> cards, String title) : base(Drawing.DrawConstants.CARDSELECTIONMENU_X, Drawing.DrawConstants.CARDSELECTIONMENU_Y,
             Drawing.DrawConstants.CARDSELECTIONMENU_WIDTH, 0, Game1.pic_functionality_bar, Color.DarkSlateGray * Drawing.DrawConstants.CARDCHOICE_BACKGROUND_FADE, title,
@@ -29,13 +36,20 @@ namespace DeityOnceLost.UserInterface.Menus
             _cards = cards;
 
             _cardsAsClickables = new UserInterface();
+            _scrollBar = new UserInterface();
             _wholeUI.Add(_cardsAsClickables);
+            _wholeUI.Add(_scrollBar);
         }
 
         public override bool addTopBar() { return true; }
 
 
 
+        /// <summary>
+        /// Determines based on the number of cards to display whether or not to also set up
+        /// the menu as scrollable (and how much it can scroll if so). Also handles the
+        /// initialization of the scroll bar Clickables if needed.
+        /// </summary>
         protected void setupClickables(int totalCardCount)
         {
             if (totalCardCount <= Drawing.DrawConstants.CARDSELECTIONMENU_MAX_CARDS_PER_ROW)
@@ -87,7 +101,73 @@ namespace DeityOnceLost.UserInterface.Menus
                     _y = (Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT) / 2 - _height / 2 - _scrollY; //Center on the screen with the top bar in mind
                     _titleY = _y + _height - Drawing.DrawConstants.CARDSELECTIONMENU_TITLE_Y_FROM_TOP - _titleFontHeight;
                 }
+
+
+                //Setup scroll bar - only do it if there's nothing held (if there is, it's this, and that's redundant)
+                if (Game1.getHeldClickable() == null)
+                {
+                    _scrollBar.resetClickables();
+                    if (_scrollable)
+                    {
+                        Clickables.SpecialButtons.ClickAndDrag scrollBarButton = null; //done this way so that I can use scrollBarButton in its own passed held action
+
+                        //Calculate scrollBarButton's initial Y
+                        int scrollBarButtonY = calculateScrollBarY();
+
+                        scrollBarButton = new Clickables.SpecialButtons.ClickAndDrag(Game1.pic_functionality_bar,
+                            new Point(Drawing.DrawConstants.MENU_SCROLLBAR_CARDMENUS_X + 1, scrollBarButtonY),
+                            Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_WIDTH, Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT, () =>
+                            {
+                                scrollBarButton._y = Game1.getInputController().getMousePos().Y;
+                                if (scrollBarButton._y > Drawing.DrawConstants.MENU_SCROLLBAR_Y + Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT)
+                                {
+                                    scrollBarButton._y = Drawing.DrawConstants.MENU_SCROLLBAR_Y + Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT;
+                                }
+                                else if (scrollBarButton._y < Drawing.DrawConstants.MENU_SCROLLBAR_Y)
+                                {
+                                    scrollBarButton._y = Drawing.DrawConstants.MENU_SCROLLBAR_Y;
+                                }
+
+                                //calculate scrollY based on button position
+                                double percentOfMaxScroll = (double)(scrollBarButton._y - Drawing.DrawConstants.MENU_SCROLLBAR_Y) /
+                                    (double)((Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_Y));
+
+                                _scrollY = (-_height + Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT) -
+                                    (int)((double)(-_height + Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT) * percentOfMaxScroll);
+
+                                Game1.updateMenus();
+                            });
+                        _scrollBar.addClickableToFront(scrollBarButton);
+
+                        Clickables.SpecialButtons.CannotHover scrollbar = new Clickables.SpecialButtons.CannotHover(Game1.pic_functionality_bar,
+                            new Point(Drawing.DrawConstants.MENU_SCROLLBAR_CARDMENUS_X, Drawing.DrawConstants.MENU_SCROLLBAR_Y), Drawing.DrawConstants.MENU_SCROLLBAR_WIDTH,
+                            Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT, () =>
+                            {
+                                //Move scroll bar button to location clicked on the bar
+                                scrollBarButton.onHeld();
+                                scrollBarButton.whileHeld();
+                                Game1.updateMenus();
+                            });
+                        scrollbar.setColor(Color.Gray);
+                        _scrollBar.addClickableToBack(scrollbar); //add it in behind so we know the first index is the button
+                    }
+                }
             }
+        }
+
+        private int calculateScrollBarY()
+        {
+            double percentOfMaxScroll = (double)_scrollY / (double)(-_height + Game1.VIRTUAL_WINDOW_HEIGHT - Drawing.DrawConstants.TOPBAR_HEIGHT); //scrollY divided by its maximum
+            return Drawing.DrawConstants.MENU_SCROLLBAR_Y + Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT -
+                (int)((double)(Drawing.DrawConstants.MENU_SCROLLBAR_HEIGHT - Drawing.DrawConstants.MENU_SCROLLBAR_BUTTON_HEIGHT) * percentOfMaxScroll);
+        }
+
+        /// <summary>
+        /// Update's the scroll bar button's location on the bar when scrollY is adjusted.
+        /// </summary>
+        public override void updateScrollBar()
+        {
+            _scrollBar.getClickables()[0]._y = calculateScrollBarY();
         }
 
 

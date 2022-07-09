@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Drawing
 {
+    /// <summary>
+    /// The purpose of this class is to store the massive amount of various constants
+    /// used in drawing the various Clickables and other things in the game, with the
+    /// exception of the virtual window width and height (which are stored in Game1).
+    /// </summary>
     class DrawConstants
     {
         //Text constants
@@ -13,19 +18,23 @@ namespace DeityOnceLost.Drawing
         public const int TEXT_10_HEIGHT = 15;
         public const int TEXT_11_HEIGHT = 15;
         public const int TEXT_12_HEIGHT = 18;
+        public const int TEXT_14_HEIGHT = 21;
         public const int TEXT_15_HEIGHT = 23;
         public const int TEXT_16_HEIGHT = 24;
         public const int TEXT_18_HEIGHT = 27;
         public const int TEXT_20_HEIGHT = 30;
+        public const int TEXT_21_HEIGHT = 32;
         public const int TEXT_24_HEIGHT = 36;
+        public const int TEXT_28_HEIGHT = 42;
         public const int DEBUG_LOG_X = 10;
         public const int DEBUG_LOG_Y_START = 10;
         public const int INFO_BOX_BUFFER_BETWEEN_LINES = 2;
         public const int INFO_BOX_BUFFER_EDGES = 8;
+        public const int SPACE_BETWEEN_INFO_BOXES = 4;
 
 
 
-        //Run constants
+        //Top bar constants
         public const int TOPBAR_HEIGHT = 32;
 
         public const int TOPBAR_CHAMPION_X = 32;
@@ -47,6 +56,12 @@ namespace DeityOnceLost.Drawing
         public const int TOPBAR_INVENTORY_ICON_Y_BUFFER = 4;
         public const int TOPBAR_INVENTORY_ICON_WIDTH = 24;
         public const int TOPBAR_INVENTORY_ICON_HEIGHT = 24;
+
+        public const int TOPBAR_RELICS_STARTX = 16;
+        public const int TOPBAR_RELICS_SPACE_FROM_TOP = 16;
+        public const int TOPBAR_RELICS_SPACE_BETWEEN = 16;
+        public const int TOPBAR_RELICS_SIZE = 48;
+        public const int TOPBAR_RELICS_BUFFER = 1;
 
 
 
@@ -76,24 +91,8 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_HANDCARDS_AREAWIDTH = 1000;
         public const int COMBAT_HANDCARDS_X_FROMMID_LEFT = 500;
         public const int COMBAT_HANDCARDS_Y = -12;
-        public const int COMBAT_HANDCARD_WIDTH = 141;
-        public const int COMBAT_HANDCARD_HEIGHT = 195;
-        public const int COMBAT_HANDCARD_NAME_Y_BUFFER = -4;
-        public const int COMBAT_HANDCARD_NAME_AREA_WIDTH = COMBAT_HANDCARD_WIDTH * 5 / 7;
-        public const int COMBAT_HANDCARDS_DIVINITY_ADJUST_X = -8;
-        public const int COMBAT_HANDCARDS_BLOOD_ADJUST_X = COMBAT_HANDCARDS_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_COST_ICON_SIZE + 2; //space of 2 between divinity and blood
-        public const int COMBAT_HANDCARDS_COST_ICON_SIZE = 32;
-        public const int COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP = -24;
-        public const int COMBAT_HANDCARD_GROW_WIDTH = 282;
-        public const int COMBAT_HANDCARD_GROW_HEIGHT = 390;
-        public const int COMBAT_HANDCARD_GROW_NAME_Y_BUFFER = -8;
-        public const int COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH = COMBAT_HANDCARD_GROW_WIDTH * 5 / 7;
         public const int COMBAT_HANDCARDS_GROW_Y = 0;
         public const int COMBAT_HANDCARDS_SPACE_BETWEEN_WHEN_LOW = 32;
-        public const int COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X = -16;
-        public const int COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X = COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_GROW_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
-        public const int COMBAT_HANDCARDS_GROW_COST_ICON_SIZE = 64;
-        public const int COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP = -48;
 
         public const int COMBAT_ENEMY_Y = 350;
         public const int COMBAT_ENEMY_SPACE_X_FROMRIGHT = 50;
@@ -153,10 +152,68 @@ namespace DeityOnceLost.Drawing
         public const int COMBAT_INVENTORY_BUTTON_WIDTH = 64;
         public const int COMBAT_INVENTORY_BUTTON_HEIGHT = 64;
 
+        public const int COMBAT_TARGETING_RETICLE_AMOUNT = 28;
+        public const int COMBAT_TARGETING_RETICLE_SIZE = 28;
+
 
 
         //Card constants
         public const float CARD_NAME_RARITY_FADE = 0.65f;
+        public const int CARD_MAX_DESCRIPTION_HEIGHT = 5;
+
+        public const int COMBAT_HANDCARD_WIDTH = 155;
+        public const int COMBAT_HANDCARD_HEIGHT = 215;
+        public const int COMBAT_HANDCARD_NAME_Y_BUFFER = -4;
+        public const int COMBAT_HANDCARD_NAME_AREA_WIDTH = COMBAT_HANDCARD_WIDTH * 5 / 7;
+        public const int COMBAT_HANDCARDS_DIVINITY_ADJUST_X = -8;
+        public const int COMBAT_HANDCARDS_BLOOD_ADJUST_X = COMBAT_HANDCARDS_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_COST_ICON_SIZE + 2; //space of 2 between divinity and blood
+        public const int COMBAT_HANDCARDS_COST_ICON_SIZE = 32;
+        public const int COMBAT_HANDCARDS_COST_ADJUST_Y_FROMTOP = -24;
+
+        public const int COMBAT_HANDCARD_GROW_WIDTH = 310;
+        public const int COMBAT_HANDCARD_GROW_HEIGHT = 430;
+        public const int COMBAT_HANDCARD_GROW_NAME_Y_BUFFER = -8;
+        public const int COMBAT_HANDCARD_GROW_NAME_AREA_WIDTH = COMBAT_HANDCARD_GROW_WIDTH * 5 / 7;
+        public const int COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X = -16;
+        public const int COMBAT_HANDCARDS_GROW_BLOOD_ADJUST_X = COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_GROW_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
+        public const int COMBAT_HANDCARDS_GROW_COST_ICON_SIZE = 64;
+        public const int COMBAT_HANDCARDS_GROW_COST_ADJUST_Y_FROMTOP = -48;
+
+        public const int CARDSELECTIONMENU_CARD_WIDTH = 233;
+        public const int CARDSELECTIONMENU_CARD_HEIGHT = 323;
+        public const int CARDSELECTIONMENU_CARD_NAME_Y_BUFFER = -8;
+        public const int CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH = CARDSELECTIONMENU_CARD_WIDTH * 5 / 7;
+        public const int CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X = -16;
+        public const int CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X = CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X + CARDSELECTIONMENU_CARDS_COST_ICON_SIZE + 3; //space of 3 between divinity and blood
+        public const int CARDSELECTIONMENU_CARDS_COST_ICON_SIZE = 64;
+        public const int CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP = -48;
+
+        public const int CARDINSPECTIONMENU_CARD_WIDTH = 310;
+        public const int CARDINSPECTIONMENU_CARD_HEIGHT = 430;
+        public const int CARDINSPECTIONMENU_CARD_NAME_Y_BUFFER = -8;
+        public const int CARDINSPECTIONMENU_CARD_NAME_AREA_WIDTH = CARDINSPECTIONMENU_CARD_WIDTH * 5 / 7;
+        public const int CARDINSPECTIONMENU_CARD_DIVINITY_ADJUST_X = -16;
+        public const int CARDINSPECTIONMENU_CARD_BLOOD_ADJUST_X = CARDINSPECTIONMENU_CARD_DIVINITY_ADJUST_X + CARDINSPECTIONMENU_CARD_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
+        public const int CARDINSPECTIONMENU_CARD_COST_ICON_SIZE = 64;
+        public const int CARDINSPECTIONMENU_CARD_COST_ADJUST_Y_FROMTOP = -48;
+
+        public const int CARDUPGRADEMENU_CARD_WIDTH = 310;
+        public const int CARDUPGRADEMENU_CARD_HEIGHT = 430;
+        public const int CARDUPGRADEMENU_CARD_NAME_Y_BUFFER = -8;
+        public const int CARDUPGRADEMENU_CARD_NAME_AREA_WIDTH = CARDUPGRADEMENU_CARD_WIDTH * 5 / 7;
+        public const int CARDUPGRADEMENU_CARD_DIVINITY_ADJUST_X = -16;
+        public const int CARDUPGRADEMENU_CARD_BLOOD_ADJUST_X = CARDUPGRADEMENU_CARD_DIVINITY_ADJUST_X + CARDUPGRADEMENU_CARD_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
+        public const int CARDUPGRADEMENU_CARD_COST_ICON_SIZE = 64;
+        public const int CARDUPGRADEMENU_CARD_COST_ADJUST_Y_FROMTOP = -48;
+
+        public const int EXTRAINFO_CARD_WIDTH = 155;
+        public const int EXTRAINFO_CARD_HEIGHT = 215;
+        public const int EXTRAINFO_CARD_NAME_Y_BUFFER = -4;
+        public const int EXTRAINFO_CARD_NAME_AREA_WIDTH = EXTRAINFO_CARD_WIDTH * 5 / 7;
+        public const int EXTRAINFO_CARD_DIVINITY_ADJUST_X = -8;
+        public const int EXTRAINFO_CARD_BLOOD_ADJUST_X = EXTRAINFO_CARD_DIVINITY_ADJUST_X + EXTRAINFO_CARD_COST_ICON_SIZE + 2; //space of 2 between divinity and blood
+        public const int EXTRAINFO_CARD_COST_ICON_SIZE = 32;
+        public const int EXTRAINFO_CARD_COST_ADJUST_Y_FROMTOP = -24;
 
 
 
@@ -186,6 +243,11 @@ namespace DeityOnceLost.Drawing
         public const float TOPBARDECK_GLOW_OPACITY = 0.15f;
         public const int TOPBARDECK_GLOW_NUM_STEPS = 3;
         public const int TOPBARDECK_GLOW_EXTRA_X_PER_STEP = 1;
+
+        public const int ITEM_GLOW_FURTHEST = 3;
+        public const int ITEM_GLOW_STEP = 1;
+        public const float ITEM_GLOW_OPACITY = 0.2f;
+        public const int ITEM_GLOW_NUM_STEPS = 3;
 
 
 
@@ -249,10 +311,6 @@ namespace DeityOnceLost.Drawing
         public const int CARDSELECTIONMENU_TITLE_Y_FROM_TOP = 32;
         public const float CARDCHOICE_BACKGROUND_FADE = 0.95f;
         public const int CARDSELECTIONMENU_Y_BUFFER = 32;
-        public const int CARDSELECTIONMENU_CARD_WIDTH = 212;//282;
-        public const int CARDSELECTIONMENU_CARD_HEIGHT = 293;//390;
-        public const int CARDSELECTIONMENU_CARD_NAME_Y_BUFFER = -8;
-        public const int CARDSELECTIONMENU_CARD_NAME_AREA_WIDTH = CARDSELECTIONMENU_CARD_WIDTH * 5 / 7;
         public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN = 32;
         public const int CARDSELECTIONMENU_CARD_SPACE_BETWEEN_UNDER4 = 64;
         public const int CARDSELECTIONMENU_SKIP_BUTTON_WIDTH = 120;
@@ -263,10 +321,6 @@ namespace DeityOnceLost.Drawing
         public const int CARDSELECTIONMENU_CARDS_START_X_3CARDS = Game1.VIRTUAL_WINDOW_WIDTH / 2 - CARDSELECTIONMENU_CARD_WIDTH / 2 - (CARDSELECTIONMENU_CARD_WIDTH + CARDSELECTIONMENU_CARD_SPACE_BETWEEN);
         public const int CARDSELECTIONMENU_CARDS_START_X_4CARDS = Game1.VIRTUAL_WINDOW_WIDTH / 2 - CARDSELECTIONMENU_CARD_SPACE_BETWEEN / 2 - CARDSELECTIONMENU_CARD_WIDTH * 2 - CARDSELECTIONMENU_CARD_SPACE_BETWEEN;
         public const int CARDSELECTIONMENU_CARDS_START_X_5CARDS = Game1.VIRTUAL_WINDOW_WIDTH / 2 - CARDSELECTIONMENU_CARD_WIDTH / 2 - (CARDSELECTIONMENU_CARD_WIDTH + CARDSELECTIONMENU_CARD_SPACE_BETWEEN) * 2;
-        public const int CARDSELECTIONMENU_CARDS_DIVINITY_ADJUST_X = -16;
-        public const int CARDSELECTIONMENU_CARDS_BLOOD_ADJUST_X = COMBAT_HANDCARDS_GROW_DIVINITY_ADJUST_X + COMBAT_HANDCARDS_GROW_COST_ICON_SIZE + 4; //space of 4 between divinity and blood
-        public const int CARDSELECTIONMENU_CARDS_COST_ICON_SIZE = 64;
-        public const int CARDSELECTIONMENU_CARDS_COST_ADJUST_Y_FROMTOP = -48;
         public const int CARDSELECTIONMENU_CONFIRM_BUTTON_WIDTH = 120;
         public const int CARDSELECTIONMENU_CONFIRM_BUTTON_HEIGHT = 50;
         public const int CARDSELECTIONMENU_SPACE_BETWEEN_BUTTONS = 64;
@@ -283,6 +337,51 @@ namespace DeityOnceLost.Drawing
         public const float INVENTORYMENU_BACKGROUND_FADE = 0.99f;
         public const int INVENTORYMENU_EXIT_BUTTON_WIDTH = 120;
         public const int INVENTORYMENU_EXIT_BUTTON_HEIGHT = 50;
+
+        public const float INVENTORYMENU_HELD_ITEM_FADE = 0.85f;
+
+        public const int ITEM_RIGHT_CLICK_MENU_HORIZONTAL_BUFFER = 8;
+
+        public const int CARDINSPECTIONMENU_EXIT_BUTTON_WIDTH = 120;
+        public const int CARDINSPECTIONMENU_EXIT_BUTTON_HEIGHT = 50;
+        public const int CARDINSPECTIONMENU_BOTTOM_BUFFER = 32;
+        public const int CARDINSPECTIONMENU_TOP_BUFFER = 32;
+        public const int CARDINSPECTIONMENU_SPACE_BETWEEN = 32;
+        public const int CARDINSPECTIONMENU_SPACE_BETWEEN_TEXT = 32;
+        public const int CARDINSPECTIONMENU_CHECKBOX_BUFFER = 6;
+        public const int CARDINSPECTIONMENU_WIDTH = Game1.VIRTUAL_WINDOW_WIDTH;
+        public const int CARDINSPECTIONMENU_HEIGHT = CARDINSPECTIONMENU_BOTTOM_BUFFER + CARDINSPECTIONMENU_EXIT_BUTTON_HEIGHT +
+            CARDINSPECTIONMENU_SPACE_BETWEEN * 2 + TEXT_12_HEIGHT + CARDINSPECTIONMENU_CARD_HEIGHT + CARDINSPECTIONMENU_TOP_BUFFER;
+        public const int CARDINSPECTIONMENU_X = Game1.VIRTUAL_WINDOW_WIDTH / 2 - CARDINSPECTIONMENU_WIDTH / 2;
+        public const int CARDINSPECTIONMENU_Y = (Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT) / 2 - CARDINSPECTIONMENU_HEIGHT / 2;
+        public const int CARDINSPECTIONMENU_BACKGROUND_HEIGHT = Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT;
+        public const int CARDINSPECTIONMENU_BACKGROUND_Y = 0;
+        public const float CARDINSPECTIONMENU_BACKGROUND_FADE = 0.95f;
+
+        public const int CARDUPGRADEMENU_CONFIRM_BUTTON_WIDTH = 120;
+        public const int CARDUPGRADEMENU_CONFIRM_BUTTON_HEIGHT = 50;
+        public const int CARDUPGRADEMENU_EXIT_BUTTON_WIDTH = 120;
+        public const int CARDUPGRADEMENU_EXIT_BUTTON_HEIGHT = 50;
+        public const int CARDUPGRADEMENU_BOTTOM_BUFFER = 32;
+        public const int CARDUPGRADEMENU_SPACE_BETWEEN = 32;
+        public const int CARDUPGRADEMENU_TITLE_BUFFER = 32;
+        public const int CARDUPGRADEMENU_UPGRADE_ARROW_SIZE = 64;
+        public const int CARDUPGRADEMENU_WIDTH = Game1.VIRTUAL_WINDOW_WIDTH;
+        public const int CARDUPGRADEMENU_HEIGHT = CARDUPGRADEMENU_BOTTOM_BUFFER + CARDUPGRADEMENU_EXIT_BUTTON_HEIGHT +
+            CARDUPGRADEMENU_SPACE_BETWEEN * 2 + CARDUPGRADEMENU_CARD_HEIGHT + TEXT_24_HEIGHT + CARDUPGRADEMENU_TITLE_BUFFER;
+        public const int CARDUPGRADEMENU_X = Game1.VIRTUAL_WINDOW_WIDTH / 2 - CARDUPGRADEMENU_WIDTH / 2;
+        public const int CARDUPGRADEMENU_Y = (Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT) / 2 - CARDUPGRADEMENU_HEIGHT / 2;
+        public const int CARDUPGRADEMENU_BACKGROUND_HEIGHT = Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT;
+        public const int CARDUPGRADEMENU_BACKGROUND_Y = 0;
+        public const int CARDUPGRADEMENU_TITLE_Y = CARDUPGRADEMENU_Y + CARDUPGRADEMENU_HEIGHT - TEXT_24_HEIGHT - CARDUPGRADEMENU_TITLE_BUFFER;
+        public const float CARDUPGRADEMENU_BACKGROUND_FADE = 0.95f;
+
+        public const int MENU_SCROLLBAR_Y = 100;
+        public const int MENU_SCROLLBAR_HEIGHT = Game1.VIRTUAL_WINDOW_HEIGHT - TOPBAR_HEIGHT - 200;
+        public const int MENU_SCROLLBAR_WIDTH = 26;
+        public const int MENU_SCROLLBAR_BUTTON_HEIGHT = 24;
+        public const int MENU_SCROLLBAR_BUTTON_WIDTH = 24;
+        public const int MENU_SCROLLBAR_CARDMENUS_X = Game1.VIRTUAL_WINDOW_WIDTH - 50 - MENU_SCROLLBAR_WIDTH;
 
 
 
@@ -309,6 +408,9 @@ namespace DeityOnceLost.Drawing
         public const int BLUE_PURPLE_RED = 96;
         public const int BLUE_PURPLE_GREEN = 0;
         public const int BLUE_PURPLE_BLUE = 224;
+        public const int BRIGHT_PURPLE_RED = 160;
+        public const int BRIGHT_PURPLE_GREEN = 0;
+        public const int BRIGHT_PURPLE_BLUE = 160;
 
 
 
@@ -323,5 +425,8 @@ namespace DeityOnceLost.Drawing
 
         //Scroll Wheel
         public const int SCROLL_Y_WHEEL_TICK_AMOUNT = 32;
+
+        //Checkboxes
+        public const int CHECKBOX_SIZE = 16;
     }
 }

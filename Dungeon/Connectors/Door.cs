@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Connectors
 {
+    /// <summary>
+    /// A variant of Connector that blocks scouting but does not block passage.
+    /// </summary>
     class Door : Connector
     {
         public Door()

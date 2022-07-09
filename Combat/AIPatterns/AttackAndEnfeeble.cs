@@ -7,6 +7,11 @@ using DeityOnceLost.Characters;
 
 namespace DeityOnceLost.Combat.AIPatterns
 {
+    /// <summary>
+    /// AttackAndEnfeeble is a type of AIPattern that will usually attack, but will
+    /// occaistionally instead attempt to debuff the champion with Feeble. Rarely,
+    /// if enabled, it will perform a heavy attack.
+    /// </summary>
     class AttackAndEnfeeble : AIPattern
     {
         public const int WEIGHT_ATTACK = 5;
@@ -24,10 +29,6 @@ namespace DeityOnceLost.Combat.AIPatterns
             HEAVY_ATTACK
         }
 
-        /// <summary>
-        /// AttackAndEnfeeble is a type of AIPattern that will usually attack, but occasionally attempt to,
-        /// debuff the champion with Feeble. Rarely, if enabled, it will perform a heavy attack
-        /// </summary>
         public AttackAndEnfeeble(int feebleAmount, bool canHeavyAttack = true) : base()
         {
             _feebleAmount = feebleAmount;

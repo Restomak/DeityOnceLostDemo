@@ -10,6 +10,11 @@ namespace DeityOnceLost.UserInterface.Menus
 {
     class CardCollectionMenu : CardMenu
     {
+        /// <summary>
+        /// Version of CardMenu that's used specifically for viewing cards in a deck or pile
+        /// or collection. The cards themselves are not clickable, however right clicking them
+        /// in order to inspect them and their upgrades is still an option.
+        /// </summary>
         public CardCollectionMenu(List<DeckBuilder.Card> cards, bool autoSort, String title) : base(cards, title)
         {
             if (autoSort)
@@ -21,6 +26,11 @@ namespace DeityOnceLost.UserInterface.Menus
         public override void updateUI()
         {
             setupCardsAsClickables();
+        }
+
+        public override void onEscapePressed()
+        {
+            Game1.closeMenu(this);
         }
 
 

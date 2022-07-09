@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that displays text. Has an _onUpdate Action that is passed to
+    /// the constructor that allows the text to dynamically change on updates.
+    /// </summary>
     class DynamicText : HoverInfo
     {
         SpriteFont _font;

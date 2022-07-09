@@ -6,15 +6,26 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// One of the more involved Clickables, this is used in the CombatUI to display the
+    /// cards in the players' hand. HandCards actually grow in size when hovered or clicked,
+    /// so that the player is able to better read the card, as well as know which one is
+    /// being (or about to be) selected. HandCards are one of the few Clickables that also
+    /// make use of the onHeld, whileHeld, and onHeldEnd functions, as HandCards can be
+    /// dragged to their associated Targets in order to play a card instead of clicking.
+    /// </summary>
     public class HandCard : Clickable
     {
         DeckBuilder.Card _card;
         int _positionInHand;
+        Target _heldOverTarget;
 
         public HandCard(DeckBuilder.Card card, int positionInHand)
         {
             _card = card;
             _positionInHand = positionInHand;
+
+            _extraInfo = _card.getHoverInfo();
         }
 
         //Getters & Setters
@@ -114,11 +125,59 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         /// <summary>
-        /// Handles what happens in logic when the user is holding down the mouse button on one of the cards in-hand.
+        /// Handles what happens in logic when the InputController determines that the HandCard
+        /// is held by the player. Sets the card up to be draggable by the player.
+        /// </summary>
+        public override void onHeld()
+        {
+            _held = true;
+            Game1.setHeldClickable(this);
+        }
+
+        /// <summary>
+        /// Handles what happens in logic when the InputController calls this function. Allows
+        /// the player to drag this HandCard over to a target.
         /// </summary>
         public override void whileHeld()
         {
-            //FIXIT implement
+            Clickable hoveredClickable = UserInterface.getFrontClickableFromUIList(Game1.getHoveredClickable(), Game1.getActiveUI(), Game1.getInputController().getMousePos());
+            
+            if (hoveredClickable != null && hoveredClickable.GetType() == typeof(Target))
+            {
+                _heldOverTarget = (Target)hoveredClickable;
+
+                _heldOverTarget.onHover();
+            }
+            else if (_heldOverTarget != null)
+            {
+                _heldOverTarget.onHoverEnd();
+                _heldOverTarget = null;
+            }
+        }
+
+        /// <summary>
+        /// Handles what happens in logic when the user lets go of this HandCard while it was
+        /// held. Will check if it was held over a target, and if so, will act as if the target
+        /// was clicked.
+        /// </summary>
+        public override void onHeldEnd()
+        {
+            _held = false;
+            Game1.setHeldClickable(null);
+
+            if (_heldOverTarget != null)
+            {
+                _heldOverTarget.onClick();
+            }
+            else if (!mouseInBoundaries(Game1.getInputController().getMousePos()))
+            {
+                deactivate();
+            }
+        }
+
+        public override void onRightClick()
+        {
+            deactivate();
         }
 
         /// <summary>

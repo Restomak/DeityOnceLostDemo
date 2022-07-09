@@ -48,23 +48,29 @@ namespace DeityOnceLost.Characters
         public const String THEYRE_VEVER = "Ve is";
         public const String THEYVE_VEVER = "Ve has";
 
+        //Weights used to determine the chance of each pronoun showing up in hero generation
         public const int PRONOUN_WEIGHT_SHE = 6;
         public const int PRONOUN_WEIGHT_HE = 6;
         public const int PRONOUN_WEIGHT_THEY = 5;
         public const int PRONOUN_WEIGHT_XE = 2;
         public const int PRONOUN_WEIGHT_VE = 2;
 
+        //Constants used for generating a Hero's deck of default cards.
         public const int NUM_SKILL_CARDS_IN_DEFAULT_DECK = 5;
         public const int NUM_ATTACK_CARDS_IN_DEFAULT_DECK = 5;
-        public const int NUM_OTHER_CARD_ROLLS_IN_DEFAULT_DECK = 2;
+        public const int NUM_OTHER_CARD_ROLLS_IN_DEFAULT_DECK = 3;
         public const int OTHER_CARD_CHANCE_IN_DEFAULT_DECK = 30;
-        public const int MIN_TOTAL_NUM_CARDS_IN_DEFAULT_DECK = 14;
-        public const int MAX_TOTAL_NUM_CARDS_IN_DEFAULT_DECK = 15;
-
-        public const int HERO_MAX_HP_MIN = 21;
-        public const int HERO_MAX_HP_MAX = 35;
+        public const int MIN_TOTAL_NUM_CARDS_IN_DEFAULT_DECK = 13;
+        public const int MAX_TOTAL_NUM_CARDS_IN_DEFAULT_DECK = 14;
 
         public const int CHANCE_AT_SPECIALIZED_DECK = 75;
         public const int CHANCE_AT_SPECIALIZED_CARD = 90;
+
+        //Constants used for generating a Hero's hitpoints
+        public const int HERO_MAX_HP_MIN = 21;
+        public const int HERO_MAX_HP_MAX = 35;
+
+        //The chance that a non-default card is lost when the Champion dies and a party member is chosen to be the new Champion
+        public const double CHANCE_CARD_SPLINTERED_AWAY_ON_DEATH = 0.33;
     }
 }

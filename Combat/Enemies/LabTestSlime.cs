@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 namespace DeityOnceLost.Combat.Enemies
 {
     /// <summary>
-    /// This enemy is used for testing purposes only. Maybe it'll get repurposed later, but for now this enemy's purpose is getting through content quickly and painlessly so that I can test things locked behind combat
+    /// This enemy is used for testing purposes only. Maybe it'll get repurposed later, but
+    /// for now this enemy's purpose is getting through content quickly and painlessly so
+    /// that I can test things locked behind combat.
     /// </summary>
     class LabTestSlime : Enemy
     {
         public const String NAME = "Lab Test Slime";
         public const int HITPOINTS_MIN = 6;
-        public const int HITPOINTS_MAX = 9;
+        public const int HITPOINTS_MAX = 6;
         public const int DEFAULT_STR = 0;
         public const int DEFAULT_DEX = 0;
         public const int DEFAULT_RES = 0;
@@ -44,11 +46,11 @@ namespace DeityOnceLost.Combat.Enemies
         }
         public override void resetDexterity()
         {
-            _strength = DEFAULT_DEX;
+            _dexterity = DEFAULT_DEX;
         }
         public override void resetResilience()
         {
-            _strength = DEFAULT_RES;
+            _resilience = DEFAULT_RES;
         }
         public override void resetBuffs()
         {

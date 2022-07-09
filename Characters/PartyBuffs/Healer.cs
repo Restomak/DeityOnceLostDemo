@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Characters.PartyBuffs
 {
+    /// <summary>
+    /// At the start of each combat, will heal your champion for 3. If your
+    ///     champion is full on hitpoints, will heal the party.
+    /// </summary>
     class Healer : Treasury.Treasures.PartyBuff
     {
         public const int HEAL_AMOUNT = 3;
         public const int HEAL_AMOUNT_PARTY = 1;
 
-        public Healer() : base("Healer", new List<String>()
+        public Healer() : base(Game1.pic_functionality_bar, "Healer", new List<String>()
             { "This hero is a healer, and their job is",
               "to look out for the others of their team.",
               "At the start of each combat, will heal",
@@ -20,6 +24,11 @@ namespace DeityOnceLost.Characters.PartyBuffs
             })
         {
 
+        }
+
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
+        {
+            return null;
         }
 
         public override void onCombatStart()

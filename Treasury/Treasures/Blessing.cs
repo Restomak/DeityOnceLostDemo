@@ -3,17 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Treasury.Treasures
 {
+    /// <summary>
+    /// Abstract base class for blessings, the variant of relics most similar to the ones
+    /// found throughout Slay the Spire. They generally provide net-positive effects, and
+    /// most will last throughout an entire dungeon run.
+    /// 
+    /// NOTE: A rule that separates blessings from curses is that blessings are optional.
+    /// Appearing either in loot, an event, or a shop, there will always be the option to
+    /// simply not take it.For events, that means an option to take another good effect
+    /// or nothing at all.Players should never feel "stuck" taking a blessing.
+    /// </summary>
     public abstract class Blessing : Relic
     {
         /* Possible blessing ideas
          * 
-         * NOTE: A rule that separates blessings from curses is that blessings are optional.
-         * Appearing either in loot, an event, or a shop, there will always be the option to
-         * simply not take it. For events, that means an option to take another good effect
-         * or nothing at all. Players should never feel "stuck" taking a blessing.
          * 
          * Possible conditions:
          *    - At the start of combat / miniboss / boss
@@ -79,9 +87,14 @@ namespace DeityOnceLost.Treasury.Treasures
          *    - Cards don't dissipate
          */
 
-        public Blessing(String name, List<String> description, bool persists) : base(name, description, persists, treasureType.blessing)
+        public Blessing(Texture2D texture, String name, List<String> description, bool persists) : base(texture, name, description, persists, treasureType.blessing)
         {
 
+        }
+
+        public override Color getBorderColor()
+        {
+            return Color.PowderBlue;
         }
     }
 }

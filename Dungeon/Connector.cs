@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon
 {
+    /// <summary>
+    /// The base class for the various types of connectors used by rooms in a
+    /// floor of a dungeon. Each room has four Connectors; one for each cardinal
+    /// direction, though not all of them will be instantiated (a Connector being
+    /// set to null means there is a wall in that direction). As Connectors are
+    /// open and traversable by default, they are this base class by default.
+    /// </summary>
     public class Connector
     {
         public enum direction

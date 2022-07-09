@@ -8,6 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface
 {
+    /// <summary>
+    /// Handles the user interface along the top bar of the screen which is displayed during every
+    /// gameState in a dungeon run. Displays key information: champion information, gold, party
+    /// information, and a button for the player's current deck.
+    /// </summary>
     class TopBarUI
     {
         UserInterface _topBar;
@@ -17,16 +22,29 @@ namespace DeityOnceLost.UserInterface
             _topBar = new UserInterface();
         }
 
+        /// <summary>
+        /// The top bar is drawn above everything else, so this function is used to convert it
+        /// to a list to be returned for drawing standalone on top.
+        /// </summary>
         public List<UserInterface> getUIForLateDraw()
         {
             return new List<UserInterface>() { _topBar };
         }
 
+        /// <summary>
+        /// Used for making sure the main UIs (Combat, Map, and Event) include this one, since
+        /// it isn't run on its own.
+        /// </summary>
         public void addToActiveUI(List<UserInterface> activeUI)
         {
             activeUI.Insert(0, _topBar);
         }
 
+        /// <summary>
+        /// Since the top bar generally doesn't have a lot of things that need updating outside
+        /// of information display, it iterates through each and makes sure the DynamicText
+        /// Clickables get updated properly.
+        /// </summary>
         public void updateUI()
         {
             for (int i = 0; i < _topBar.getClickables().Count; i++)
@@ -40,6 +58,9 @@ namespace DeityOnceLost.UserInterface
             }
         }
 
+        /// <summary>
+        /// Called to initialize or reinitialize the Clickables of the top bar.
+        /// </summary>
         public void setupUI()
         {
             _topBar.resetClickables();
@@ -79,7 +100,7 @@ namespace DeityOnceLost.UserInterface
             List<String> goldDescription = new List<String>();
             goldDescription.Add("Your current amount of gold.");
             goldDescription.Add("You will need it later when"); //FIXIT implement description for after first dungeon as well
-            goldDescription.Add("your champion and followers");
+            goldDescription.Add("your champion and followers"); //FIXIT this should probably be in Gold's class file
             goldDescription.Add("escape the dungeon.");
             /*
             goldDescription.Add("Your current amount of gold.");
@@ -104,7 +125,7 @@ namespace DeityOnceLost.UserInterface
                 Game1.roboto_black_12, Drawing.DrawConstants.TEXT_12_HEIGHT, deckString, new List<String>(), Color.PowderBlue);
             _topBar.addClickableToBack(deckText);
 
-            Clickables.DeckOfCards topBarDeckIcon = new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DECK, Game1.getChamp());
+            Clickables.DeckOfCards topBarDeckIcon = new Clickables.DeckOfCards(Clickables.DeckOfCards.typeOfDeck.DECK, Game1.getChamp(), "");
             _topBar.addClickableToBack(topBarDeckIcon);
 
 

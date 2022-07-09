@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat
 {
+    /// <summary>
+    /// The unit class for party members, which stores and uses their Hero data.
+    /// </summary>
     public class PartyMember : Unit
     {
         Characters.Hero _hero;
@@ -47,6 +50,28 @@ namespace DeityOnceLost.Combat
             //Not sure party members will ever gain buffs. we'll see
 
             //base.gainBuff(buff);
+        }
+
+
+
+        /// <summary>
+        /// Determines the final damage after checking the target's debuffs.
+        /// </summary>
+        public static int getDamageAffectedByBuffs(int damage, Unit target)
+        {
+            if (target == null || !target.vulnerable())
+            {
+                return damage;
+            }
+
+            double newDamage = damage;
+
+            if (target != null && target.vulnerable())
+            {
+                newDamage = newDamage * Buff.VULNERABLE_MODIFIER;
+            }
+
+            return (int)(Math.Round(newDamage)); ;
         }
     }
 }

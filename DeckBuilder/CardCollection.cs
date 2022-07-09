@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Handles the collection of all cards in the game. Cards not added to the pool immediately
+    /// are ones not available until certain conditions have been met, such as obtaining party
+    /// members or completing the tutorial dungeon.
+    /// </summary>
     public class CardCollection
     {
-        //The overall collection of all cards in the game
-
         private List<Card> _allCards;
 
         public CardCollection()
@@ -19,34 +22,39 @@ namespace DeityOnceLost.DeckBuilder
             //Manually create all cards here until I figure out how to do it automatically
 
             //Default Cards
-            _allCards.Add(new Cards.DefaultCards.Block());
-            _allCards.Add(new Cards.DefaultCards.CautiousStrike());
-            _allCards.Add(new Cards.DefaultCards.Dodge());
-            _allCards.Add(new Cards.DefaultCards.Jab());
-            _allCards.Add(new Cards.DefaultCards.Kick());
-            _allCards.Add(new Cards.DefaultCards.Parry());
-            _allCards.Add(new Cards.DefaultCards.Punch());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Block());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.CautiousStrike());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Dodge());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Jab());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Kick());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Parry());
+            _allCards.Add(new Cards.RegularCards.DefaultCards.Punch());
 
             //Common Cards
-            _allCards.Add(new Cards.CommonCards.GatherStrength());
-            _allCards.Add(new Cards.CommonCards.HeroicBlow());
-            _allCards.Add(new Cards.CommonCards.RollingKick());
-            _allCards.Add(new Cards.CommonCards.DodgeAndRoll());
-            _allCards.Add(new Cards.CommonCards.Cleave());
-            _allCards.Add(new Cards.CommonCards.ViciousSlam());
-            _allCards.Add(new Cards.CommonCards.ExploitWeakness());
-            _allCards.Add(new Cards.CommonCards.CheapShot());
+            _allCards.Add(new Cards.RegularCards.CommonCards.GatherStrength());
+            _allCards.Add(new Cards.RegularCards.CommonCards.HeroicBlow());
+            _allCards.Add(new Cards.RegularCards.CommonCards.RollingKick());
+            _allCards.Add(new Cards.RegularCards.CommonCards.DodgeAndRoll());
+            _allCards.Add(new Cards.RegularCards.CommonCards.Cleave());
+            _allCards.Add(new Cards.RegularCards.CommonCards.ViciousSlam());
+            _allCards.Add(new Cards.RegularCards.CommonCards.ExploitWeakness());
+            _allCards.Add(new Cards.RegularCards.CommonCards.CheapShot());
+            _allCards.Add(new Cards.RegularCards.CommonCards.FirstStrike());
+            _allCards.Add(new Cards.RegularCards.CommonCards.SnapSlap());
 
             //Rare Cards
-            _allCards.Add(new Cards.RareCards.HuntersMark());
-            _allCards.Add(new Cards.RareCards.Sacrifice());
-            _allCards.Add(new Cards.RareCards.QuakeStomp());
+            _allCards.Add(new Cards.RegularCards.RareCards.Guidance());
+            _allCards.Add(new Cards.RegularCards.RareCards.HuntersMark());
+            _allCards.Add(new Cards.RegularCards.RareCards.QuakeStomp());
+            _allCards.Add(new Cards.RegularCards.RareCards.RecurringBlows());
 
             //Epic Cards
-            _allCards.Add(new Cards.EpicCards.DrawForth());
+            _allCards.Add(new Cards.RegularCards.EpicCards.DrawForth());
 
             //Godly Cards
-            _allCards.Add(new Cards.GodlyCards.FistOfTheStars());
+            _allCards.Add(new Cards.RegularCards.GodlyCards.FistOfTheStars());
+            _allCards.Add(new Cards.RegularCards.GodlyCards.FontOfPossibilities());
+            _allCards.Add(new Cards.RegularCards.GodlyCards.GuidingLight());
 
 
             //Void Cards
@@ -60,11 +68,22 @@ namespace DeityOnceLost.DeckBuilder
 
         /// <summary>
         /// Called when the player first gains party members, so that these cards don't exist in the loot tables until then.
+        /// This is to avoid weird mechanics bugs for having cards that affect mechanics the player doesn't yet have.
         /// </summary>
         public void addCardsAfterParty()
         {
             //Epic Cards
-            _allCards.Add(new Cards.EpicCards.TimeShift());
+            _allCards.Add(new Cards.RegularCards.EpicCards.TimeShift()); //has party mechanics
+        }
+
+        /// <summary>
+        /// Called when the player finishes the first dungeon, so that these cards don't exist in the loot tables until then.
+        /// This is to keep the game simple at first while learning, then allow it to branch out more drastically later on.
+        /// </summary>
+        public void addCardsAfterTutorial()
+        {
+            //Rare Cards
+            _allCards.Add(new Cards.RegularCards.RareCards.Sacrifice()); //has a blood cost
         }
 
         /// <summary>

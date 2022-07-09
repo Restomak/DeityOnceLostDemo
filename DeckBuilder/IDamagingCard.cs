@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder
 {
+    /// <summary>
+    /// Interface for helping create cards that deal damage.
+    /// </summary>
     interface IDamagingCard
     {
-        int damage
+        int iDamage
         {
             get;
         }
 
-        void dealDamage();
+        void iDealDamage();
     }
 }

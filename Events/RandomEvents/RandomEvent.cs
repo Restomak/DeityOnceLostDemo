@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Events.RandomEvents
 {
+    /// <summary>
+    /// A generic variant of event that includes many different types of events that
+    /// can be randomly selected by a dungeon for specific locations.
+    /// </summary>
     public abstract class RandomEvent : Happening
     {
         int _eventWeight;

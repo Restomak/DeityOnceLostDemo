@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Combat.Enemies
 {
+    /// <summary>
+    /// Basic medium difficulty enemy used in the tutorial dungeon, representing the
+    /// dungeon's guards. Carries a polearm whose blades look like a fan.
+    /// </summary>
     class FanbladeGuard : Enemy
     {
         public const String NAME = "Fanblade Guard";
@@ -41,11 +45,11 @@ namespace DeityOnceLost.Combat.Enemies
         }
         public override void resetDexterity()
         {
-            _strength = DEFAULT_DEX;
+            _dexterity = DEFAULT_DEX;
         }
         public override void resetResilience()
         {
-            _strength = DEFAULT_RES;
+            _resilience = DEFAULT_RES;
         }
         public override void resetBuffs()
         {

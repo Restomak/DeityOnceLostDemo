@@ -8,16 +8,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that stores and displays a buff/debuff.
+    /// </summary>
     class StatusEffect : HoverInfo
     {
         Combat.Buff _buff;
 
-        public StatusEffect(Point xy, int width, int height, Combat.Buff buff) : base(xy, width, height, new List<string>())
+        public StatusEffect(Point xy, int width, int height, Combat.Buff buff) : base(xy, width, height, new List<String>())
         {
             _buff = buff;
 
             _description = Combat.Buff.buffDescription(_buff);
             _description.Insert(0, Combat.Buff.buffString(_buff.getType()));
+
+            _extraInfo.Add(Combat.Buff.getExtraInfo(_buff.getType()));
         }
 
         public Combat.Buff getBuff()

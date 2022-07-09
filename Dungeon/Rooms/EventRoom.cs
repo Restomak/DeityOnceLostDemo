@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.Dungeon.Rooms
 {
+    /// <summary>
+    /// A variant of room that contains an event.
+    /// </summary>
     class EventRoom : Room
     {
         protected Events.Happening _roomEvent;

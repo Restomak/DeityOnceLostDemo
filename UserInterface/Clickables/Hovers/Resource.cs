@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables.Hovers
 {
+    /// <summary>
+    /// Version of HoverInfo that displays card resources (ie. Divinity).
+    /// </summary>
     public class Resource : HoverInfo
     {
         public const String DIVINITY_SAMPLE_STRING = "Divinity: 4 / 4";

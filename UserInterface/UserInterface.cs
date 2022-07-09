@@ -7,6 +7,13 @@ using Microsoft.Xna.Framework;
 
 namespace DeityOnceLost.UserInterface
 {
+    /// <summary>
+    /// Used for storing user interface elements (called Clickables). Each UserInterface keeps
+    /// their Clickables in a sorted list - the closer a Clickable is to the front of the list,
+    /// the closer it is to the front of the screen. If multiple Clickables overlap, them being
+    /// kept in a sorted list will tell the engine which is most relevant if the user clicks on
+    /// that overlap.
+    /// </summary>
     public class UserInterface
     {
         private List<Clickable> _clickables;

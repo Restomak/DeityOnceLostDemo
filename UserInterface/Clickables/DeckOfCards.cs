@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Used by not only the deck button on the top bar, but also the three card piles (draw,
+    /// discard, and removed) in combat. When clicked, opens a CardCollectionMenu of that
+    /// deck, after closing any others that are already open.
+    /// </summary>
     public class DeckOfCards : Clickable
     {
         public enum typeOfDeck
@@ -18,17 +23,23 @@ namespace DeityOnceLost.UserInterface.Clickables
         }
 
         typeOfDeck _typeOfDeck;
+        String _hoverDescription;
 
-        public DeckOfCards(typeOfDeck type, Characters.Champion champ)
+        public DeckOfCards(typeOfDeck type, Characters.Champion champ, String hoverDescription)
         {
             _typeOfDeck = type;
+            _hoverDescription = hoverDescription;
             setupDeck(champ);
         }
 
-        //Getter
+        //Getters
         public typeOfDeck getDeckType()
         {
             return _typeOfDeck;
+        }
+        public String getHoverDescription()
+        {
+            return _hoverDescription;
         }
 
         /// <summary>

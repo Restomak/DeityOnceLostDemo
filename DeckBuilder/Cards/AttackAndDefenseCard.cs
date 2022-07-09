@@ -6,46 +6,37 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class AttackAndDefenseCard : BasicAttackCard, IDefendingCard
+    /// <summary>
+    /// Base class to make card design easier for cards that both gain defense and deal damage
+    /// to an enemy.
+    /// </summary>
+    abstract class AttackAndDefenseCard : BasicAttackCard, IDefendingCard
     {
-        protected int _defense;
-
         public AttackAndDefenseCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int damage, int defense) : base(name, cardType, rarity, damage)
         {
-            _defense = defense;
+            iDefense = defense;
         }
 
-        public int defense
-        {
-            get => _defense;
-        }
+        public int iDefense { get; }
 
         public override void onPlay()
         {
-            dealDamage();
-            gainDefense();
+            iDealDamage();
+            iGainDefense();
         }
 
-        public void gainDefense()
+        public void iGainDefense()
         {
-            Game1.getChamp().gainDefense(_defense);
+            Game1.getChamp().gainDefense(iDefense);
         }
 
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
+        public override List<UserInterface.ExtraInfo> getHoverInfo()
         {
-            List<String> desc = new List<string>();
-            int defense = champ.getDefenseAffectedByBuffs(_defense);
-            Combat.Unit descTarget = null;
-            if (activeCard)
-            {
-                descTarget = Card.getTargetForDescription(_targetType);
-            }
-            int damage = champ.getDamageAffectedByBuffs(_damage, descTarget);
+            List<UserInterface.ExtraInfo> extraInfo = new List<UserInterface.ExtraInfo>();
 
-            desc.Add("Deal " + damage + " damage.");
-            desc.Add("Gain " + defense + " defense.");
+            extraInfo.Add(getDefenseExtraInfo());
 
-            return desc;
+            return extraInfo;
         }
     }
 }

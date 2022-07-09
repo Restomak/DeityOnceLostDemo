@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.UserInterface.Clickables
 {
+    /// <summary>
+    /// Avatar is the Clickable used for displaying the champion on screen during combat.
+    /// When initialized, it's set up with the champion's HP and buffs/debuffs.
+    /// </summary>
     public class Avatar : Clickable
     {
         public Avatar()

@@ -6,46 +6,28 @@ using System.Threading.Tasks;
 
 namespace DeityOnceLost.DeckBuilder.Cards
 {
-    class DefenseAndDrawCard : BasicDefenseCard, IDrawCard
+    /// <summary>
+    /// Base class to make card design easier for cards that both gain defense and draw
+    /// some cards.
+    /// </summary>
+    abstract class DefenseAndDrawCard : BasicDefenseCard, IDrawCard
     {
-        protected int _drawAmount;
-
         public DefenseAndDrawCard(String name, CardEnums.CardType cardType, CardEnums.CardRarity rarity, int defense, int drawAmount) : base(name, cardType, rarity, defense)
         {
-            _drawAmount = drawAmount;
+            iDrawAmount = drawAmount;
         }
 
-        public int amount
-        {
-            get => _drawAmount;
-        }
+        public int iDrawAmount { get; }
 
         public override void onPlay()
         {
-            gainDefense();
-            cardDraw();
+            iGainDefense();
+            iCardDraw();
         }
 
-        public void cardDraw()
+        public void iCardDraw()
         {
-            Game1.getChamp().getDeck().drawNumCards(_drawAmount);
-        }
-
-        public override List<String> getDescription(Characters.Champion champ, bool activeCard = false)
-        {
-            List<String> desc = new List<string>();
-            int defense = champ.getDefenseAffectedByBuffs(_defense);
-            String drawCardString = "Draw " + _drawAmount + " card";
-            if (_drawAmount > 1)
-            {
-                drawCardString += "s";
-            }
-            drawCardString += ".";
-            
-            desc.Add("Gain " + defense + " defense.");
-            desc.Add(drawCardString);
-
-            return desc;
+            Game1.getChamp().getDeck().drawNumCards(iDrawAmount);
         }
     }
 }

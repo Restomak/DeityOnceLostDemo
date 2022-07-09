@@ -8,12 +8,24 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DeityOnceLost.Dungeon
 {
+    /// <summary>
+    /// The abstract base class for the floor of a dungeon. Stores all of the rooms in a
+    /// two-dimensional list, and has two Point variables set to the entrance and exit of
+    /// the floor. While the floor's data structure holds rooms in a rectangle manner, the
+    /// shape of the floor can be made different by removing the connectors from certain
+    /// rooms in a way that bars all access, making an illusion of no rooms being in those
+    /// spaces.
+    /// 
+    /// Eventually, floors will need to be allowed greater space, which will require some
+    /// UI changes involving allowing the dungeon map to be scrollable, rather than
+    /// centered on the player at all times.
+    /// </summary>
     public abstract class Floor
     {
         protected List<List<Room>> _rooms;
         protected int _width, _height; //length is a better word but it's easier to visualize as height from a top-down view
         protected Point _start, _end;
-        protected int _defaultGoldFromCombat_Min, _defaultGoldFromCombat_Max, _remainingRandomEncounters;
+        protected int _defaultGoldFromCombat_Min, _defaultGoldFromCombat_Max, _remainingRandomEncounters, _remainingRestEncounters;
 
         public Floor(int width, int height, int defaultGoldFromCombat_Min, int defaultGoldFromCombat_Max)
         {
@@ -60,11 +72,13 @@ namespace DeityOnceLost.Dungeon
         }
         public abstract Combat.Encounter getRandomEncounter();
         protected abstract int getRemainingRandomEncounters();
+        public abstract Combat.Encounter getRestEncounter();
+        protected abstract int getRemainingRestEncounters();
 
 
 
         /// <summary>
-        /// Defaults all rooms in the floor as empty rooms with open connectors
+        /// Defaults all rooms in the floor as empty rooms with open connectors.
         /// </summary>
         public void initializeAllRooms()
         {
@@ -96,7 +110,7 @@ namespace DeityOnceLost.Dungeon
         }
 
         /// <summary>
-        /// Connects an individual room to its neighbors with open connectors
+        /// Connects an individual room to its neighbors with open connectors.
         /// </summary>
         private void initializeRoom(int x, int y)
         {
@@ -125,6 +139,10 @@ namespace DeityOnceLost.Dungeon
             }
         }
         
+        /// <summary>
+        /// Puts a new room in the two-dimensional list of rooms at the specified point,
+        /// connecting all adjacent rooms properly so that the replacement is seamless.
+        /// </summary>
         public void replaceRoom(Room newRoom, Point insertAt)
         {
             Room oldRoom = _rooms[insertAt.X][insertAt.Y];
@@ -208,6 +226,11 @@ namespace DeityOnceLost.Dungeon
 
 
 
+        /// <summary>
+        /// Called when the player collects a Key. The rooms are all searched for a locked type
+        /// Connector and if one is found, and if that Connector's associated color matches the
+        /// Key's color, the Connector is unlocked so that it can be traversed.
+        /// </summary>
         public void unlockAllDoorsOfColor(Treasury.Equipment.Key.keyColor color)
         {
             Connector currentConnector = null;
