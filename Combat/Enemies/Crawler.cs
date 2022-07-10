@@ -21,7 +21,6 @@ namespace DeityOnceLost.Combat.Enemies
         public const int DEFAULT_RES = 0;
         public const int DEFAULT_DAMAGE = 6;
         public const int DEFAULT_HEAVY_DAMAGE = 9;
-        public const int DEFAULT_DEFENSE = 5;
 
         public const int WIDTH = 120;
         public const int HEIGHT = 160;
@@ -31,28 +30,7 @@ namespace DeityOnceLost.Combat.Enemies
         public Crawler(int drawX, int drawY) : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.AttackAndEnfeeble(FEEBLE_AMOUNT, false),
             Game1.pic_enemy_crawler, WIDTH, HEIGHT, drawX, drawY)
         {
-            resetStrength();
-            resetDexterity();
-            resetResilience();
-
             _aiPattern.setEnemy(this);
-        }
-
-        public override void resetStrength()
-        {
-            _strength = DEFAULT_STR;
-        }
-        public override void resetDexterity()
-        {
-            _dexterity = DEFAULT_DEX;
-        }
-        public override void resetResilience()
-        {
-            _resilience = DEFAULT_RES;
-        }
-        public override void resetBuffs()
-        {
-            _buffs.Clear();
         }
         
         public override int getBasicDamage_noStrength()
@@ -62,10 +40,6 @@ namespace DeityOnceLost.Combat.Enemies
         public override int getHeavyDamage()
         {
             return getDamageAffectedByBuffs(DEFAULT_HEAVY_DAMAGE);
-        }
-        public override int getBasicDefense()
-        {
-            return DEFAULT_DEFENSE + _dexterity;
         }
     }
 }

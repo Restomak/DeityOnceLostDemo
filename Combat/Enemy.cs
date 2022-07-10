@@ -50,9 +50,9 @@ namespace DeityOnceLost.Combat
 
         //Abstracts
         public abstract int getBasicDamage_noStrength();
-        public abstract int getBasicDefense();
+        public virtual int getBasicDefense() { return 0; } //not all enemies defend
 
-        
+
 
         public int getDamageAffectedByBuffs(int damage)
         {

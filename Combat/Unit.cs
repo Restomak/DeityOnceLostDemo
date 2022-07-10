@@ -90,10 +90,22 @@ namespace DeityOnceLost.Combat
         }
 
         //Handled differently depending on children
-        public abstract void resetStrength();
-        public abstract void resetDexterity();
-        public abstract void resetResilience();
-        public abstract void resetBuffs();
+        public virtual void resetBuffs()
+        {
+            _buffs.Clear();
+        }
+        public virtual void resetStrength()
+        {
+            _strength = 0;
+        }
+        public virtual void resetDexterity()
+        {
+            _dexterity = 0;
+        }
+        public virtual void resetResilience()
+        {
+            _resilience = 0;
+        }
         public virtual void onDamageTaken() { }
 
 

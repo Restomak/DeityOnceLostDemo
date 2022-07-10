@@ -32,28 +32,7 @@ namespace DeityOnceLost.Combat.Enemies
         public FanbladeGuard(int drawX, int drawY) : base(NAME, Game1.randint(HITPOINTS_MIN, HITPOINTS_MAX), new AIPatterns.SimpleSlowRoller(BUFF_STRENGTH_GAIN, BUFF_INTERVAL_MIN, BUFF_INTERVAL_MAX),
             Game1.pic_enemy_fanbladeGuard, WIDTH, HEIGHT, drawX, drawY)
         {
-            resetStrength();
-            resetDexterity();
-            resetResilience();
-
             _aiPattern.setEnemy(this);
-        }
-
-        public override void resetStrength()
-        {
-            _strength = DEFAULT_STR;
-        }
-        public override void resetDexterity()
-        {
-            _dexterity = DEFAULT_DEX;
-        }
-        public override void resetResilience()
-        {
-            _resilience = DEFAULT_RES;
-        }
-        public override void resetBuffs()
-        {
-            _buffs.Clear();
         }
 
         public override int getBasicDamage_noStrength()

@@ -9,7 +9,7 @@ namespace DeityOnceLost.Combat.AIPatterns
 {
     /// <summary>
     /// AttackAndEnfeeble is a type of AIPattern that will usually attack, but will
-    /// occaistionally instead attempt to debuff the champion with Feeble. Rarely,
+    /// occasionally instead attempt to debuff the champion with Feeble. Rarely,
     /// if enabled, it will perform a heavy attack.
     /// </summary>
     class AttackAndEnfeeble : AIPattern
